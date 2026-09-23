@@ -1,0 +1,9 @@
+.card {
+  border: 1px solid;
+  border-radius: 16px;
+}
+
+.soft {
+  background: color-mix(in srgb, var(--primary-color) 6%, #ffffff);
+  border-color: color-mix(in srgb, var(--primary-color) 20%, #ffffff);
+}
