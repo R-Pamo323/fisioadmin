@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
 import { Card, LogoMark } from '../../../../shared/components'
-import { ROUTE_PATHS } from '../../../../core/routes/paths'
 import { colors } from '../../../../core/theme/colors'
 import { typography } from '../../../../core/theme/typography'
+import { RegisterForm } from '../components/RegisterForm'
 import styles from './Register.module.css'
 
 export function Register() {
@@ -46,21 +45,10 @@ export function Register() {
             fontWeight: typography.body.fontWeight,
           }}
         >
-          Estás en la pantalla de registro de nuevos usuarios.
+          Registra los datos del nuevo acceso a tu centro clínico.
         </p>
 
-        <Link
-          to={ROUTE_PATHS.login}
-          className={styles.backLink}
-          style={{
-            color: colors.primary,
-            fontFamily: typography.fontFamily,
-            fontSize: typography.body.fontSize,
-            fontWeight: 600,
-          }}
-        >
-          ← Volver al inicio de sesión
-        </Link>
+        <RegisterForm />
       </Card>
     </main>
   )

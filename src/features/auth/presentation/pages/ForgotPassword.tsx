@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
 import { Card, LogoMark } from '../../../../shared/components'
-import { ROUTE_PATHS } from '../../../../core/routes/paths'
 import { colors } from '../../../../core/theme/colors'
 import { typography } from '../../../../core/theme/typography'
+import { ForgotPasswordFlow } from '../components/ForgotPasswordFlow'
 import styles from './ForgotPassword.module.css'
 
 export function ForgotPassword() {
@@ -37,30 +36,7 @@ export function ForgotPassword() {
           Recuperar contraseña
         </h1>
 
-        <p
-          className={styles.subtitle}
-          style={{
-            color: typography.body.color,
-            fontFamily: typography.fontFamily,
-            fontSize: typography.body.fontSize,
-            fontWeight: typography.body.fontWeight,
-          }}
-        >
-          Estás en la pantalla para recuperar el acceso a tu cuenta.
-        </p>
-
-        <Link
-          to={ROUTE_PATHS.login}
-          className={styles.backLink}
-          style={{
-            color: colors.primary,
-            fontFamily: typography.fontFamily,
-            fontSize: typography.body.fontSize,
-            fontWeight: 600,
-          }}
-        >
-          ← Volver al inicio de sesión
-        </Link>
+        <ForgotPasswordFlow />
       </Card>
     </main>
   )

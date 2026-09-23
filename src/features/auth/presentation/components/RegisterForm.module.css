@@ -1,0 +1,65 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.eyeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.eyeButton:hover {
+  opacity: 0.8;
+}
+
+.divider {
+  border-top: 1px solid;
+  margin: 4px 0 0;
+}
+
+.loginLink {
+  margin: 0;
+  text-align: center;
+}
+
+.loginLink a {
+  text-decoration: none;
+}
+
+.loginLink a:hover {
+  text-decoration: underline;
+}
+
+.modalBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.modalIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.modalTitle {
+  margin: 4px 0 0;
+  letter-spacing: -0.4px;
+}
+
+.modalMessage {
+  margin: 0 0 8px;
+  line-height: 1.5;
+}
