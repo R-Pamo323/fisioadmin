@@ -1,0 +1,206 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.cardSubtitle {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.empty {
+  margin: 16px 0 0;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.todayList {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.todayRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.todayRow:last-child {
+  border-bottom: none;
+}
+
+.todayTime {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  min-width: 44px;
+}
+
+.todayInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.todayInfo strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.todayInfo span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.nextCard {
+  background: color-mix(in srgb, #0ea5e9 4%, #ffffff);
+}
+
+.nextTime {
+  margin-top: 16px;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+  color: #0ea5e9;
+}
+
+.nextInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 10px;
+}
+
+.nextInfo strong {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.nextInfo span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.nextLocation {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.nextWhen {
+  margin-top: 16px;
+  align-self: flex-start;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  background: #0ea5e9;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.payments {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.paymentRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.paymentLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.paymentRow strong {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.link {
+  margin-top: auto;
+  padding-top: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0ea5e9;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.legend {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.legendDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

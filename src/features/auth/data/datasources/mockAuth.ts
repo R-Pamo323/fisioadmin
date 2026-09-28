@@ -1,11 +1,38 @@
 export const MOCK_RESET_CODE = '1234'
 
-const REGISTERED_EMAILS = ['juan.perez@fisioadmin.com', 'test@test.com']
+const REGISTERED_USERS: Record<string, string> = {
+  'juan.perez@fisioadmin.com': 'fisioadmin',
+  'test@test.com': 'test1234',
+}
+
+export const REGISTERED_EMAILS = Object.keys(REGISTERED_USERS)
+
+export const MOCK_LOGIN_PASSWORD = REGISTERED_USERS['juan.perez@fisioadmin.com']
 
 const wait = (ms: number) =>
   new Promise<void>((resolve) => {
     setTimeout(resolve, ms)
   })
+
+export type LoginResult =
+  | { ok: true }
+  | { ok: false; error: 'email_not_registered' | 'invalid_credentials' }
+
+export async function mockLogin(email: string, password: string): Promise<LoginResult> {
+  await wait(900)
+
+  const normalizedEmail = email.trim().toLowerCase()
+
+  if (!(normalizedEmail in REGISTERED_USERS)) {
+    return { ok: false, error: 'email_not_registered' }
+  }
+
+  if (REGISTERED_USERS[normalizedEmail] !== password) {
+    return { ok: false, error: 'invalid_credentials' }
+  }
+
+  return { ok: true }
+}
 
 export interface CreateAccountInput {
   name: string

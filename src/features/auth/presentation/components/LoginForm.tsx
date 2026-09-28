@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { CSSProperties, FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { mockLogin } from '../../data/datasources/mockAuth'
 import {
   Button,
   EnvelopeIcon,
@@ -28,12 +29,14 @@ const rememberStyle: TokenStyle = {
 }
 
 export function LoginForm() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [remember, setRemember] = useState(false)
   const [emailError, setEmailError] = useState('')
   const [passwordError, setPasswordError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   const handleEmailBlur = () => {
     if (email.trim() !== '' && !EMAIL_REGEX.test(email.trim())) {
@@ -47,22 +50,53 @@ export function LoginForm() {
     }
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    if (email.trim() === '') {
+    if (submitting) return
+
+    const normalizedEmail = email.trim()
+
+    if (normalizedEmail === '') {
       setEmailError('Introduce tu correo electrónico.')
-    } else if (!EMAIL_REGEX.test(email.trim())) {
+      setPasswordError('')
+      return
+    }
+
+    if (!EMAIL_REGEX.test(normalizedEmail)) {
       setEmailError('Introduce un correo electrónico válido.')
-    } else {
-      setEmailError('')
+      setPasswordError('')
+      return
     }
 
     if (password.length < 8) {
       setPasswordError('La contraseña debe tener al menos 8 caracteres.')
-    } else {
-      setPasswordError('')
+      setEmailError('')
+      return
     }
+
+    setEmailError('')
+    setPasswordError('')
+    setSubmitting(true)
+
+    const result = await mockLogin(normalizedEmail, password)
+    setSubmitting(false)
+
+    if (result.ok) {
+      navigate(ROUTE_PATHS.calendar)
+      return
+    }
+
+    if (result.error === 'email_not_registered') {
+      setEmailError(
+        'Este correo no está registrado. Comprueba la dirección o crea una cuenta.',
+      )
+      return
+    }
+
+    setPasswordError(
+      'La contraseña no es correcta. Revísala e inténtalo de nuevo.',
+    )
   }
 
   return (
@@ -159,8 +193,15 @@ export function LoginForm() {
           <span>Mantener sesión iniciada</span>
         </div>
 
-        <Button type="submit" fullWidth>
-          Iniciar sesión →
+        <Button type="submit" fullWidth disabled={submitting}>
+          {submitting ? (
+            <>
+              <span className={styles.loader} />
+              Iniciando sesión...
+            </>
+          ) : (
+            'Iniciar sesión →'
+          )}
         </Button>
       </form>
 

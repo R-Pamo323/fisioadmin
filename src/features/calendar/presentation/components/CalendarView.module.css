@@ -1,0 +1,135 @@
+.wrapper {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 8px;
+  min-height: 560px;
+}
+
+.wrapper :global(.fc) {
+  font-family: inherit;
+  font-size: 13px;
+  color: #111827;
+}
+
+.wrapper :global(.fc .fc-col-header-cell) {
+  border-color: #e5e7eb;
+  padding: 8px 0;
+}
+
+.wrapper :global(.fc .fc-daygrid-day) {
+  border-color: #e5e7eb;
+}
+
+.wrapper :global(.fc .fc-timegrid-slot) {
+  border-color: #f3f4f6;
+}
+
+.wrapper :global(.fc .fc-timegrid-slot-label-cushion) {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.wrapper :global(.fc .fc-timegrid-now-indicator-line) {
+  border-color: #0ea5e9;
+}
+
+.wrapper :global(.fc .fc-timegrid-now-indicator-arrow) {
+  border-color: #0ea5e9;
+}
+
+.wrapper :global(.fc .fc-event) {
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.wrapper :global(.fc .fc-timegrid-event) {
+  margin: 2px 4px;
+}
+
+.dayHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.dayHeaderWeekday {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: #6b7280;
+}
+
+.dayHeaderNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.wrapper :global(.fc .fc-scrollgrid) {
+  border-color: #e5e7eb;
+}
+
+.wrapper :global(.fc .fc-scrollgrid-section > td) {
+  border-color: #e5e7eb;
+}
+
+.wrapper :global(.fc .fc-timegrid-divider-cushion) {
+  display: none;
+}
+
+.eventCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  height: 100%;
+  padding: 4px 8px;
+  border-left: 3px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.eventTitle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eventTitle span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eventMeta {
+  font-size: 11px;
+  color: #6b7280;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 767px) {
+  .wrapper {
+    min-height: 480px;
+    padding: 4px;
+  }
+}
