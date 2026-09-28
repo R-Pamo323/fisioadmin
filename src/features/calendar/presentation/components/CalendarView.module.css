@@ -1,9 +1,12 @@
 .wrapper {
   background: #ffffff;
   border: 1px solid #e5e7eb;
+  --fc-border-color: #a6b0c0;
   border-radius: 16px;
   padding: 8px;
-  min-height: 560px;
+  flex: 1;
+  min-height: 340px;
+  min-width: 0;
 }
 
 .wrapper :global(.fc) {
@@ -13,36 +16,80 @@
 }
 
 .wrapper :global(.fc .fc-col-header-cell) {
-  border-color: #e5e7eb;
+  border-color: #a6b0c0;
   padding: 8px 0;
 }
 
 .wrapper :global(.fc .fc-daygrid-day) {
-  border-color: #e5e7eb;
+  border-color: #a6b0c0;
 }
 
 .wrapper :global(.fc .fc-timegrid-slot) {
-  border-color: #f3f4f6;
+  height: 75px;
+  border-color: #a6b0c0;
 }
 
 .wrapper :global(.fc .fc-timegrid-slot-label-cushion) {
-  font-size: 12px;
-  color: #9ca3af;
+  font-size: 14px;
+  color: #374151;
   font-weight: 500;
 }
 
 .wrapper :global(.fc .fc-timegrid-now-indicator-line) {
-  border-color: #0ea5e9;
+  display: none;
 }
 
 .wrapper :global(.fc .fc-timegrid-now-indicator-arrow) {
-  border-color: #0ea5e9;
+  display: none;
+}
+
+@supports (-moz-appearance: none) {
+  .wrapper,
+  .wrapper :global(.fc *),
+  .wrapper :global(.fc-scrollgrid),
+  .wrapper :global(.fc-scroller) {
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+  }
+}
+
+.wrapper :global(.fc ::-webkit-scrollbar),
+.wrapper :global(.fc-scrollgrid::-webkit-scrollbar) {
+  width: 10px;
+  height: 10px;
+}
+
+.wrapper :global(.fc ::-webkit-scrollbar-button),
+.wrapper :global(.fc-scrollgrid::-webkit-scrollbar-button) {
+  display: none;
+}
+
+.wrapper :global(.fc ::-webkit-scrollbar-thumb) {
+  background: #d1d5db;
+  border-radius: 8px;
+}
+
+.nowLine {
+  position: absolute;
+  right: 0;
+  height: 0;
+  border-top: 3px solid #ef4444;
+  z-index: 5;
+  pointer-events: none;
 }
 
 .wrapper :global(.fc .fc-event) {
   border: none;
   cursor: pointer;
   border-radius: 6px;
+}
+
+.wrapper :global(.fc .fc-v-event) {
+  background: transparent;
+}
+
+.wrapper :global(.fc .fc-timegrid-event .fc-event-main) {
+  padding: 0;
 }
 
 .wrapper :global(.fc .fc-timegrid-event) {
@@ -58,10 +105,10 @@
 }
 
 .dayHeaderWeekday {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   text-transform: capitalize;
-  color: #6b7280;
+  color: #374151;
 }
 
 .dayHeaderNumber {
@@ -76,11 +123,23 @@
 }
 
 .wrapper :global(.fc .fc-scrollgrid) {
-  border-color: #e5e7eb;
+  border-color: #a6b0c0;
+  border-right: 1px solid #a6b0c0;
+  border-radius: 14px;
+}
+
+.wrapper :global(.fc .fc-scrollgrid-section-header > th) {
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+}
+
+.wrapper :global(.fc .fc-scrollgrid-section-liquid > td) {
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
 }
 
 .wrapper :global(.fc .fc-scrollgrid-section > td) {
-  border-color: #e5e7eb;
+  border-color: #a6b0c0;
 }
 
 .wrapper :global(.fc .fc-timegrid-divider-cushion) {
@@ -94,7 +153,8 @@
   gap: 2px;
   height: 100%;
   padding: 4px 8px;
-  border-left: 3px solid transparent;
+  border: 1px solid transparent;
+  border-left-width: 3px;
   border-radius: 6px;
   overflow: hidden;
   box-sizing: border-box;
@@ -104,7 +164,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: #111827;
   line-height: 1.2;
@@ -119,7 +179,7 @@
 }
 
 .eventMeta {
-  font-size: 11px;
+  font-size: 13px;
   color: #6b7280;
   line-height: 1.2;
   white-space: nowrap;
@@ -129,7 +189,7 @@
 
 @media (max-width: 767px) {
   .wrapper {
-    min-height: 480px;
+    min-height: 300px;
     padding: 4px;
   }
 }

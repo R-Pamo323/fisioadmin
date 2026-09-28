@@ -55,7 +55,8 @@ export function Calendar() {
       firstViewApplied.current = true
       return
     }
-    api.changeView(view)
+    const id = window.setTimeout(() => api.changeView(view), 0)
+    return () => window.clearTimeout(id)
   }, [view])
 
   const handleDatesSet = (arg: DatesSetArg) => {

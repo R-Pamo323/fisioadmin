@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
+import { createPortal } from 'react-dom'
 import FullCalendar from '@fullcalendar/react'
 import type {
   DatesSetArg,
@@ -20,6 +21,14 @@ import type { TooltipState } from './AppointmentTooltip'
 import styles from './CalendarView.module.css'
 
 export type CalendarViewType = 'timeGridWeek' | 'timeGridDay'
+
+const DAY_START_MINUTES = 8 * 60
+const DAY_END_MINUTES = 20 * 60
+
+function getNowMinutes(): number {
+  const now = new Date()
+  return now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60
+}
 
 interface CalendarViewProps {
   calendarRef: RefObject<FullCalendar | null>
@@ -57,6 +66,43 @@ const isSameDay = (a: Date, b: Date): boolean =>
 
 export function CalendarView({ calendarRef, view, onDatesSet }: CalendarViewProps) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null)
+  const wrapperRef = useRef<HTMLDivElement | null>(null)
+  const [bodyEl, setBodyEl] = useState<HTMLElement | null>(null)
+  const [nowMinutes, setNowMinutes] = useState(getNowMinutes)
+
+  useEffect(() => {
+    const el = wrapperRef.current?.querySelector<HTMLElement>('.fc-timegrid-body') ?? null
+    if (el !== bodyEl) setBodyEl(el)
+  })
+
+  useEffect(() => {
+    if (!bodyEl) return undefined
+
+    setNowMinutes(getNowMinutes())
+    const interval = window.setInterval(() => setNowMinutes(getNowMinutes()), 60_000)
+    const onResize = () => setNowMinutes(getNowMinutes())
+    window.addEventListener('resize', onResize)
+
+    return () => {
+      window.clearInterval(interval)
+      window.removeEventListener('resize', onResize)
+    }
+  }, [bodyEl])
+
+  let nowLineTop = 0
+  let nowLineLeft = 0
+  const showNowLine =
+    bodyEl !== null && nowMinutes >= DAY_START_MINUTES && nowMinutes <= DAY_END_MINUTES
+
+  if (bodyEl && showNowLine) {
+    const bodyRect = bodyEl.getBoundingClientRect()
+    const colEl = bodyEl.querySelector<HTMLElement>('.fc-timegrid-col')
+    if (colEl) {
+      nowLineLeft = colEl.getBoundingClientRect().left - bodyRect.left
+    }
+    const ratio = (nowMinutes - DAY_START_MINUTES) / (DAY_END_MINUTES - DAY_START_MINUTES)
+    nowLineTop = ratio * bodyEl.offsetHeight
+  }
 
   const handleDatesSet = (arg: DatesSetArg) => {
     setTooltip(null)
@@ -82,7 +128,7 @@ export function CalendarView({ calendarRef, view, onDatesSet }: CalendarViewProp
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} ref={wrapperRef}>
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -90,14 +136,15 @@ export function CalendarView({ calendarRef, view, onDatesSet }: CalendarViewProp
         initialView={view}
         headerToolbar={false}
         firstDay={1}
-        nowIndicator
         allDaySlot={false}
         slotMinTime="08:00:00"
         slotMaxTime="20:00:00"
-        slotDuration="01:00:00"
+        slotDuration="00:30:00"
+        slotLabelInterval="01:00:00"
         slotLabelFormat={timeFormat}
         eventTimeFormat={timeFormat}
-        height="auto"
+        height="100%"
+        expandRows
         events={events}
         datesSet={handleDatesSet}
         eventClick={handleEventClick}
@@ -129,7 +176,7 @@ export function CalendarView({ calendarRef, view, onDatesSet }: CalendarViewProp
             <div
               className={styles.eventCard}
               style={{
-                borderLeftColor: status.color,
+                borderColor: status.color,
                 background: status.background,
               }}
             >
@@ -149,6 +196,12 @@ export function CalendarView({ calendarRef, view, onDatesSet }: CalendarViewProp
       {tooltip ? (
         <AppointmentTooltip tooltip={tooltip} onClose={() => setTooltip(null)} />
       ) : null}
+      {bodyEl && showNowLine
+        ? createPortal(
+            <div className={styles.nowLine} style={{ top: nowLineTop, left: nowLineLeft }} />,
+            bodyEl,
+          )
+        : null}
     </div>
   )
 }
