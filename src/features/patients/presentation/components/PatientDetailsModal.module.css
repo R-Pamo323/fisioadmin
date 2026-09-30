@@ -1,0 +1,257 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  /* El padding vertical del Modal es 28px; sin este tope el hijo flexible
+     nunca se encoge y el scroll interno no llega a activarse. */
+  max-height: calc(90vh - 56px);
+}
+
+/* Solo la sección de visitas cede espacio; el resto conserva su tamaño. */
+.content > * {
+  flex-shrink: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.title {
+  margin: 0;
+  letter-spacing: -0.6px;
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.close:hover {
+  background: #f9fafb;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border: 1px solid #f3f4f6;
+  border-radius: 14px;
+  background: #f9fafb;
+}
+
+.summaryText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.name {
+  font-size: 17px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.2px;
+}
+
+.meta {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 24px;
+}
+
+.fact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.fact:last-child {
+  grid-column: 1 / -1;
+}
+
+.factIcon {
+  flex-shrink: 0;
+  color: #9ca3af;
+}
+
+.factValue {
+  min-width: 0;
+  word-break: break-word;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.visitCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.sectionIcon {
+  color: #0ea5e9;
+}
+
+/* Permite que la lista de visitas se encogue y desplace. */
+.sectionScroll {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.diagnosis {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+.treatment {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.visits {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0 10px 0 0;
+  list-style: none;
+  /* Región desplazable: permite muchos registros sin alargar el modal. */
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+.visits::-webkit-scrollbar {
+  width: 6px;
+}
+
+.visits::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.visits::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #d1d5db;
+}
+
+.visit {
+  display: flex;
+  gap: 14px;
+}
+
+.visitMarker {
+  width: 10px;
+  height: 10px;
+  margin-top: 5px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #e0f2fe;
+  border: 2px solid #0ea5e9;
+}
+
+.visitBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.visitTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.visitService {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.visitDate {
+  font-size: 12px;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.visitRelative {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+
+.visitNotes {
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #6b7280;
+}
+
+.emptyHistory {
+  margin: 0;
+  padding: 20px;
+  border: 1px dashed #e5e7eb;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6b7280;
+  text-align: center;
+}
+
+@media (max-width: 519px) {
+  .facts {
+    grid-template-columns: 1fr;
+  }
+}

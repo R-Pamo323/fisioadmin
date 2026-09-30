@@ -3,6 +3,7 @@ export const ROUTE_PATHS = {
   forgotPassword: '/olvide-password',
   register: '/registro',
   calendar: '/calendario',
+  patients: '/pacientes',
   income: '/ingresos',
   appointmentTypes: '/tipos-de-citas',
   settings: '/configuracion',

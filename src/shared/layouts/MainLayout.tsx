@@ -10,6 +10,7 @@ import {
   LogOut,
   Menu,
   Settings,
+  Users,
   Wallet,
   X,
 } from 'lucide-react'
@@ -19,6 +20,7 @@ import styles from './MainLayout.module.css'
 
 const NAV_ITEMS = [
   { to: ROUTE_PATHS.calendar, label: 'Calendario', icon: CalendarDays },
+  { to: ROUTE_PATHS.patients, label: 'Pacientes', icon: Users },
   { to: ROUTE_PATHS.income, label: 'Ingresos', icon: Wallet },
   { to: ROUTE_PATHS.appointmentTypes, label: 'Tipos de citas', icon: ClipboardList },
   { to: ROUTE_PATHS.settings, label: 'Configuración', icon: Settings },
@@ -26,6 +28,7 @@ const NAV_ITEMS = [
 
 const SECTION_TITLES: Record<string, string> = {
   [ROUTE_PATHS.calendar]: 'Calendario',
+  [ROUTE_PATHS.patients]: 'Pacientes',
   [ROUTE_PATHS.income]: 'Ingresos',
   [ROUTE_PATHS.appointmentTypes]: 'Tipos de citas',
   [ROUTE_PATHS.settings]: 'Configuración',
