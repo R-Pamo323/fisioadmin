@@ -16,6 +16,19 @@
     transform 0.1s ease;
 }
 
+.primary,
+.secondary,
+.ghost {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.secondary:hover,
+.ghost:hover {
+  background: #f9fafb;
+  filter: none;
+}
+
 .button:hover {
   filter: brightness(0.94);
 }

@@ -23,6 +23,18 @@
   animation: slide-up 0.25s ease;
 }
 
+.sizeSm {
+  max-width: 380px;
+}
+
+.sizeMd {
+  max-width: 520px;
+}
+
+.sizeLg {
+  max-width: 680px;
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;
