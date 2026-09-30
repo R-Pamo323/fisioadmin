@@ -76,7 +76,7 @@ export function ServiceTypeCard({
           onClick={() => onShowDetails(service)}
           style={{ color: colors.primary }}
         >
-          Ver detalles de protocolo
+          Ver detalles
           <ChevronRight size={14} />
         </button>
       </div>

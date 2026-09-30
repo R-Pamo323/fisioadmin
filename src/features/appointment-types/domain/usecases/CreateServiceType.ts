@@ -13,6 +13,7 @@ export class CreateServiceType {
       ...draft,
       name: draft.name.trim(),
       description: draft.description.trim(),
+      protocol: draft.protocol.map((step) => step.trim()).filter((step) => step !== ''),
     })
   }
 }

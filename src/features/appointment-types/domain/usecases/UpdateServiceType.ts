@@ -15,6 +15,13 @@ export class UpdateServiceType {
       ...(patch.description !== undefined
         ? { description: patch.description.trim() }
         : {}),
+      ...(patch.protocol !== undefined
+        ? {
+            protocol: patch.protocol
+              .map((step) => step.trim())
+              .filter((step) => step !== ''),
+          }
+        : {}),
     }
 
     return this.repository.update(id, normalized)

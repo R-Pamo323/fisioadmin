@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
   Bell,
   CalendarDays,
@@ -7,14 +7,14 @@ import {
   ChevronRight,
   ClipboardList,
   HelpCircle,
+  LogOut,
   Menu,
-  Search,
   Settings,
   Wallet,
   X,
 } from 'lucide-react'
 import { ROUTE_PATHS } from '../../core/routes/paths'
-import { LogoMark } from '../components'
+import { DropdownMenu, LogoMark } from '../components'
 import styles from './MainLayout.module.css'
 
 const NAV_ITEMS = [
@@ -33,6 +33,7 @@ const SECTION_TITLES: Record<string, string> = {
 
 export function MainLayout() {
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const title = SECTION_TITLES[pathname] ?? 'FisioAdmin'
@@ -92,26 +93,36 @@ export function MainLayout() {
             <h1 className={styles.pageTitle}>{title}</h1>
           </div>
           <div className={styles.headerRight}>
-            <label className={styles.searchBox}>
-              <Search size={16} />
-              <input className={styles.searchInput} placeholder="Buscar..." />
-            </label>
             <button className={styles.iconBtn} aria-label="Notificaciones">
               <Bell size={20} />
               <span className={styles.notifDot} />
             </button>
             <div className={styles.profileDivider} />
-            <div className={styles.profile}>
-              <div className={styles.avatar}>
-                <span>JP</span>
-                <span className={styles.statusDot} />
-              </div>
-              <div className={styles.profileText}>
-                <strong>Dr. Juan Pérez</strong>
-                <span>Administrador</span>
-              </div>
-              <ChevronDown size={16} className={styles.profileChevron} />
-            </div>
+            <DropdownMenu
+              ariaLabel="Menú de usuario"
+              triggerClassName={styles.profileTrigger}
+              items={[
+                {
+                  label: 'Cerrar sesión',
+                  icon: <LogOut size={15} />,
+                  tone: 'danger',
+                  onSelect: () => navigate(ROUTE_PATHS.login),
+                },
+              ]}
+              trigger={
+                <>
+                  <div className={styles.avatar}>
+                    <span>JP</span>
+                    <span className={styles.statusDot} />
+                  </div>
+                  <div className={styles.profileText}>
+                    <strong>Dr. Juan Pérez</strong>
+                    <span>Administrador</span>
+                  </div>
+                  <ChevronDown size={16} className={styles.profileChevron} />
+                </>
+              }
+            />
           </div>
         </header>
         <main className={styles.content}>

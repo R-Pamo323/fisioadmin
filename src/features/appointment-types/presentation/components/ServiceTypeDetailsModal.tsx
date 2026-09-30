@@ -72,17 +72,19 @@ export function ServiceTypeDetailsModal({
           <p className={styles.description}>{service.description}</p>
         ) : null}
 
-        <section className={styles.protocol}>
-          <h4 className={styles.protocolTitle}>Protocolo de sesión</h4>
-          <ol className={styles.steps}>
-            {service.protocol.map((step, index) => (
-              <li key={`${service.id}-step-${index}`} className={styles.step}>
-                <span className={styles.stepIndex}>{index + 1}</span>
-                <span>{step}</span>
-              </li>
-            ))}
-          </ol>
-        </section>
+        {service.protocol.length > 0 ? (
+          <section className={styles.protocol}>
+            <h4 className={styles.protocolTitle}>Protocolo de sesión</h4>
+            <ol className={styles.steps}>
+              {service.protocol.map((step, index) => (
+                <li key={`${service.id}-step-${index}`} className={styles.step}>
+                  <span className={styles.stepIndex}>{index + 1}</span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ) : null}
 
         <Button fullWidth onClick={onClose}>
           Cerrar

@@ -111,6 +111,18 @@ export function ServiceTypeFormModal({
           onBlur={onBlur('description')}
         />
 
+        <Textarea
+          label="Detalles de protocolo"
+          rows={4}
+          value={values.protocol}
+          onChange={setValue('protocol')}
+          placeholder={'Ej.:\nEvaluar al paciente\nAplicar calor\nTerapia manual'}
+        />
+        <p className={styles.protocolHint}>
+          Opcional. Escribe un paso por línea; se guardan en el orden en que los
+          escribas.
+        </p>
+
         <div className={styles.actions}>
           <Button variant="ghost" onClick={onClose} disabled={isSaving}>
             Cancelar

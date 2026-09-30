@@ -8,6 +8,7 @@ export interface ServiceTypeFormValues {
   price: string
   duration: string
   description: string
+  protocol: string
   category: ServiceCategory
 }
 
@@ -19,6 +20,7 @@ const emptyValues: ServiceTypeFormValues = {
   price: '',
   duration: '',
   description: '',
+  protocol: '',
   category: DEFAULT_CATEGORY,
 }
 
@@ -27,8 +29,16 @@ const fromServiceType = (service: ServiceType): ServiceTypeFormValues => ({
   price: String(service.price),
   duration: String(service.durationMinutes),
   description: service.description,
+  protocol: service.protocol.join('\n'),
   category: service.category,
 })
+
+/** Convierte el texto del textarea en pasos, ignorando líneas vacías. */
+const parseProtocol = (value: string): string[] =>
+  value
+    .split('\n')
+    .map((step) => step.trim())
+    .filter((step) => step !== '')
 
 const parseNumber = (value: string): number | null => {
   const trimmed = value.trim()
@@ -121,7 +131,7 @@ export function useServiceTypeForm(options: {
       durationMinutes: parseNumber(values.duration) ?? 0,
       description: values.description,
       category: values.category,
-      protocol: service ? service.protocol : [],
+      protocol: parseProtocol(values.protocol),
     })
 
     setIsSaving(false)

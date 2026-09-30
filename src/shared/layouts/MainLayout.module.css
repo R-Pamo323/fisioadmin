@@ -180,33 +180,6 @@
   gap: 16px;
 }
 
-.searchBox {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  height: 38px;
-  width: 220px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  color: #9ca3af;
-}
-
-.searchInput {
-  border: none;
-  background: none;
-  outline: none;
-  font-size: 14px;
-  color: #111827;
-  flex: 1;
-  min-width: 0;
-}
-
-.searchInput::placeholder {
-  color: #9ca3af;
-}
-
 .iconBtn {
   position: relative;
   border: none;
@@ -239,10 +212,27 @@
   background: #e5e7eb;
 }
 
-.profile {
+.profileTrigger {
   display: flex;
   align-items: center;
   gap: 10px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 10px;
+  transition: background 0.15s ease;
+}
+
+.profileTrigger:hover {
+  background: #f9fafb;
+}
+
+.profileTrigger:focus-visible {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 2px;
 }
 
 .avatar {
@@ -338,10 +328,6 @@
 
   .menuBtn {
     display: inline-flex;
-  }
-
-  .searchBox {
-    display: none;
   }
 
   .profileText {

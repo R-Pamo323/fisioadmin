@@ -14,9 +14,18 @@ export interface DropdownMenuItem {
 interface DropdownMenuProps {
   items: DropdownMenuItem[]
   ariaLabel?: string
+  /** Contenido del disparador. Si se omite se muestra el icono de puntos verticales. */
+  trigger?: ReactNode
+  /** Clase CSS del disparador cuando se pasa `trigger`. */
+  triggerClassName?: string
 }
 
-export function DropdownMenu({ items, ariaLabel = 'Opciones' }: DropdownMenuProps) {
+export function DropdownMenu({
+  items,
+  ariaLabel = 'Opciones',
+  trigger,
+  triggerClassName,
+}: DropdownMenuProps) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -49,14 +58,14 @@ export function DropdownMenu({ items, ariaLabel = 'Opciones' }: DropdownMenuProp
     <div className={styles.container} ref={containerRef}>
       <button
         type="button"
-        className={styles.trigger}
+        className={trigger ? triggerClassName : styles.trigger}
         aria-label={ariaLabel}
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((isOpen) => !isOpen)}
-        style={{ color: colors.textSecondary }}
+        style={trigger ? undefined : { color: colors.textSecondary }}
       >
-        <MoreVertical size={18} />
+        {trigger ?? <MoreVertical size={18} />}
       </button>
 
       {open ? (
