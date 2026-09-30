@@ -1,0 +1,99 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.brandName {
+  font-size: 20px;
+  letter-spacing: -0.2px;
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 32px;
+}
+
+.title {
+  margin: 0;
+  letter-spacing: -0.8px;
+}
+
+.subtitle {
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.loader {
+  width: 16px;
+  height: 16px;
+  border: 2px solid color-mix(in srgb, #ffffff 40%, transparent);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.forgotLink {
+  text-decoration: none;
+}
+
+.forgotLink:hover {
+  text-decoration: underline;
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: -4px;
+}
+
+.divider {
+  border-top: 1px solid;
+  margin: 24px 0 16px;
+}
+
+.signup {
+  margin: 0;
+  text-align: center;
+}
+
+.signup a {
+  text-decoration: none;
+}
+
+.signup a:hover {
+  text-decoration: underline;
+}
+
+.footer {
+  margin-top: 32px;
+  text-align: center;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .footer {
+    margin-top: 24px;
+  }
+}

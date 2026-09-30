@@ -1,0 +1,23 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.divider {
+  border-top: 1px solid;
+  margin: 4px 0 0;
+}
+
+.loginLink {
+  margin: 0;
+  text-align: center;
+}
+
+.loginLink a {
+  text-decoration: none;
+}
+
+.loginLink a:hover {
+  text-decoration: underline;
+}

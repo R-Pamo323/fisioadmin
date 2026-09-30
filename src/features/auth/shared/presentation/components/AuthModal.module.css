@@ -1,0 +1,27 @@
+.modalBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.modalIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.modalTitle {
+  margin: 4px 0 0;
+  letter-spacing: -0.4px;
+}
+
+.modalMessage {
+  margin: 0 0 8px;
+  line-height: 1.5;
+}
