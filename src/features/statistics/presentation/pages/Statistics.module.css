@@ -1,0 +1,38 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.loading {
+  margin: 8px 0 0;
+  font-size: 14px;
+}
+
+/* Fila de las 4 métricas: 4 → 2 → 1 columnas. */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* Paneles: 2 columnas en desktop, apilados en mobile. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .metrics,
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

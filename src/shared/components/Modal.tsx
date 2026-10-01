@@ -3,7 +3,7 @@ import type { CSSProperties, ReactNode } from 'react'
 import { colors } from '../../core/theme/colors'
 import styles from './Modal.module.css'
 
-export type ModalSize = 'sm' | 'md' | 'lg'
+export type ModalSize = 'sm' | 'md' | 'lg' | 'xl'
 
 interface ModalProps {
   open: boolean
@@ -22,6 +22,7 @@ const SIZE_CLASSES: Record<ModalSize, string> = {
   sm: styles.sizeSm,
   md: styles.sizeMd,
   lg: styles.sizeLg,
+  xl: styles.sizeXl,
 }
 
 export function Modal({ open, onRequestClose, children, size = 'sm' }: ModalProps) {

@@ -35,6 +35,13 @@
   max-width: 680px;
 }
 
+/* Listas largas: 960px con más aire interior. Va después de .dialog para que
+   su padding gane por orden de cascada. */
+.sizeXl {
+  max-width: 960px;
+  padding: 32px 28px;
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;

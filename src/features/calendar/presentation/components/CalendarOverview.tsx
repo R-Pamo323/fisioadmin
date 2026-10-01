@@ -99,8 +99,8 @@ export function CalendarOverview({ appointments, next, payments }: CalendarOverv
             <strong>{payments.pending}</strong>
           </div>
         </div>
-        <Link className={styles.link} to={ROUTE_PATHS.income}>
-          Ver detalle de ingresos
+        <Link className={styles.link} to={ROUTE_PATHS.statistics}>
+          Ver detalle de estadísticas
           <ArrowRight size={14} />
         </Link>
       </section>

@@ -4,7 +4,9 @@ export const ROUTE_PATHS = {
   register: '/registro',
   calendar: '/calendario',
   patients: '/pacientes',
-  income: '/ingresos',
+  statistics: '/estadisticas',
+  /** Ruta anterior, conservada solo para redirigir marcadores viejos. */
+  legacyStatistics: '/ingresos',
   appointmentTypes: '/tipos-de-citas',
   settings: '/configuracion',
 } as const

@@ -1,0 +1,72 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+  /* Sin min-width: el card debe ceder espacio al grid de dos columnas. */
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: #111827;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* Carril con scroll horizontal; el ancho mínimo real lo fija style en el TSX. */
+.scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 6px;
+}
+
+.canvas {
+  height: 320px;
+  width: 100%;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.legendDot {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  border-radius: 3px;
+}
+
+@media (max-width: 519px) {
+  .canvas {
+    height: 280px;
+  }
+}

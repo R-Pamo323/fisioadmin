@@ -1,0 +1,147 @@
+.table {
+  --grid: minmax(140px, 1.4fr) minmax(140px, 1.3fr) 110px 100px 104px;
+
+  min-width: 560px;
+}
+
+.headRow,
+.row {
+  display: grid;
+  grid-template-columns: var(--grid);
+  align-items: center;
+  column-gap: 14px;
+}
+
+.headRow {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.headCell {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+
+.row {
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 13px;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.patient {
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.type {
+  color: #374151;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.date {
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.amount {
+  font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+}
+
+.status {
+  justify-self: start;
+}
+
+/* Por debajo de tablet cada fila se apila como tarjeta, usando data-label. */
+@media (max-width: 767px) {
+  .table {
+    min-width: 0;
+  }
+
+  .headRow {
+    display: none;
+  }
+
+  .row {
+    display: block;
+    padding: 12px 14px;
+    border: 1px solid #f3f4f6;
+    border-radius: 12px;
+    margin-bottom: 10px;
+  }
+
+  .row:last-child {
+    margin-bottom: 0;
+  }
+
+  .row > * {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 5px 0;
+    text-align: right;
+  }
+
+  .row > *::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #9ca3af;
+  }
+
+  .patient,
+  .type,
+  .date,
+  .amount {
+    white-space: normal;
+  }
+}
+
+/* Variante `roomy` (modal xl): todo el ancho disponible, sin scroll horizontal.
+   Va dentro de min-width:768px porque por debajo manda el layout apilado. */
+@media (min-width: 768px) {
+  .roomy {
+    --grid: minmax(0, 1.5fr) minmax(0, 1.4fr) 118px 108px 108px;
+
+    min-width: 0;
+  }
+
+  .roomy .headRow,
+  .roomy .row {
+    column-gap: 20px;
+  }
+
+  .roomy .headRow {
+    padding-bottom: 14px;
+  }
+
+  .roomy .headCell {
+    font-size: 12px;
+  }
+
+  .roomy .row {
+    padding: 18px 0;
+    font-size: 14px;
+  }
+
+  .roomy .amount {
+    font-size: 15px;
+  }
+}
