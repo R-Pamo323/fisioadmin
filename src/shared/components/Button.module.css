@@ -18,7 +18,8 @@
 
 .primary,
 .secondary,
-.ghost {
+.ghost,
+.danger {
   border-width: 1px;
   border-style: solid;
 }

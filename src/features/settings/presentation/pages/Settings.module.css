@@ -1,32 +1,48 @@
-.container {
-  max-width: 960px;
-}
-
-.placeholder {
-  padding: 40px 28px;
+.page {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
+  gap: 20px;
 }
 
-.iconCircle {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  background: #e0f2fe;
+/*
+ * minmax(0, …) para que los inputs anchos no revienten la columna: es el mismo
+ * truco que .metrics / .grid en Estadísticas. Collapse a una columna bajo 768px.
+ */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+
+.loading {
+  margin: 0;
+  font-size: 16px;
+  color: #6b7280;
+}
+
+.footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
+  gap: 8px;
+  padding: 16px 0 4px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 15px;
+  color: #6b7280;
 }
 
-.badge {
-  margin-top: 4px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #2563eb;
-  background: #dbeafe;
-  padding: 4px 12px;
-  border-radius: 999px;
+.footerDot {
+  color: #d1d5db;
+}
+
+@media (max-width: 767px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .footer {
+    justify-content: flex-start;
+  }
 }

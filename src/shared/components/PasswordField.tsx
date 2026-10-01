@@ -1,12 +1,8 @@
 import { useState } from 'react'
 import type { ChangeEvent, ReactNode } from 'react'
-import {
-  EyeIcon,
-  EyeOffIcon,
-  Input,
-  LockIcon,
-} from '../../../../../shared/components'
-import { colors } from '../../../../../core/theme/colors'
+import { colors } from '../../core/theme/colors'
+import { EyeIcon, EyeOffIcon, LockIcon } from './Icons'
+import { Input } from './Input'
 import styles from './PasswordField.module.css'
 
 interface PasswordFieldProps {

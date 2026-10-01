@@ -1,0 +1,59 @@
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  flex-shrink: 0;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px #e5e7eb;
+}
+
+.identityText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.identityName {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.identityHint {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/*
+ * Sube labels e inputs a 16px sin tocar Input.module.css: los selectores de
+ * elemento no se hashean en CSS Modules y esta especificidad (0,1,1) le gana
+ * a la clase .label / .input (0,1,0).
+ */
+.form label,
+.form input {
+  font-size: 16px;
+}
+
+.saved {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #ecfdf5;
+  font-size: 15px;
+  font-weight: 500;
+  color: #047857;
+}

@@ -5,12 +5,12 @@ import {
   EnvelopeIcon,
   Input,
   LogoMark,
+  PasswordField,
   Switch,
 } from '../../../../../shared/components'
 import { ROUTE_PATHS } from '../../../../../core/routes/paths'
 import { colors } from '../../../../../core/theme/colors'
 import { typography } from '../../../../../core/theme/typography'
-import { PasswordField } from '../../../shared/presentation/components/PasswordField'
 import { useLogin } from '../hooks/useLogin'
 import styles from './LoginForm.module.css'
 

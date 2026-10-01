@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from 'react'
 import { colors } from '../../core/theme/colors'
 import styles from './Button.module.css'
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost'
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
@@ -24,6 +24,12 @@ const VARIANT_STYLES: Record<ButtonVariant, CSSProperties & Record<`--${string}`
   ghost: {
     background: 'transparent',
     color: colors.textSecondary,
+    borderColor: 'transparent',
+  },
+  /** Acciones destructivas: cerrar sesión, eliminar, descartar. */
+  danger: {
+    background: colors.error,
+    color: colors.surface,
     borderColor: 'transparent',
   },
 }

@@ -5,13 +5,13 @@ import {
   CheckIcon,
   EnvelopeIcon,
   Input,
+  PasswordField,
   UserIcon,
 } from '../../../../../shared/components'
 import { ROUTE_PATHS } from '../../../../../core/routes/paths'
 import { colors } from '../../../../../core/theme/colors'
 import { typography } from '../../../../../core/theme/typography'
 import { AuthModal } from '../../../shared/presentation/components/AuthModal'
-import { PasswordField } from '../../../shared/presentation/components/PasswordField'
 import { useRegister } from '../hooks/useRegister'
 import styles from './RegisterForm.module.css'
 
