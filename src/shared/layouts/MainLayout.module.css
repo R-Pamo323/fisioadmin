@@ -180,38 +180,6 @@
   gap: 16px;
 }
 
-.iconBtn {
-  position: relative;
-  border: none;
-  background: none;
-  color: #6b7280;
-  cursor: pointer;
-  display: inline-flex;
-  padding: 6px;
-  border-radius: 8px;
-}
-
-.iconBtn:hover {
-  background: #f9fafb;
-}
-
-.notifDot {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #ef4444;
-  border: 2px solid #ffffff;
-}
-
-.profileDivider {
-  width: 1px;
-  height: 32px;
-  background: #e5e7eb;
-}
-
 .profileTrigger {
   display: flex;
   align-items: center;

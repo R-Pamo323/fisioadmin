@@ -27,15 +27,19 @@
   color: #9ca3af;
 }
 
-/* Carril con scroll horizontal; el ancho mínimo real lo fija style en el TSX. */
+/* Carril con scroll horizontal; el ancho mínimo real lo fija style en el TSX.
+   flex: 1 para igualar la altura con el card vecino; el min-height es el piso
+   del gráfico. */
 .scroll {
+  flex: 1;
+  min-height: 320px;
   overflow-x: auto;
   overflow-y: hidden;
   padding-bottom: 6px;
 }
 
 .canvas {
-  height: 320px;
+  height: 100%;
   width: 100%;
 }
 
@@ -66,7 +70,7 @@
 }
 
 @media (max-width: 519px) {
-  .canvas {
-    height: 280px;
+  .scroll {
+    min-height: 280px;
   }
 }

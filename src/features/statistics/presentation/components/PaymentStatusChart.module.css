@@ -25,9 +25,11 @@
   color: #9ca3af;
 }
 
+/* flex: 1 para igualar la altura con el card vecino; min-height es el piso. */
 .plot {
   position: relative;
-  height: 200px;
+  flex: 1;
+  min-height: 200px;
   width: 100%;
 }
 

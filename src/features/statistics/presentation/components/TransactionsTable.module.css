@@ -12,7 +12,13 @@
   column-gap: 14px;
 }
 
+/* position: sticky para que los títulos sobrevivan al scroll del modal.
+   El fondo es opaco porque por debajo pasan las filas. */
 .headRow {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #ffffff;
   padding-bottom: 10px;
   border-bottom: 1px solid #f3f4f6;
 }

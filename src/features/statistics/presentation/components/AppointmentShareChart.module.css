@@ -25,8 +25,10 @@
   color: #9ca3af;
 }
 
+/* flex: 1 para igualar la altura con el gráfico de barras; min-height es el piso. */
 .plot {
-  height: 200px;
+  flex: 1;
+  min-height: 200px;
   width: 100%;
 }
 

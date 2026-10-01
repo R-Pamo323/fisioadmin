@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
-  Bell,
   CalendarDays,
   ChevronDown,
   ChevronRight,
@@ -21,8 +20,8 @@ import styles from './MainLayout.module.css'
 const NAV_ITEMS = [
   { to: ROUTE_PATHS.calendar, label: 'Calendario', icon: CalendarDays },
   { to: ROUTE_PATHS.patients, label: 'Pacientes', icon: Users },
-  { to: ROUTE_PATHS.statistics, label: 'Estadísticas', icon: TrendingUp },
   { to: ROUTE_PATHS.appointmentTypes, label: 'Tipos de citas', icon: ClipboardList },
+  { to: ROUTE_PATHS.statistics, label: 'Estadísticas', icon: TrendingUp },
   { to: ROUTE_PATHS.settings, label: 'Configuración', icon: Settings },
 ] as const
 
@@ -96,11 +95,6 @@ export function MainLayout() {
             <h1 className={styles.pageTitle}>{title}</h1>
           </div>
           <div className={styles.headerRight}>
-            <button className={styles.iconBtn} aria-label="Notificaciones">
-              <Bell size={20} />
-              <span className={styles.notifDot} />
-            </button>
-            <div className={styles.profileDivider} />
             <DropdownMenu
               ariaLabel="Menú de usuario"
               triggerClassName={styles.profileTrigger}

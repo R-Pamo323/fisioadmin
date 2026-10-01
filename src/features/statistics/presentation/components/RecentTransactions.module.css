@@ -59,6 +59,9 @@
   border-radius: 4px;
 }
 
+/* flex: 1 para igualar la altura con Estado de Pagos; las 5 filas quedan
+   arriba y el aire sobrante debajo. */
 .tableScroll {
+  flex: 1;
   overflow-x: auto;
 }
