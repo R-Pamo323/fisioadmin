@@ -5,6 +5,7 @@ import { CreatePatient } from '../../domain/usecases/CreatePatient'
 import { DeletePatient } from '../../domain/usecases/DeletePatient'
 import { GetPatients } from '../../domain/usecases/GetPatients'
 import { UpdatePatient } from '../../domain/usecases/UpdatePatient'
+import { toTimestamp } from '../components/patientMeta'
 
 const repository = new MockPatientRepository()
 const getPatients = new GetPatients(repository)
@@ -69,7 +70,7 @@ export function usePatients() {
   const visiblePatients = useMemo(() => {
     const term = normalize(search)
 
-    return patients.filter((patient) => {
+    const filtered = patients.filter((patient) => {
       if (statusFilter !== 'todos' && patient.status !== statusFilter) return false
       if (term === '') return true
 
@@ -80,6 +81,14 @@ export function usePatients() {
         normalize(patient.treatment).includes(term)
       )
     })
+
+    // `filter` ya devuelve un array nuevo, así que ordenar in-place es seguro.
+    // Del más reciente al más antiguo, con desempate alfabético por nombre.
+    return filtered.sort(
+      (a, b) =>
+        toTimestamp(b.lastVisitAt) - toTimestamp(a.lastVisitAt) ||
+        a.name.localeCompare(b.name, 'es'),
+    )
   }, [patients, search, statusFilter])
 
   const statusCounts = useMemo(
@@ -95,7 +104,6 @@ export function usePatients() {
     patients,
     visiblePatients,
     statusCounts,
-    total: patients.length,
     isLoading,
     search,
     setSearch,

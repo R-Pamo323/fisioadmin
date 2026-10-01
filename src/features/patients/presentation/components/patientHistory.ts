@@ -1,3 +1,5 @@
+import { toTimestamp } from './patientMeta'
+
 export interface VisitRecord {
   id: string
   /** Fecha de la visita, en formato ISO. */
@@ -158,5 +160,11 @@ const SEED_VISIT_HISTORY: Record<string, VisitRecord[]> = {
 }
 
 export function getVisitHistory(patientId: string): VisitRecord[] {
-  return SEED_VISIT_HISTORY[patientId] ?? []
+  const records = SEED_VISIT_HISTORY[patientId] ?? []
+
+  // Copia antes de ordenar: SEED_VISIT_HISTORY es estado de módulo y mutarlo
+  // dejaría el seed desordenado de forma permanente.
+  return [...records].sort(
+    (a, b) => toTimestamp(b.date) - toTimestamp(a.date),
+  )
 }

@@ -204,15 +204,18 @@
   min-width: 0;
 }
 
+/* Columna fija para la fecha: sin `flex-wrap` + `space-between` la fecha saltaba
+   de línea y quedaba a la izquierda o a la derecha según el largo del servicio.
+   `minmax(0, 1fr)` permite que un nombre largo se parta sin ensanchar la grilla. */
 .visitTop {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
-  justify-content: space-between;
   gap: 12px;
-  flex-wrap: wrap;
 }
 
 .visitService {
+  min-width: 0;
   font-size: 14px;
   font-weight: 600;
   color: #111827;

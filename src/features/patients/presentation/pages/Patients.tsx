@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Download, Plus, SearchX, Users } from 'lucide-react'
+import { Plus, SearchX, Users } from 'lucide-react'
 import { Button, Card, SectionHeader } from '../../../../shared/components'
 import { colors } from '../../../../core/theme/colors'
 import type { Patient, PatientDraft } from '../../domain/entities/Patient'
@@ -17,7 +17,6 @@ export function Patients() {
     patients,
     visiblePatients,
     statusCounts,
-    total,
     isLoading,
     search,
     setSearch,
@@ -72,16 +71,10 @@ export function Patients() {
         title="Gestión de Pacientes"
         subtitle="Administra la base de datos de tu clínica. Visualiza historias clínicas, tratamientos activos y datos de contacto."
         actions={
-          <>
-            <Button variant="secondary">
-              <Download size={16} />
-              Exportar CSV
-            </Button>
-            <Button onClick={openCreate}>
-              <Plus size={16} />
-              Agregar Paciente
-            </Button>
-          </>
+          <Button onClick={openCreate}>
+            <Plus size={16} />
+            Agregar Paciente
+          </Button>
         }
       />
 
@@ -91,7 +84,6 @@ export function Patients() {
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
         statusCounts={statusCounts}
-        total={total}
       />
 
       <Card className={styles.tableCard}>

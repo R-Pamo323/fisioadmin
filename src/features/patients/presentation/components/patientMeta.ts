@@ -117,6 +117,15 @@ export function toPercentages(counts: number[], total: number): number[] {
   return result
 }
 
+/**
+ * Timestamp de una fecha ISO para ordenar. Devuelve 0 si es inválida: comparar
+ * con NaN siempre da false y dejaría el orden de las filas aleatorio.
+ */
+export const toTimestamp = (isoDate: string): number => {
+  const time = new Date(isoDate).getTime()
+  return Number.isNaN(time) ? 0 : time
+}
+
 const dateFormatter = new Intl.DateTimeFormat('es-ES', {
   day: 'numeric',
   month: 'short',
