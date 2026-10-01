@@ -7,6 +7,7 @@ import { Patients } from '../../features/patients/presentation/pages/Patients'
 import { Statistics } from '../../features/statistics/presentation/pages/Statistics'
 import { AppointmentTypes } from '../../features/appointment-types/presentation/pages/AppointmentTypes'
 import { Settings } from '../../features/settings/presentation/pages/Settings'
+import { Support } from '../../features/support/presentation/pages/Support'
 import { MainLayout } from '../../shared/layouts/MainLayout'
 import { ROUTE_PATHS } from './paths'
 
@@ -27,6 +28,7 @@ export function AppRouter() {
           <Route path={ROUTE_PATHS.statistics} element={<Statistics />} />
           <Route path={ROUTE_PATHS.appointmentTypes} element={<AppointmentTypes />} />
           <Route path={ROUTE_PATHS.settings} element={<Settings />} />
+          <Route path={ROUTE_PATHS.support} element={<Support />} />
         </Route>
         <Route path="*" element={<Navigate to={ROUTE_PATHS.login} replace />} />
       </Routes>

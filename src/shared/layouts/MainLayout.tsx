@@ -31,6 +31,7 @@ const SECTION_TITLES: Record<string, string> = {
   [ROUTE_PATHS.statistics]: 'Estadísticas',
   [ROUTE_PATHS.appointmentTypes]: 'Tipos de citas',
   [ROUTE_PATHS.settings]: 'Configuración',
+  [ROUTE_PATHS.support]: 'Soporte',
 }
 
 export function MainLayout() {
@@ -78,7 +79,20 @@ export function MainLayout() {
           </div>
           <strong className={styles.helpTitle}>¿Necesitas ayuda?</strong>
           <span className={styles.helpText}>Contacta con nuestro equipo de soporte</span>
-          <button className={styles.helpButton}>Soporte</button>
+          <button
+            className={[
+              styles.helpButton,
+              pathname === ROUTE_PATHS.support ? styles.helpButtonActive : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            onClick={() => {
+              navigate(ROUTE_PATHS.support)
+              closeSidebar()
+            }}
+          >
+            Soporte
+          </button>
         </div>
       </aside>
 

@@ -132,6 +132,13 @@
   background: #f9fafb;
 }
 
+.helpButtonActive,
+.helpButtonActive:hover {
+  background: #0ea5e9;
+  border-color: #0ea5e9;
+  color: #ffffff;
+}
+
 .main {
   flex: 1;
   min-width: 0;

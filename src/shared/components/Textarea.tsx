@@ -14,6 +14,7 @@ interface TextareaProps {
   disabled?: boolean
   name?: string
   id?: string
+  onBlur?: () => void
 }
 
 export function Textarea({
@@ -26,6 +27,7 @@ export function Textarea({
   disabled = false,
   name,
   id,
+  onBlur,
 }: TextareaProps) {
   const generatedId = useId()
   const textareaId = id ?? generatedId
@@ -50,6 +52,7 @@ export function Textarea({
         placeholder={placeholder}
         disabled={disabled}
         onChange={onChange}
+        onBlur={onBlur}
         className={styles.textarea}
         style={{
           borderColor: error ? colors.error : colors.border,

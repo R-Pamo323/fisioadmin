@@ -1,0 +1,51 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  /* Card compartida no trae padding; lo añade cada consumidor. */
+  padding: 24px;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/*
+ * Sube labels e inputs a 16px sin tocar Input/Textarea: los selectores de
+ * elemento no se hashean en CSS Modules y esta especificidad (0,1,1) le gana
+ * a la clase .label / .input (0,1,0).
+ */
+.form label,
+.form input,
+.form textarea {
+  font-size: 16px;
+}
+
+@media (max-width: 767px) {
+  .card {
+    padding: 20px;
+  }
+}

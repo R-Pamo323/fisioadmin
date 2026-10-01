@@ -8,5 +8,6 @@ export const ROUTE_PATHS = {
   /** Ruta anterior, conservada solo para redirigir marcadores viejos. */
   legacyStatistics: '/ingresos',
   appointmentTypes: '/tipos-de-citas',
+  support: '/soporte',
   settings: '/configuracion',
 } as const
