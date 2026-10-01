@@ -29,7 +29,6 @@ export function PatientDetailsModal({ patient, onClose }: PatientDetailsModalPro
             className={styles.title}
             style={{
               color: typography.h2.color,
-              fontSize: typography.h2.fontSize,
               fontWeight: typography.h2.fontWeight,
             }}
           >
@@ -107,14 +106,14 @@ export function PatientDetailsModal({ patient, onClose }: PatientDetailsModalPro
                 <li key={visit.id} className={styles.visit}>
                   <span className={styles.visitMarker} />
                   <div className={styles.visitBody}>
-                    <div className={styles.visitTop}>
-                      <strong className={styles.visitService}>{visit.service}</strong>
+                    <strong className={styles.visitService}>{visit.service}</strong>
+                    <span className={styles.visitMeta}>
                       <span className={styles.visitDate}>
                         {formatVisitDate(visit.date)}
                       </span>
-                    </div>
-                    <span className={styles.visitRelative}>
-                      {formatRelativeVisit(visit.date)}
+                      <span className={styles.visitRelative}>
+                        - {formatRelativeVisit(visit.date)}
+                      </span>
                     </span>
                     <p className={styles.visitNotes}>{visit.notes}</p>
                   </div>

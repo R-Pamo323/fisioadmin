@@ -21,6 +21,7 @@
 
 .title {
   margin: 0;
+  font-size: 27px;
   letter-spacing: -0.6px;
 }
 
@@ -60,14 +61,14 @@
 }
 
 .name {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 600;
   color: #111827;
   letter-spacing: -0.2px;
 }
 
 .meta {
-  font-size: 13px;
+  font-size: 14px;
   color: #6b7280;
 }
 
@@ -81,7 +82,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 14px;
   color: #374151;
 }
 
@@ -110,7 +111,7 @@
   align-items: center;
   gap: 8px;
   margin: 0;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: #111827;
 }
@@ -125,7 +126,7 @@
   border-radius: 999px;
   background: #f3f4f6;
   color: #6b7280;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -141,14 +142,14 @@
 
 .diagnosis {
   margin: 0;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.6;
   color: #6b7280;
 }
 
 .treatment {
   margin: 0;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1.5;
 }
@@ -200,44 +201,46 @@
 .visitBody {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  align-items: flex-start;
+  gap: 6px;
   min-width: 0;
-}
-
-/* Columna fija para la fecha: sin `flex-wrap` + `space-between` la fecha saltaba
-   de línea y quedaba a la izquierda o a la derecha según el largo del servicio.
-   `minmax(0, 1fr)` permite que un nombre largo se parta sin ensanchar la grilla. */
-.visitTop {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: baseline;
-  gap: 12px;
 }
 
 .visitService {
   min-width: 0;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: #111827;
 }
 
+/* Fecha y tiempo relativo en la misma línea: `baseline` alinea el texto de
+   12px con la fecha de 13px, y `wrap` deja bajar la línea entera antes de
+   dejarla desbordar. */
+.visitMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+}
+
 .visitDate {
-  font-size: 12px;
+  font-size: 13px;
   color: #6b7280;
   white-space: nowrap;
 }
 
 .visitRelative {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.4px;
   text-transform: uppercase;
   color: #9ca3af;
+  white-space: nowrap;
 }
 
 .visitNotes {
-  margin: 2px 0 0;
-  font-size: 13px;
+  margin: 0;
+  font-size: 14px;
   line-height: 1.55;
   color: #6b7280;
 }
@@ -247,7 +250,7 @@
   padding: 20px;
   border: 1px dashed #e5e7eb;
   border-radius: 12px;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   color: #6b7280;
   text-align: center;
