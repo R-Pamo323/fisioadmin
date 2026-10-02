@@ -1,9 +1,12 @@
+/**
+ * Los servicios ya son las categorías: solo se distingue si el servicio deja
+ * dinero a la clínica o si es un gasto.
+ */
 export type ServiceCategory =
-  | 'fisioterapia'
-  | 'rehabilitacion'
-  | 'masaje'
-  | 'pilates'
-  | 'otros'
+  /** Genera dinero: el paciente paga por el servicio. */
+  | 'beneficios'
+  /** No genera dinero: es un costo de la clínica. */
+  | 'gastos'
 
 export interface ServiceType {
   id: string

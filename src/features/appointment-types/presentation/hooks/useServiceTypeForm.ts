@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
 import type { ServiceCategory, ServiceType, ServiceTypeDraft } from '../../domain/entities/ServiceType'
-import { DEFAULT_CATEGORY } from '../components/categories'
+import { DEFAULT_CATEGORY } from '../components/serviceMeta'
 
 export interface ServiceTypeFormValues {
   name: string

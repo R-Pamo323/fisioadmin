@@ -3,7 +3,7 @@ import { Badge, Button, Modal } from '../../../../shared/components'
 import { colors } from '../../../../core/theme/colors'
 import { typography } from '../../../../core/theme/typography'
 import type { ServiceType } from '../../domain/entities/ServiceType'
-import { CATEGORY_META, formatDuration, formatPrice } from './categories'
+import { CATEGORY_META, formatAmount, formatDuration } from './serviceMeta'
 import styles from './ServiceTypeDetailsModal.module.css'
 
 interface ServiceTypeDetailsModalProps {
@@ -58,12 +58,17 @@ export function ServiceTypeDetailsModal({
             <span className={styles.fact}>
               <strong
                 style={{
-                  color: service.price === 0 ? colors.primary : colors.textPrimary,
+                  color:
+                    service.category === 'gastos'
+                      ? colors.error
+                      : service.price === 0
+                        ? colors.primary
+                        : colors.textPrimary,
                 }}
               >
-                {formatPrice(service.price)}
+                {formatAmount(service.price, service.category)}
               </strong>
-              <span>Tarifa</span>
+              <span>{meta.amountLabel}</span>
             </span>
           </div>
         </div>

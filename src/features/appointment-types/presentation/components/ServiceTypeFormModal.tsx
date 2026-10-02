@@ -10,7 +10,7 @@ import { colors } from '../../../../core/theme/colors'
 import { typography } from '../../../../core/theme/typography'
 import type { ServiceType, ServiceTypeDraft } from '../../domain/entities/ServiceType'
 import { useServiceTypeForm } from '../hooks/useServiceTypeForm'
-import { CATEGORY_OPTIONS } from './categories'
+import { CATEGORY_OPTIONS } from './serviceMeta'
 import styles from './ServiceTypeFormModal.module.css'
 
 interface ServiceTypeFormModalProps {
@@ -101,6 +101,10 @@ export function ServiceTypeFormModal({
           onBlur={onBlur('category')}
           options={CATEGORY_OPTIONS}
         />
+        <p className={styles.categoryHint}>
+          Elige <strong>beneficios</strong> si el servicio genera dinero; <strong>gastos</strong>{' '}
+          si es un costo de la clínica.
+        </p>
 
         <Textarea
           label="Descripción"

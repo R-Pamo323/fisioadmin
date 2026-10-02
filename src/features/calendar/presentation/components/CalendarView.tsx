@@ -53,6 +53,7 @@ function toEventInput(appointment: Appointment): EventInput {
       patientId: appointment.patientId,
       patientName: appointment.patientName,
       appointmentType: appointment.appointmentType,
+      description: appointment.description,
       status: appointment.status,
     },
   }
@@ -127,6 +128,7 @@ export function CalendarView({
       patientId: props.patientId,
       patientName: props.patientName,
       appointmentType: props.appointmentType,
+      description: props.description,
       status: props.status,
       start: info.event.start ?? new Date(),
       end: info.event.end ?? new Date(),

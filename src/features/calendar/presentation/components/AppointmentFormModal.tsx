@@ -3,7 +3,7 @@ import { ArrowRight, X } from 'lucide-react'
 import { ROUTE_PATHS } from '../../../../core/routes/paths'
 import { colors } from '../../../../core/theme/colors'
 import { typography } from '../../../../core/theme/typography'
-import { Button, Input, Modal, Select } from '../../../../shared/components'
+import { Button, Input, Modal, Select, Textarea } from '../../../../shared/components'
 import type { SelectOption } from '../../../../shared/components'
 import type { Patient } from '../../../patients/domain/entities/Patient'
 import type { ServiceType } from '../../../appointment-types/domain/entities/ServiceType'
@@ -99,15 +99,6 @@ export function AppointmentFormModal({
           disabled={isLoading}
         />
 
-        <button
-          type="button"
-          className={styles.link}
-          onClick={() => goTo(ROUTE_PATHS.patients)}
-        >
-          ¿Falta algún paciente? Ir a Pacientes
-          <ArrowRight size={13} />
-        </button>
-
         {isMeeting ? (
           <>
             <Input
@@ -123,25 +114,49 @@ export function AppointmentFormModal({
             </p>
           </>
         ) : (
-          <Select
-            label="Tipo de cita"
-            value={values.serviceTypeId}
-            onChange={setValue('serviceTypeId')}
-            onBlur={onBlur('serviceTypeId')}
-            options={serviceTypeOptions}
-            error={getError('serviceTypeId')}
-            disabled={isLoading}
-          />
+          <>
+            <button
+              type="button"
+              className={styles.link}
+              onClick={() => goTo(ROUTE_PATHS.patients)}
+            >
+              ¿Falta algún paciente? Ir a Pacientes
+              <ArrowRight size={13} />
+            </button>
+
+            <Select
+              label="Tipo de cita"
+              value={values.serviceTypeId}
+              onChange={setValue('serviceTypeId')}
+              onBlur={onBlur('serviceTypeId')}
+              options={serviceTypeOptions}
+              error={getError('serviceTypeId')}
+              disabled={isLoading}
+            />
+
+            <button
+              type="button"
+              className={styles.link}
+              onClick={() => goTo(ROUTE_PATHS.appointmentTypes)}
+            >
+              ¿No aparece el tipo? Crear uno nuevo
+              <ArrowRight size={13} />
+            </button>
+          </>
         )}
 
-        <button
-          type="button"
-          className={styles.link}
-          onClick={() => goTo(ROUTE_PATHS.appointmentTypes)}
-        >
-          ¿No aparece el tipo? Crear uno nuevo
-          <ArrowRight size={13} />
-        </button>
+        <Textarea
+          label={isMeeting ? 'Descripción breve' : 'Descripción del tratamiento'}
+          rows={2}
+          value={values.description}
+          onChange={setValue('description')}
+          onBlur={onBlur('description')}
+          placeholder={
+            isMeeting
+              ? 'Ej. Revisión de casos del equipo'
+              : 'Ej. Movilidad articular y ejercicios de refuerzo'
+          }
+        />
 
         <Input
           label="Fecha"

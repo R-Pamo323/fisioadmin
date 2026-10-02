@@ -14,6 +14,8 @@ export interface Appointment {
   patientName: string
   /** Nombre del tipo de cita; vacío cuando no aplica. */
   appointmentType: string
+  /** Qué se va a hacer con el paciente, o de qué trata la reunión. Opcional. */
+  description: string
   start: Date
   end: Date
   status: AppointmentStatus

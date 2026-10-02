@@ -2,7 +2,7 @@ import { ChevronRight, Pencil, Trash2 } from 'lucide-react'
 import { Badge, Card, DropdownMenu } from '../../../../shared/components'
 import { colors } from '../../../../core/theme/colors'
 import type { ServiceType } from '../../domain/entities/ServiceType'
-import { CATEGORY_META, formatDuration, formatPrice } from './categories'
+import { CATEGORY_META, formatAmount, formatDuration, getInitials } from './serviceMeta'
 import styles from './ServiceTypeCard.module.css'
 
 interface ServiceTypeCardProps {
@@ -19,14 +19,13 @@ export function ServiceTypeCard({
   onShowDetails,
 }: ServiceTypeCardProps) {
   const meta = CATEGORY_META[service.category]
-  const Icon = meta.icon
-  const isFree = service.price === 0
+  const isExpense = service.category === 'gastos'
 
   return (
     <Card className={styles.card}>
       <div className={styles.media} style={{ background: meta.wash }}>
-        <span className={styles.watermark} style={{ color: colors.surface }}>
-          <Icon size={72} />
+        <span className={styles.initials} style={{ color: meta.ink }}>
+          {getInitials(service.name)}
         </span>
       </div>
 
@@ -58,9 +57,15 @@ export function ServiceTypeCard({
           <h3 className={styles.name}>{service.name}</h3>
           <span
             className={styles.price}
-            style={{ color: isFree ? colors.primary : colors.textPrimary }}
+            style={{
+              color: isExpense
+                ? colors.error
+                : service.price === 0
+                  ? colors.primary
+                  : colors.textPrimary,
+            }}
           >
-            {formatPrice(service.price)}
+            {formatAmount(service.price, service.category)}
           </span>
         </div>
 

@@ -19,6 +19,8 @@ export interface AppointmentFormValues {
   serviceTypeId: string
   /** Título de la reunión; solo se usa cuando no hay paciente. */
   meetingTitle: string
+  /** Qué se va a hacer, o de qué trata la reunión. Opcional. */
+  description: string
   date: string
   startTime: string
   endTime: string
@@ -33,6 +35,7 @@ const emptyValues: AppointmentFormValues = {
   patientId: '',
   serviceTypeId: '',
   meetingTitle: '',
+  description: '',
   date: '',
   startTime: '',
   endTime: '',
@@ -72,6 +75,7 @@ function fromAppointment(appointment: Appointment, serviceTypes: ServiceType[]):
       : (serviceTypes.find((serviceType) => serviceType.name === appointment.appointmentType)?.id ??
         ''),
     meetingTitle: isMeeting ? appointment.patientName : '',
+    description: appointment.description,
     date: toDateValue(appointment.start),
     startTime: toTimeValue(appointment.start),
     endTime: toTimeValue(appointment.end),
@@ -137,28 +141,29 @@ export function useAppointmentForm(options: {
   const isMeeting = values.patientId === NO_PATIENT_VALUE
 
   const change = useCallback(
-    (field: Field) => (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      const nextValue = event.target.value
-      setValues((current) => {
-        if (field === 'patientId') {
-          // Cambiar entre paciente y reunión invalida lo que ya no aplica, y el
-          // estado de pago acompaña a la rama: una reunión nunca se cobra.
-          const meetingSelected = nextValue === NO_PATIENT_VALUE
-          return {
-            ...current,
-            patientId: nextValue,
-            serviceTypeId: '',
-            meetingTitle: '',
-            status: meetingSelected
-              ? 'no_payment'
-              : current.status === 'no_payment'
-                ? 'pending'
-                : current.status,
+    (field: Field) =>
+      (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const nextValue = event.target.value
+        setValues((current) => {
+          if (field === 'patientId') {
+            // Cambiar entre paciente y reunión invalida lo que ya no aplica, y el
+            // estado de pago acompaña a la rama: una reunión nunca se cobra.
+            const meetingSelected = nextValue === NO_PATIENT_VALUE
+            return {
+              ...current,
+              patientId: nextValue,
+              serviceTypeId: '',
+              meetingTitle: '',
+              status: meetingSelected
+                ? 'no_payment'
+                : current.status === 'no_payment'
+                  ? 'pending'
+                  : current.status,
+            }
           }
-        }
-        return { ...current, [field]: nextValue }
-      })
-    },
+          return { ...current, [field]: nextValue }
+        })
+      },
     [],
   )
 
@@ -207,6 +212,7 @@ export function useAppointmentForm(options: {
         patientId: isMeeting ? null : patient?.id ?? null,
         patientName: isMeeting ? values.meetingTitle.trim() : patient?.name ?? '',
         appointmentType: isMeeting ? '' : serviceType?.name ?? '',
+        description: values.description.trim(),
         start,
         end,
         // Al crear, el estado se deriva; al editar, manda lo elegido.

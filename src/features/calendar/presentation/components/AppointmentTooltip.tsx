@@ -1,4 +1,4 @@
-import { Clock, Pencil, Tag, Trash2, UserX } from 'lucide-react'
+import { Clock, FileText, Pencil, Tag, Trash2, UserX } from 'lucide-react'
 import { Button } from '../../../../shared/components'
 import type { Appointment } from '../../domain/entities/Appointment'
 import { appointmentStatusMeta } from './appointmentStatusMeta'
@@ -68,6 +68,12 @@ export function AppointmentTooltip({
               <span>Sin paciente asignado</span>
             </div>
           )}
+          {appointment.description.trim() !== '' ? (
+            <div className={styles.row}>
+              <FileText size={15} className={styles.rowIcon} />
+              <span className={styles.description}>{appointment.description}</span>
+            </div>
+          ) : null}
         </div>
 
         <div className={styles.actions}>

@@ -8,7 +8,7 @@ const SEED_SERVICE_TYPES: ServiceType[] = [
     durationMinutes: 45,
     description:
       'Sesión general de fisioterapia para recuperar la movilidad y reducir el dolor.',
-    category: 'fisioterapia',
+    category: 'beneficios',
     protocol: [
       'Valoración inicial de la zona afectada',
       '15 min de movilidad articular activa',
@@ -23,7 +23,7 @@ const SEED_SERVICE_TYPES: ServiceType[] = [
     durationMinutes: 50,
     description:
       'Protocolo específico para lumbalgias y hernias discales con enfoque en descarga.',
-    category: 'fisioterapia',
+    category: 'beneficios',
     protocol: [
       'Exploración lumbar y test de Lasègue',
       'Descarga biomecánica en decúbito lateral',
@@ -38,7 +38,7 @@ const SEED_SERVICE_TYPES: ServiceType[] = [
     durationMinutes: 60,
     description:
       'Recuperación funcional tras cirugía o lesión, con seguimiento de la evolución.',
-    category: 'rehabilitacion',
+    category: 'beneficios',
     protocol: [
       'Control de la herida y rango articular',
       'Terapia manual de la cicatriz',
@@ -53,7 +53,7 @@ const SEED_SERVICE_TYPES: ServiceType[] = [
     durationMinutes: 30,
     description:
       'Sesión de seguimiento sin coste para pacientes de seguimiento prolongado.',
-    category: 'otros',
+    category: 'gastos',
     protocol: [
       'Control de síntomas y adherencia',
       'Revisión de la rutina de ejercicios',
@@ -66,7 +66,7 @@ const SEED_SERVICE_TYPES: ServiceType[] = [
     durationMinutes: 40,
     description:
       'Entrenamiento de pilates con instructor certificado para la corrección postural.',
-    category: 'pilates',
+    category: 'beneficios',
     protocol: [
       'Calentamiento en plataforma',
       'Serie de ejercicios de control central',
@@ -81,7 +81,7 @@ const SEED_SERVICE_TYPES: ServiceType[] = [
     durationMinutes: 30,
     description:
       'Masaje de cuerpo completo para reducir la tensión muscular acumulada.',
-    category: 'masaje',
+    category: 'beneficios',
     protocol: [
       'Drenaje linfático en dorsales',
       'Trabajo de trapecios y cervicales',
@@ -95,7 +95,7 @@ const SEED_SERVICE_TYPES: ServiceType[] = [
     durationMinutes: 20,
     description:
       'Primera valoración del paciente sin coste para definir el plan de tratamiento.',
-    category: 'otros',
+    category: 'gastos',
     protocol: [
       'Anamnesis y entrevista clínica',
       'Exploración física y rangos de movimiento',
