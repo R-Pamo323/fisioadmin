@@ -1,6 +1,7 @@
-import { CheckCircle2, Clock, MapPin } from 'lucide-react'
-import { colors } from '../../../../core/theme/colors'
+import { Clock, Pencil, Tag, Trash2, UserX } from 'lucide-react'
+import { Button } from '../../../../shared/components'
 import type { Appointment } from '../../domain/entities/Appointment'
+import { appointmentStatusMeta } from './appointmentStatusMeta'
 import styles from './AppointmentTooltip.module.css'
 
 export interface TooltipState {
@@ -12,19 +13,24 @@ export interface TooltipState {
 interface AppointmentTooltipProps {
   tooltip: TooltipState
   onClose: () => void
+  onEdit: (appointment: Appointment) => void
+  onDelete: (appointment: Appointment) => void
 }
 
 const formatTime = (date: Date): string =>
   new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' }).format(date)
 
-export function AppointmentTooltip({ tooltip, onClose }: AppointmentTooltipProps) {
+export function AppointmentTooltip({
+  tooltip,
+  onClose,
+  onEdit,
+  onDelete,
+}: AppointmentTooltipProps) {
   const { appointment, x, y } = tooltip
-  const isPaid = appointment.status === 'paid'
-  const statusColor = isPaid ? colors.success : colors.pendingText
-  const statusBg = isPaid ? '#ECFDF5' : '#EFF6FF'
+  const status = appointmentStatusMeta(appointment.status)
 
   const left = Math.max(8, Math.min(x + 16, window.innerWidth - 288))
-  const top = Math.max(8, Math.min(y + 16, window.innerHeight - 240))
+  const top = Math.max(8, Math.min(y + 16, window.innerHeight - 300))
 
   return (
     <>
@@ -39,9 +45,9 @@ export function AppointmentTooltip({ tooltip, onClose }: AppointmentTooltipProps
           <strong className={styles.patient}>{appointment.patientName}</strong>
           <span
             className={styles.status}
-            style={{ color: statusColor, background: statusBg }}
+            style={{ color: status.color, background: status.background }}
           >
-            {isPaid ? 'Pagada' : 'Pendiente'}
+            {status.label}
           </span>
         </div>
         <div className={styles.rows}>
@@ -51,14 +57,36 @@ export function AppointmentTooltip({ tooltip, onClose }: AppointmentTooltipProps
               {formatTime(appointment.start)} – {formatTime(appointment.end)}
             </span>
           </div>
-          <div className={styles.row}>
-            <CheckCircle2 size={15} className={styles.rowIcon} />
-            <span>{appointment.appointmentType}</span>
-          </div>
-          <div className={styles.row}>
-            <MapPin size={15} className={styles.rowIcon} />
-            <span>{appointment.location}</span>
-          </div>
+          {appointment.appointmentType ? (
+            <div className={styles.row}>
+              <Tag size={15} className={styles.rowIcon} />
+              <span>{appointment.appointmentType}</span>
+            </div>
+          ) : (
+            <div className={styles.row}>
+              <UserX size={15} className={styles.rowIcon} />
+              <span>Sin paciente asignado</span>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.actions}>
+          <Button
+            variant="secondary"
+            onClick={() => onEdit(appointment)}
+            className={styles.actionBtn}
+          >
+            <Pencil size={14} />
+            Editar
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => onDelete(appointment)}
+            className={styles.actionBtn}
+          >
+            <Trash2 size={14} />
+            Eliminar
+          </Button>
         </div>
       </div>
     </>

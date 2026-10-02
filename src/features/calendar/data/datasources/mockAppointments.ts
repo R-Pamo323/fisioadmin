@@ -1,4 +1,4 @@
-import type { Appointment } from '../../domain/entities/Appointment'
+import type { Appointment, AppointmentDraft, AppointmentPatch } from '../../domain/entities/Appointment'
 
 function atTime(date: Date, hours: number, minutes = 0): Date {
   const result = new Date(date)
@@ -13,123 +13,139 @@ function dayOffset(offsetDays: number): Date {
   return date
 }
 
-export const MOCK_TODAY_LOCATION = 'Box 01'
-
-export const mockAppointments: Appointment[] = [
+/*
+ * Los patientId y los nombres coinciden con features/patients/data/datasources/
+ * mockPatients.ts, y los tipos de cita con mockServiceTypes.ts. Las reuniones
+ * llevan patientId null y status 'no_payment': no generan cobro.
+ */
+const SEED_APPOINTMENTS: Appointment[] = [
   {
     id: 'a1',
-    patientName: 'María García',
-    appointmentType: 'Fisioterapia',
+    patientId: 'pt-1',
+    patientName: 'Carlos Ruiz',
+    appointmentType: 'Terapia Física',
     start: atTime(dayOffset(0), 9),
     end: atTime(dayOffset(0), 10),
     status: 'paid',
-    location: 'Box 01',
   },
   {
     id: 'a2',
-    patientName: 'Carlos Ruiz',
+    patientId: 'pt-4',
+    patientName: 'Sofía Martínez',
     appointmentType: 'Rehabilitación',
     start: atTime(dayOffset(0), 10, 30),
     end: atTime(dayOffset(0), 11, 30),
     status: 'pending',
-    location: 'Box 02',
   },
   {
     id: 'a3',
-    patientName: 'Laura Sánchez',
-    appointmentType: 'Quiromasaje',
+    patientId: 'pt-8',
+    patientName: 'Lucía Fernández',
+    appointmentType: 'Masaje Relaxante',
     start: atTime(dayOffset(0), 12),
     end: atTime(dayOffset(0), 13),
     status: 'paid',
-    location: 'Box 03',
   },
   {
     id: 'a4',
-    patientName: 'Pablo Gómez',
-    appointmentType: 'Pilates',
+    patientId: 'pt-6',
+    patientName: 'Valentina Herrera',
+    appointmentType: 'Pilates Terapéutico',
     start: atTime(dayOffset(0), 16),
-    end: atTime(dayOffset(0), 17),
+    end: atTime(dayOffset(0), 16, 40),
     status: 'pending',
-    location: 'Sala Grupal',
   },
   {
     id: 'a5',
-    patientName: 'Ana Torres',
-    appointmentType: 'Fisioterapia',
-    start: atTime(dayOffset(1), 9, 30),
-    end: atTime(dayOffset(1), 10, 30),
-    status: 'paid',
-    location: 'Box 01',
+    patientId: null,
+    patientName: 'Reunión de equipo',
+    appointmentType: '',
+    start: atTime(dayOffset(0), 19),
+    end: atTime(dayOffset(0), 20),
+    status: 'no_payment',
   },
   {
     id: 'a6',
-    patientName: 'Jorge Díaz',
-    appointmentType: 'Osteopatía',
-    start: atTime(dayOffset(2), 11),
-    end: atTime(dayOffset(2), 12),
-    status: 'pending',
-    location: 'Box 02',
+    patientId: 'pt-5',
+    patientName: 'Roberto Díaz',
+    appointmentType: 'Terapia Lumbar',
+    start: atTime(dayOffset(1), 9, 30),
+    end: atTime(dayOffset(1), 10, 30),
+    status: 'paid',
   },
   {
     id: 'a7',
-    patientName: 'Sofía Navarro',
+    patientId: 'pt-3',
+    patientName: 'Marc Esposito',
+    appointmentType: 'Evaluación inicial',
+    start: atTime(dayOffset(2), 11),
+    end: atTime(dayOffset(2), 12),
+    status: 'pending',
+  },
+  {
+    id: 'a8',
+    patientId: null,
+    patientName: 'Mantenimiento de equipos',
+    appointmentType: '',
+    start: atTime(dayOffset(2), 20, 30),
+    end: atTime(dayOffset(2), 21),
+    status: 'no_payment',
+  },
+  {
+    id: 'a9',
+    patientId: 'pt-7',
+    patientName: 'Andrés Quispe',
     appointmentType: 'Rehabilitación',
     start: atTime(dayOffset(3), 15),
     end: atTime(dayOffset(3), 16),
     status: 'paid',
-    location: 'Box 03',
   },
   {
-    id: 'a8',
-    patientName: 'Raúl Méndez',
-    appointmentType: 'Quiromasaje',
+    id: 'a10',
+    patientId: 'pt-9',
+    patientName: 'Diego Cueva',
+    appointmentType: 'Masaje Relaxante',
     start: atTime(dayOffset(4), 10),
     end: atTime(dayOffset(4), 11),
     status: 'paid',
-    location: 'Box 01',
   },
 ]
 
-function isSameDay(a: Date, b: Date): boolean {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  )
-}
+let appointments: Appointment[] = SEED_APPOINTMENTS.map((appointment) => ({ ...appointment }))
 
-export function getTodayAppointments(): Appointment[] {
-  const today = new Date()
-  return mockAppointments
-    .filter((appointment) => isSameDay(appointment.start, today))
-    .sort((a, b) => a.start.getTime() - b.start.getTime())
-}
+let sequence = SEED_APPOINTMENTS.length
 
-export function getNextAppointment(): Appointment | null {
-  const now = new Date()
-  const upcoming = getTodayAppointments().filter((appointment) => appointment.end > now)
-  return upcoming[0] ?? null
-}
+export const mockAppointments = {
+  list(): Appointment[] {
+    return appointments.map((appointment) => ({ ...appointment }))
+  },
 
-export function getWeekPayments(): { paid: number; pending: number } {
-  const today = new Date()
-  const day = today.getDay()
-  const monday = atTime(dayOffset(0), 0)
-  monday.setDate(today.getDate() - ((day + 6) % 7))
-  monday.setHours(0, 0, 0, 0)
+  create(input: AppointmentDraft): Appointment {
+    sequence += 1
 
-  const weekEnd = new Date(monday)
-  weekEnd.setDate(monday.getDate() + 7)
+    const created: Appointment = { ...input, id: `a-${sequence}` }
 
-  let paid = 0
-  let pending = 0
+    appointments = [...appointments, created]
 
-  for (const appointment of mockAppointments) {
-    if (appointment.start >= monday && appointment.start < weekEnd) {
-      if (appointment.status === 'paid') paid += 1
-      else pending += 1
-    }
-  }
+    return { ...created }
+  },
 
-  return { paid, pending }
+  update(id: string, patch: AppointmentPatch): Appointment | null {
+    const current = appointments.find((appointment) => appointment.id === id)
+    if (!current) return null
+
+    const updated: Appointment = { ...current, ...patch, id: current.id }
+
+    appointments = appointments.map((appointment) =>
+      appointment.id === id ? updated : appointment,
+    )
+
+    return { ...updated }
+  },
+
+  remove(id: string): boolean {
+    const exists = appointments.some((appointment) => appointment.id === id)
+    appointments = appointments.filter((appointment) => appointment.id !== id)
+    return exists
+  },
 }

@@ -1,15 +1,21 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, CheckCircle2, Clock, MapPin } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { colors } from '../../../../core/theme/colors'
 import { typography } from '../../../../core/theme/typography'
 import { ROUTE_PATHS } from '../../../../core/routes/paths'
+import type { WeekPaymentCounts } from '../../domain/appointmentSelectors'
 import type { Appointment } from '../../domain/entities/Appointment'
+import {
+  APPOINTMENT_STATUS_META,
+  APPOINTMENT_STATUS_ORDER,
+  appointmentStatusMeta,
+} from './appointmentStatusMeta'
 import styles from './CalendarOverview.module.css'
 
 interface CalendarOverviewProps {
   appointments: Appointment[]
   next: Appointment | null
-  payments: { paid: number; pending: number }
+  payments: WeekPaymentCounts
 }
 
 const formatTime = (date: Date): string =>
@@ -32,25 +38,24 @@ export function CalendarOverview({ appointments, next, payments }: CalendarOverv
           <p className={styles.empty}>No hay citas programadas para hoy.</p>
         ) : (
           <ul className={styles.todayList}>
-            {appointments.map((appointment) => (
-              <li key={appointment.id} className={styles.todayRow}>
-                <span className={styles.todayTime}>{formatTime(appointment.start)}</span>
-                <div className={styles.todayInfo}>
-                  <strong>{appointment.patientName}</strong>
-                  <span>{appointment.appointmentType}</span>
-                </div>
-                <span
-                  className={styles.badge}
-                  style={
-                    appointment.status === 'paid'
-                      ? { color: colors.success, background: '#ECFDF5' }
-                      : { color: colors.pendingText, background: '#EFF6FF' }
-                  }
-                >
-                  {appointment.status === 'paid' ? 'Pagada' : 'Pendiente'}
-                </span>
-              </li>
-            ))}
+            {appointments.map((appointment) => {
+              const status = appointmentStatusMeta(appointment.status)
+              return (
+                <li key={appointment.id} className={styles.todayRow}>
+                  <span className={styles.todayTime}>{formatTime(appointment.start)}</span>
+                  <div className={styles.todayInfo}>
+                    <strong>{appointment.patientName}</strong>
+                    <span>{appointment.appointmentType || 'Sin tipo de cita'}</span>
+                  </div>
+                  <span
+                    className={styles.badge}
+                    style={{ color: status.color, background: status.background }}
+                  >
+                    {status.label}
+                  </span>
+                </li>
+              )
+            })}
           </ul>
         )}
       </section>
@@ -67,11 +72,7 @@ export function CalendarOverview({ appointments, next, payments }: CalendarOverv
             <div className={styles.nextTime}>{formatTime(next.start)}</div>
             <div className={styles.nextInfo}>
               <strong>{next.patientName}</strong>
-              <span>{next.appointmentType}</span>
-            </div>
-            <div className={styles.nextLocation}>
-              <MapPin size={14} />
-              {next.location}
+              <span>{next.appointmentType || 'Sin tipo de cita'}</span>
             </div>
             <span className={styles.nextWhen}>{minutesUntil(next.start)}</span>
           </>
@@ -84,20 +85,18 @@ export function CalendarOverview({ appointments, next, payments }: CalendarOverv
         <h3 className={styles.cardTitle}>Estado de Pagos</h3>
         <p className={styles.cardSubtitle}>Semana actual</p>
         <div className={styles.payments}>
-          <div className={styles.paymentRow}>
-            <span className={styles.paymentLabel}>
-              <CheckCircle2 size={16} color={colors.success} />
-              Pagadas
-            </span>
-            <strong>{payments.paid}</strong>
-          </div>
-          <div className={styles.paymentRow}>
-            <span className={styles.paymentLabel}>
-              <Clock size={16} color={colors.pendingText} />
-              Pendientes
-            </span>
-            <strong>{payments.pending}</strong>
-          </div>
+          {APPOINTMENT_STATUS_ORDER.map((statusKey) => {
+            const { label, color, Icon } = APPOINTMENT_STATUS_META[statusKey]
+            return (
+              <div key={statusKey} className={styles.paymentRow}>
+                <span className={styles.paymentLabel}>
+                  <Icon size={16} color={color} />
+                  {statusKey === 'no_payment' ? 'Sin cobro' : `${label}s`}
+                </span>
+                <strong>{payments[statusKey]}</strong>
+              </div>
+            )
+          })}
         </div>
         <Link className={styles.link} to={ROUTE_PATHS.statistics}>
           Ver detalle de estadísticas
@@ -108,20 +107,15 @@ export function CalendarOverview({ appointments, next, payments }: CalendarOverv
       <section className={styles.card}>
         <h3 className={styles.cardTitle}>Leyenda</h3>
         <div className={styles.legend}>
-          <div className={styles.legendItem}>
-            <span
-              className={styles.legendDot}
-              style={{ background: colors.success }}
-            />
-            <span style={typography.small}>Pagada</span>
-          </div>
-          <div className={styles.legendItem}>
-            <span
-              className={styles.legendDot}
-              style={{ background: colors.pendingText }}
-            />
-            <span style={typography.small}>Pendiente</span>
-          </div>
+          {APPOINTMENT_STATUS_ORDER.map((statusKey) => (
+            <div key={statusKey} className={styles.legendItem}>
+              <span
+                className={styles.legendDot}
+                style={{ background: APPOINTMENT_STATUS_META[statusKey].color }}
+              />
+              <span style={typography.small}>{APPOINTMENT_STATUS_META[statusKey].label}</span>
+            </div>
+          ))}
         </div>
       </section>
     </div>

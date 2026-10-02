@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { RefObject } from 'react'
 import { createPortal } from 'react-dom'
 import FullCalendar from '@fullcalendar/react'
@@ -12,18 +12,19 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import esLocale from '@fullcalendar/core/locales/es'
-import { CheckCircle2, Clock } from 'lucide-react'
+import { MapPin } from 'lucide-react'
 import { colors } from '../../../../core/theme/colors'
-import { mockAppointments } from '../../data/datasources/mockAppointments'
-import type { Appointment, AppointmentStatus } from '../../domain/entities/Appointment'
+import type { Appointment } from '../../domain/entities/Appointment'
 import { AppointmentTooltip } from './AppointmentTooltip'
 import type { TooltipState } from './AppointmentTooltip'
+import { appointmentStatusMeta } from './appointmentStatusMeta'
 import styles from './CalendarView.module.css'
 
 export type CalendarViewType = 'timeGridWeek' | 'timeGridDay'
 
 const DAY_START_MINUTES = 8 * 60
-const DAY_END_MINUTES = 20 * 60
+/** La grilla llega hasta las 22:00; el formulario no deja agendar más tarde de las 21:00. */
+const DAY_END_MINUTES = 22 * 60
 
 function getNowMinutes(): number {
   const now = new Date()
@@ -34,26 +35,27 @@ interface CalendarViewProps {
   calendarRef: RefObject<FullCalendar | null>
   view: CalendarViewType
   onDatesSet: (arg: DatesSetArg) => void
+  /** Viene por prop para que las citas creadas en el modal aparezcan al instante. */
+  appointments: Appointment[]
+  onEdit: (appointment: Appointment) => void
+  onDelete: (appointment: Appointment) => void
 }
 
 const timeFormat = { hour: '2-digit', minute: '2-digit', hour12: false } as const
 
-const events: EventInput[] = mockAppointments.map((appointment) => ({
-  id: appointment.id,
-  title: appointment.patientName,
-  start: appointment.start,
-  end: appointment.end,
-  extendedProps: {
-    patientName: appointment.patientName,
-    appointmentType: appointment.appointmentType,
-    status: appointment.status,
-    location: appointment.location,
-  },
-}))
-
-const statusStyle: Record<AppointmentStatus, { color: string; background: string }> = {
-  paid: { color: colors.success, background: '#ECFDF5' },
-  pending: { color: colors.pendingText, background: '#EFF6FF' },
+function toEventInput(appointment: Appointment): EventInput {
+  return {
+    id: appointment.id,
+    title: appointment.patientName,
+    start: appointment.start,
+    end: appointment.end,
+    extendedProps: {
+      patientId: appointment.patientId,
+      patientName: appointment.patientName,
+      appointmentType: appointment.appointmentType,
+      status: appointment.status,
+    },
+  }
 }
 
 const capitalize = (value: string): string =>
@@ -64,11 +66,20 @@ const isSameDay = (a: Date, b: Date): boolean =>
   a.getMonth() === b.getMonth() &&
   a.getDate() === b.getDate()
 
-export function CalendarView({ calendarRef, view, onDatesSet }: CalendarViewProps) {
+export function CalendarView({
+  calendarRef,
+  view,
+  onDatesSet,
+  appointments,
+  onEdit,
+  onDelete,
+}: CalendarViewProps) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
   const [bodyEl, setBodyEl] = useState<HTMLElement | null>(null)
   const [nowMinutes, setNowMinutes] = useState(getNowMinutes)
+
+  const events = useMemo(() => appointments.map(toEventInput), [appointments])
 
   useEffect(() => {
     const el = wrapperRef.current?.querySelector<HTMLElement>('.fc-timegrid-body') ?? null
@@ -113,10 +124,10 @@ export function CalendarView({ calendarRef, view, onDatesSet }: CalendarViewProp
     const props = info.event.extendedProps as Omit<Appointment, 'id' | 'start' | 'end'>
     const appointment: Appointment = {
       id: info.event.id,
+      patientId: props.patientId,
       patientName: props.patientName,
       appointmentType: props.appointmentType,
       status: props.status,
-      location: props.location,
       start: info.event.start ?? new Date(),
       end: info.event.end ?? new Date(),
     }
@@ -138,7 +149,7 @@ export function CalendarView({ calendarRef, view, onDatesSet }: CalendarViewProp
         firstDay={1}
         allDaySlot={false}
         slotMinTime="08:00:00"
-        slotMaxTime="20:00:00"
+        slotMaxTime="22:00:00"
         slotDuration="00:30:00"
         slotLabelInterval="01:00:00"
         slotLabelFormat={timeFormat}
@@ -170,8 +181,8 @@ export function CalendarView({ calendarRef, view, onDatesSet }: CalendarViewProp
         }}
         eventContent={(arg) => {
           const props = arg.event.extendedProps as Omit<Appointment, 'id' | 'start' | 'end'>
-          const status = statusStyle[props.status]
-          const Icon = props.status === 'paid' ? CheckCircle2 : Clock
+          const status = appointmentStatusMeta(props.status)
+          const Icon = status.Icon
           return (
             <div
               className={styles.eventCard}
@@ -186,7 +197,8 @@ export function CalendarView({ calendarRef, view, onDatesSet }: CalendarViewProp
               </div>
               {arg.timeText ? (
                 <span className={styles.eventMeta}>
-                  {arg.timeText} · {props.appointmentType}
+                  {arg.timeText}
+                  {props.appointmentType ? ` · ${props.appointmentType}` : ''}
                 </span>
               ) : null}
             </div>
@@ -194,7 +206,19 @@ export function CalendarView({ calendarRef, view, onDatesSet }: CalendarViewProp
         }}
       />
       {tooltip ? (
-        <AppointmentTooltip tooltip={tooltip} onClose={() => setTooltip(null)} />
+        <AppointmentTooltip
+          tooltip={tooltip}
+          onClose={() => setTooltip(null)}
+          onEdit={(appointment) => {
+            // Se cierra el detalle para que no quede detrás del modal.
+            setTooltip(null)
+            onEdit(appointment)
+          }}
+          onDelete={(appointment) => {
+            setTooltip(null)
+            onDelete(appointment)
+          }}
+        />
       ) : null}
       {bodyEl && showNowLine
         ? createPortal(

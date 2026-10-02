@@ -116,15 +116,6 @@
   color: #6b7280;
 }
 
-.nextLocation {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 6px;
-  font-size: 13px;
-  color: #6b7280;
-}
-
 .nextWhen {
   margin-top: 16px;
   align-self: flex-start;

@@ -92,26 +92,6 @@
   color: #ffffff !important;
 }
 
-.filterBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 34px;
-  padding: 0 14px;
-  border: 1px solid #e5e7eb;
-  background: #ffffff;
-  border-radius: 8px;
-  color: #6b7280;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.filterBtn:hover {
-  background: #f9fafb;
-}
-
 .newApptBtn {
   padding: 9px 18px;
 }

@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Filter, Plus } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 import { Button } from '../../../../shared/components'
 import { colors } from '../../../../core/theme/colors'
 import type { CalendarViewType } from './CalendarView'
@@ -53,10 +53,6 @@ export function CalendarControls({
             Semana
           </button>
         </div>
-        <button className={styles.filterBtn}>
-          <Filter size={16} />
-          Filtrar
-        </button>
         <Button className={styles.newApptBtn} onClick={onNewAppointment}>
           <Plus size={16} style={{ color: colors.surface }} />
           Nueva cita
