@@ -22,9 +22,9 @@ export const CATEGORY_META: Record<ServiceCategory, CategoryMeta> = {
   },
   gastos: {
     label: 'Gastos',
-    tone: 'warning',
-    wash: '#FEF3C7',
-    ink: '#B45309',
+    tone: 'error',
+    wash: '#FEE2E2',
+    ink: '#991B1B',
     amountLabel: 'Costo',
   },
 }
@@ -53,7 +53,8 @@ export function getInitials(name: string): string {
 
 /**
  * El mismo número significa cosas distintas según la categoría: en beneficios
- * es lo que entra, en gastos es lo que sale.
+ * es lo que entra, en gastos es lo que sale. Un importe en 0 nunca se pinta de
+ * rojo: el rojo queda reservado para los gastos con monto real.
  */
 export function formatAmount(amount: number, category: ServiceCategory): string {
   if (amount === 0) {

@@ -58,11 +58,14 @@ export function ServiceTypeCard({
           <span
             className={styles.price}
             style={{
-              color: isExpense
-                ? colors.error
-                : service.price === 0
+              // El rojo es exclusivo de los gastos con monto; un 0 ("Sin costo"
+              // o "Gratis") se pinta azul, como el resto de importes sin valor.
+              color:
+                service.price === 0
                   ? colors.primary
-                  : colors.textPrimary,
+                  : isExpense
+                    ? colors.error
+                    : colors.textPrimary,
             }}
           >
             {formatAmount(service.price, service.category)}

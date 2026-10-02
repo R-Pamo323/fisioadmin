@@ -12,11 +12,14 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import esLocale from '@fullcalendar/core/locales/es'
-import { MapPin } from 'lucide-react'
 import { colors } from '../../../../core/theme/colors'
 import type { Appointment } from '../../domain/entities/Appointment'
+import type { Expense } from '../../domain/entities/Expense'
 import { AppointmentTooltip } from './AppointmentTooltip'
 import type { TooltipState } from './AppointmentTooltip'
+import { ExpenseTooltip } from './ExpenseTooltip'
+import type { ExpenseTooltipState } from './ExpenseTooltip'
+import { EXPENSE_META, formatExpenseAmount } from './expenseMeta'
 import { appointmentStatusMeta } from './appointmentStatusMeta'
 import styles from './CalendarView.module.css'
 
@@ -37,8 +40,12 @@ interface CalendarViewProps {
   onDatesSet: (arg: DatesSetArg) => void
   /** Viene por prop para que las citas creadas en el modal aparezcan al instante. */
   appointments: Appointment[]
+  /** Gastos: van en la banda de todo el día, nunca en la grilla de horas. */
+  expenses: Expense[]
   onEdit: (appointment: Appointment) => void
   onDelete: (appointment: Appointment) => void
+  onEditExpense: (expense: Expense) => void
+  onDeleteExpense: (expense: Expense) => void
 }
 
 const timeFormat = { hour: '2-digit', minute: '2-digit', hour12: false } as const
@@ -50,11 +57,33 @@ function toEventInput(appointment: Appointment): EventInput {
     start: appointment.start,
     end: appointment.end,
     extendedProps: {
+      kind: 'appointment',
       patientId: appointment.patientId,
       patientName: appointment.patientName,
       appointmentType: appointment.appointmentType,
       description: appointment.description,
       status: appointment.status,
+    },
+  }
+}
+
+/**
+ * El gasto se declara como evento de todo el día: FullCalendar lo pinta en la
+ * banda superior y por definición no puede solaparse con una cita.
+ */
+function toExpenseEventInput(expense: Expense): EventInput {
+  return {
+    id: expense.id,
+    title: expense.title,
+    start: expense.date,
+    allDay: true,
+    extendedProps: {
+      kind: 'expense',
+      title: expense.title,
+      description: expense.description,
+      time: expense.time,
+      amount: expense.amount,
+      serviceTypeId: expense.serviceTypeId,
     },
   }
 }
@@ -72,15 +101,28 @@ export function CalendarView({
   view,
   onDatesSet,
   appointments,
+  expenses,
   onEdit,
   onDelete,
+  onEditExpense,
+  onDeleteExpense,
 }: CalendarViewProps) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null)
+  const [expenseTooltip, setExpenseTooltip] = useState<ExpenseTooltipState | null>(null)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
   const [bodyEl, setBodyEl] = useState<HTMLElement | null>(null)
   const [nowMinutes, setNowMinutes] = useState(getNowMinutes)
 
-  const events = useMemo(() => appointments.map(toEventInput), [appointments])
+  const events = useMemo(
+    () => [...appointments.map(toEventInput), ...expenses.map(toExpenseEventInput)],
+    [appointments, expenses],
+  )
+
+  /** Ningún popover sobrevive a un cambio de fecha o de vista. */
+  const closePopovers = () => {
+    setTooltip(null)
+    setExpenseTooltip(null)
+  }
 
   useEffect(() => {
     const el = wrapperRef.current?.querySelector<HTMLElement>('.fc-timegrid-body') ?? null
@@ -117,19 +159,41 @@ export function CalendarView({
   }
 
   const handleDatesSet = (arg: DatesSetArg) => {
-    setTooltip(null)
+    closePopovers()
     onDatesSet(arg)
   }
 
   const handleEventClick = (info: EventClickArg) => {
-    const props = info.event.extendedProps as Omit<Appointment, 'id' | 'start' | 'end'>
+    // Un solo popover a la vez: se cierra el del otro tipo antes de abrir este.
+    closePopovers()
+    const props = info.event.extendedProps
+
+    if (props.kind === 'expense') {
+      const expense: Expense = {
+        id: info.event.id,
+        title: props.title,
+        description: props.description,
+        date: info.event.start ?? new Date(),
+        time: props.time,
+        amount: props.amount,
+        serviceTypeId: props.serviceTypeId,
+      }
+      setExpenseTooltip({
+        expense,
+        x: info.jsEvent.clientX,
+        y: info.jsEvent.clientY,
+      })
+      return
+    }
+
+    const appointmentProps = props as Omit<Appointment, 'id' | 'start' | 'end'>
     const appointment: Appointment = {
       id: info.event.id,
-      patientId: props.patientId,
-      patientName: props.patientName,
-      appointmentType: props.appointmentType,
-      description: props.description,
-      status: props.status,
+      patientId: appointmentProps.patientId,
+      patientName: appointmentProps.patientName,
+      appointmentType: appointmentProps.appointmentType,
+      description: appointmentProps.description,
+      status: appointmentProps.status,
       start: info.event.start ?? new Date(),
       end: info.event.end ?? new Date(),
     }
@@ -149,7 +213,11 @@ export function CalendarView({
         initialView={view}
         headerToolbar={false}
         firstDay={1}
-        allDaySlot={false}
+        allDaySlot
+        allDayText="Gastos"
+        // FullCalendar acota la banda por su cuenta con un "+N más", así la fila
+        // de gastos nunca se come la grilla de horas.
+        dayMaxEvents={4}
         slotMinTime="08:00:00"
         slotMaxTime="22:00:00"
         slotDuration="00:30:00"
@@ -182,8 +250,24 @@ export function CalendarView({
           )
         }}
         eventContent={(arg) => {
-          const props = arg.event.extendedProps as Omit<Appointment, 'id' | 'start' | 'end'>
-          const status = appointmentStatusMeta(props.status)
+          const props = arg.event.extendedProps
+
+          if (props.kind === 'expense') {
+            // Chip de la banda de gastos: título, hora opcional y monto.
+            return (
+              <div className={styles.expenseChip}>
+                <EXPENSE_META.Icon size={12} color={EXPENSE_META.color} />
+                <span className={styles.expenseTitle}>{props.title}</span>
+                {props.time ? <span className={styles.expenseTime}>{props.time}</span> : null}
+                <span className={styles.expenseAmount}>
+                  {formatExpenseAmount(props.amount)}
+                </span>
+              </div>
+            )
+          }
+
+          const appointmentProps = props as Omit<Appointment, 'id' | 'start' | 'end'>
+          const status = appointmentStatusMeta(appointmentProps.status)
           const Icon = status.Icon
           return (
             <div
@@ -195,12 +279,14 @@ export function CalendarView({
             >
               <div className={styles.eventTitle}>
                 <Icon size={12} color={status.color} />
-                <span>{props.patientName}</span>
+                <span>{appointmentProps.patientName}</span>
               </div>
               {arg.timeText ? (
                 <span className={styles.eventMeta}>
                   {arg.timeText}
-                  {props.appointmentType ? ` · ${props.appointmentType}` : ''}
+                  {appointmentProps.appointmentType
+                    ? ` · ${appointmentProps.appointmentType}`
+                    : ''}
                 </span>
               ) : null}
             </div>
@@ -210,15 +296,29 @@ export function CalendarView({
       {tooltip ? (
         <AppointmentTooltip
           tooltip={tooltip}
-          onClose={() => setTooltip(null)}
+          onClose={closePopovers}
           onEdit={(appointment) => {
             // Se cierra el detalle para que no quede detrás del modal.
-            setTooltip(null)
+            closePopovers()
             onEdit(appointment)
           }}
           onDelete={(appointment) => {
-            setTooltip(null)
+            closePopovers()
             onDelete(appointment)
+          }}
+        />
+      ) : null}
+      {expenseTooltip ? (
+        <ExpenseTooltip
+          tooltip={expenseTooltip}
+          onClose={closePopovers}
+          onEdit={(expense) => {
+            closePopovers()
+            onEditExpense(expense)
+          }}
+          onDelete={(expense) => {
+            closePopovers()
+            onDeleteExpense(expense)
           }}
         />
       ) : null}

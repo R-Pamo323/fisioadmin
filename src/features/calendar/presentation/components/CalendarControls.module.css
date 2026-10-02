@@ -96,6 +96,11 @@
   padding: 9px 18px;
 }
 
+/* El gasto es la única acción roja: va en blanco con borde rojo para no competir con el azul. */
+.newExpenseBtn {
+  padding: 9px 18px;
+}
+
 @media (max-width: 767px) {
   .title {
     width: 100%;

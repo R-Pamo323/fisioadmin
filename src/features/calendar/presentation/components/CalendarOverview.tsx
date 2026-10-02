@@ -10,7 +10,22 @@ import {
   APPOINTMENT_STATUS_ORDER,
   appointmentStatusMeta,
 } from './appointmentStatusMeta'
+import { EXPENSE_META } from './expenseMeta'
 import styles from './CalendarOverview.module.css'
+
+/**
+ * La leyenda no es solo de estados: el gasto es lo único rojo del calendario,
+ * así que se agrega como una entrada más, sin tocar el orden de estados (que
+ * usan el selector de pago y la tarjeta de pagos).
+ */
+const LEGEND_ITEMS = [
+  ...APPOINTMENT_STATUS_ORDER.map((status) => ({
+    key: status,
+    label: APPOINTMENT_STATUS_META[status].label,
+    color: APPOINTMENT_STATUS_META[status].color,
+  })),
+  { key: 'expense', label: EXPENSE_META.label, color: EXPENSE_META.color },
+]
 
 interface CalendarOverviewProps {
   appointments: Appointment[]
@@ -107,13 +122,10 @@ export function CalendarOverview({ appointments, next, payments }: CalendarOverv
       <section className={styles.card}>
         <h3 className={styles.cardTitle}>Leyenda</h3>
         <div className={styles.legend}>
-          {APPOINTMENT_STATUS_ORDER.map((statusKey) => (
-            <div key={statusKey} className={styles.legendItem}>
-              <span
-                className={styles.legendDot}
-                style={{ background: APPOINTMENT_STATUS_META[statusKey].color }}
-              />
-              <span style={typography.small}>{APPOINTMENT_STATUS_META[statusKey].label}</span>
+          {LEGEND_ITEMS.map((item) => (
+            <div key={item.key} className={styles.legendItem}>
+              <span className={styles.legendDot} style={{ background: item.color }} />
+              <span style={typography.small}>{item.label}</span>
             </div>
           ))}
         </div>

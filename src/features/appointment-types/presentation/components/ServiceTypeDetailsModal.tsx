@@ -58,11 +58,12 @@ export function ServiceTypeDetailsModal({
             <span className={styles.fact}>
               <strong
                 style={{
+                  // El rojo queda para los gastos con monto; los ceros van en azul.
                   color:
-                    service.category === 'gastos'
-                      ? colors.error
-                      : service.price === 0
-                        ? colors.primary
+                    service.price === 0
+                      ? colors.primary
+                      : service.category === 'gastos'
+                        ? colors.error
                         : colors.textPrimary,
                 }}
               >

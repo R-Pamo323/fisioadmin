@@ -1,7 +1,8 @@
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, Receipt } from 'lucide-react'
 import { Button } from '../../../../shared/components'
 import { colors } from '../../../../core/theme/colors'
 import type { CalendarViewType } from './CalendarView'
+import { EXPENSE_META } from './expenseMeta'
 import styles from './CalendarControls.module.css'
 
 interface CalendarControlsProps {
@@ -12,6 +13,7 @@ interface CalendarControlsProps {
   onToday: () => void
   onChangeView: (view: CalendarViewType) => void
   onNewAppointment: () => void
+  onNewExpense: () => void
 }
 
 export function CalendarControls({
@@ -22,6 +24,7 @@ export function CalendarControls({
   onToday,
   onChangeView,
   onNewAppointment,
+  onNewExpense,
 }: CalendarControlsProps) {
   return (
     <div className={styles.toolbar}>
@@ -53,6 +56,15 @@ export function CalendarControls({
             Semana
           </button>
         </div>
+        <Button
+          variant="secondary"
+          className={styles.newExpenseBtn}
+          onClick={onNewExpense}
+          style={{ color: EXPENSE_META.color, borderColor: EXPENSE_META.color }}
+        >
+          <Receipt size={16} color={EXPENSE_META.color} />
+          Nuevo gasto
+        </Button>
         <Button className={styles.newApptBtn} onClick={onNewAppointment}>
           <Plus size={16} style={{ color: colors.surface }} />
           Nueva cita
