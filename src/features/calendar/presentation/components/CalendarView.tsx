@@ -15,12 +15,13 @@ import esLocale from '@fullcalendar/core/locales/es'
 import { colors } from '../../../../core/theme/colors'
 import type { Appointment } from '../../domain/entities/Appointment'
 import type { Expense } from '../../domain/entities/Expense'
+import type { ServiceCategory } from '../../../appointment-types/domain/entities/ServiceType'
 import { AppointmentTooltip } from './AppointmentTooltip'
 import type { TooltipState } from './AppointmentTooltip'
 import { ExpenseTooltip } from './ExpenseTooltip'
 import type { ExpenseTooltipState } from './ExpenseTooltip'
+import { appointmentCategoryMeta } from './appointmentCategoryMeta'
 import { EXPENSE_META, formatExpenseAmount } from './expenseMeta'
-import { appointmentStatusMeta } from './appointmentStatusMeta'
 import styles from './CalendarView.module.css'
 
 export type CalendarViewType = 'timeGridWeek' | 'timeGridDay'
@@ -42,6 +43,8 @@ interface CalendarViewProps {
   appointments: Appointment[]
   /** Gastos: van en la banda de todo el día, nunca en la grilla de horas. */
   expenses: Expense[]
+  /** Nombre del tipo de cita → categoría, para colorear cada evento. */
+  serviceCategoryByName: Map<string, ServiceCategory>
   onEdit: (appointment: Appointment) => void
   onDelete: (appointment: Appointment) => void
   onEditExpense: (expense: Expense) => void
@@ -50,7 +53,14 @@ interface CalendarViewProps {
 
 const timeFormat = { hour: '2-digit', minute: '2-digit', hour12: false } as const
 
-function toEventInput(appointment: Appointment): EventInput {
+function toEventInput(
+  appointment: Appointment,
+  serviceCategoryByName: Map<string, ServiceCategory>,
+): EventInput {
+  const category = appointment.appointmentType
+    ? serviceCategoryByName.get(appointment.appointmentType) ?? null
+    : null
+
   return {
     id: appointment.id,
     title: appointment.patientName,
@@ -63,6 +73,7 @@ function toEventInput(appointment: Appointment): EventInput {
       appointmentType: appointment.appointmentType,
       description: appointment.description,
       status: appointment.status,
+      category,
     },
   }
 }
@@ -102,6 +113,7 @@ export function CalendarView({
   onDatesSet,
   appointments,
   expenses,
+  serviceCategoryByName,
   onEdit,
   onDelete,
   onEditExpense,
@@ -114,8 +126,11 @@ export function CalendarView({
   const [nowMinutes, setNowMinutes] = useState(getNowMinutes)
 
   const events = useMemo(
-    () => [...appointments.map(toEventInput), ...expenses.map(toExpenseEventInput)],
-    [appointments, expenses],
+    () => [
+      ...appointments.map((appointment) => toEventInput(appointment, serviceCategoryByName)),
+      ...expenses.map(toExpenseEventInput),
+    ],
+    [appointments, expenses, serviceCategoryByName],
   )
 
   /** Ningún popover sobrevive a un cambio de fecha o de vista. */
@@ -267,18 +282,21 @@ export function CalendarView({
           }
 
           const appointmentProps = props as Omit<Appointment, 'id' | 'start' | 'end'>
-          const status = appointmentStatusMeta(appointmentProps.status)
-          const Icon = status.Icon
+          // El color sale de la categoría del tipo de cita; una reunión sin tipo
+          // usa la meta de "sin categoría".
+          const category = (props.category ?? null) as ServiceCategory | null
+          const meta = appointmentCategoryMeta(category)
+          const Icon = meta.Icon
           return (
             <div
               className={styles.eventCard}
               style={{
-                borderColor: status.color,
-                background: status.background,
+                borderColor: meta.color,
+                background: meta.background,
               }}
             >
               <div className={styles.eventTitle}>
-                <Icon size={12} color={status.color} />
+                <Icon size={12} color={meta.color} />
                 <span>{appointmentProps.patientName}</span>
               </div>
               {arg.timeText ? (

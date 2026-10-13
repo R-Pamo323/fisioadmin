@@ -16,7 +16,8 @@ function dayOffset(offsetDays: number): Date {
 /*
  * Los patientId y los nombres coinciden con features/patients/data/datasources/
  * mockPatients.ts, y los tipos de cita con mockServiceTypes.ts. Las reuniones
- * llevan patientId null y status 'no_payment': no generan cobro.
+ * llevan patientId null y las citas de tipo gratis llevan status 'no_payment':
+ * ninguna de las dos genera cobro.
  */
 const SEED_APPOINTMENTS: Appointment[] = [
   {
@@ -87,7 +88,7 @@ const SEED_APPOINTMENTS: Appointment[] = [
     description: 'Primera valoración para definir el plan de tratamiento',
     start: atTime(dayOffset(2), 11),
     end: atTime(dayOffset(2), 12),
-    status: 'pending',
+    status: 'no_payment',
   },
   {
     id: 'a8',
@@ -118,6 +119,26 @@ const SEED_APPOINTMENTS: Appointment[] = [
     start: atTime(dayOffset(4), 10),
     end: atTime(dayOffset(4), 11),
     status: 'paid',
+  },
+  {
+    id: 'a11',
+    patientId: 'pt-2',
+    patientName: 'Elena Gómez',
+    appointmentType: 'Cita sin cobro',
+    description: 'Seguimiento sin coste de la rehabilitación de rodilla',
+    start: atTime(dayOffset(1), 12),
+    end: atTime(dayOffset(1), 12, 30),
+    status: 'no_payment',
+  },
+  {
+    id: 'a12',
+    patientId: 'pt-5',
+    patientName: 'Roberto Díaz',
+    appointmentType: 'Charla de ergonomía',
+    description: 'Sesión informativa sin coste sobre higiene postural',
+    start: atTime(dayOffset(3), 17),
+    end: atTime(dayOffset(3), 17, 30),
+    status: 'no_payment',
   },
 ]
 

@@ -8,6 +8,7 @@ import {
 } from '../../domain/appointmentSelectors'
 import type { Appointment, AppointmentDraft } from '../../domain/entities/Appointment'
 import type { Expense, ExpenseDraft } from '../../domain/entities/Expense'
+import type { ServiceCategory } from '../../../appointment-types/domain/entities/ServiceType'
 import { CalendarControls } from '../components/CalendarControls'
 import { CalendarView } from '../components/CalendarView'
 import type { CalendarViewType } from '../components/CalendarView'
@@ -170,6 +171,18 @@ export function Calendar() {
     [serviceTypes],
   )
 
+  /**
+   * La cita guarda el nombre del tipo, no su id, así que la categoría se resuelve
+   * por nombre contra el catálogo. Mismo criterio que usa el formulario al editar.
+   */
+  const serviceCategoryByName = useMemo(() => {
+    const map = new Map<string, ServiceCategory>()
+    for (const serviceType of serviceTypes) {
+      map.set(serviceType.name, serviceType.category)
+    }
+    return map
+  }, [serviceTypes])
+
   return (
     <div className={styles.page}>
       <CalendarControls
@@ -189,6 +202,7 @@ export function Calendar() {
         onDatesSet={handleDatesSet}
         appointments={appointments}
         expenses={expenses}
+        serviceCategoryByName={serviceCategoryByName}
         onEdit={openEdit}
         onDelete={setDeleting}
         onEditExpense={openEditExpense}

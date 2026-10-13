@@ -161,10 +161,26 @@ export function useAppointmentForm(options: {
                   : current.status,
             }
           }
+
+          if (field === 'serviceTypeId') {
+            // Un tipo de cita gratis nunca se cobra: su estado es "sin cobro".
+            const serviceType = serviceTypes.find((item) => item.id === nextValue)
+            const isFree = serviceType?.category === 'gratis'
+            return {
+              ...current,
+              serviceTypeId: nextValue,
+              status: isFree
+                ? 'no_payment'
+                : current.status === 'no_payment'
+                  ? 'pending'
+                  : current.status,
+            }
+          }
+
           return { ...current, [field]: nextValue }
         })
       },
-    [],
+    [serviceTypes],
   )
 
   const blur = useCallback(
@@ -207,6 +223,7 @@ export function useAppointmentForm(options: {
         : patients.find((item) => item.id === values.patientId) ?? null
 
       const serviceType = serviceTypes.find((item) => item.id === values.serviceTypeId)
+      const isFree = serviceType?.category === 'gratis'
 
       await onSubmit({
         patientId: isMeeting ? null : patient?.id ?? null,
@@ -215,8 +232,9 @@ export function useAppointmentForm(options: {
         description: values.description.trim(),
         start,
         end,
-        // Al crear, el estado se deriva; al editar, manda lo elegido.
-        status: isMeeting ? 'no_payment' : values.status,
+        // Al crear, el estado se deriva; al editar, manda lo elegido. Una cita
+        // gratis o una reunión nunca se cobran.
+        status: isMeeting || isFree ? 'no_payment' : values.status,
       })
 
       setIsSaving(false)

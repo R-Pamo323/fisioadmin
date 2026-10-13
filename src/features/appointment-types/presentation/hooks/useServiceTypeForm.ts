@@ -55,18 +55,28 @@ function validate(values: ServiceTypeFormValues): FormErrors {
     errors.name = 'El nombre del servicio es obligatorio.'
   }
 
-  const price = parseNumber(values.price)
-  if (price === null) {
-    errors.price = 'Indica el precio. Usa 0 para un servicio gratis.'
-  } else if (price < 0) {
-    errors.price = 'El precio no puede ser negativo.'
+  // Gratis no tiene precio: queda fijo en 0 y no se valida. En beneficios y
+  // gastos el precio (tarifa o costo) es obligatorio.
+  if (values.category !== 'gratis') {
+    const price = parseNumber(values.price)
+    if (price === null) {
+      errors.price = 'Indica el precio del servicio.'
+    } else if (price < 0) {
+      errors.price = 'El precio no puede ser negativo.'
+    }
   }
 
+  // La duración solo es obligatoria para los beneficios; en gastos y gratis es
+  // opcional y un 0 equivale a "sin duración".
   const duration = parseNumber(values.duration)
-  if (duration === null) {
-    errors.duration = 'La duración en minutos es obligatoria.'
-  } else if (duration <= 0) {
-    errors.duration = 'La duración debe ser mayor a 0 minutos.'
+  if (values.category === 'beneficios') {
+    if (duration === null) {
+      errors.duration = 'La duración en minutos es obligatoria.'
+    } else if (duration <= 0) {
+      errors.duration = 'La duración debe ser mayor a 0 minutos.'
+    }
+  } else if (duration !== null && duration < 0) {
+    errors.duration = 'La duración no puede ser negativa.'
   }
 
   return errors
@@ -93,7 +103,19 @@ export function useServiceTypeForm(options: {
     (field: FormField) =>
       (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const nextValue = event.target.value
-        setValues((current) => ({ ...current, [field]: nextValue }))
+        setValues((current) => {
+          // Elegir gratis no deja precio: el servicio es sin coste.
+          if (field === 'category' && nextValue === 'gratis') {
+            return { ...current, category: 'gratis', price: '0' }
+          }
+
+          // Un gratis no puede cambiar su precio, aunque el campo esté bloqueado.
+          if (field === 'price' && current.category === 'gratis') {
+            return current
+          }
+
+          return { ...current, [field]: nextValue }
+        })
       },
     [],
   )
@@ -127,7 +149,7 @@ export function useServiceTypeForm(options: {
 
     await onSubmit({
       name: values.name,
-      price: parseNumber(values.price) ?? 0,
+      price: values.category === 'gratis' ? 0 : parseNumber(values.price) ?? 0,
       durationMinutes: parseNumber(values.duration) ?? 0,
       description: values.description,
       category: values.category,

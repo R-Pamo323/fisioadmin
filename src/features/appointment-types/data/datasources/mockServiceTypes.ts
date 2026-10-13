@@ -53,7 +53,7 @@ const SEED_SERVICE_TYPES: ServiceType[] = [
     durationMinutes: 30,
     description:
       'Sesión de seguimiento sin coste para pacientes de seguimiento prolongado.',
-    category: 'gastos',
+    category: 'gratis',
     protocol: [
       'Control de síntomas y adherencia',
       'Revisión de la rutina de ejercicios',
@@ -95,12 +95,46 @@ const SEED_SERVICE_TYPES: ServiceType[] = [
     durationMinutes: 20,
     description:
       'Primera valoración del paciente sin coste para definir el plan de tratamiento.',
-    category: 'gastos',
+    category: 'gratis',
     protocol: [
       'Anamnesis y entrevista clínica',
       'Exploración física y rangos de movimiento',
       'Definición de objetivos terapéuticos',
     ],
+  },
+  {
+    id: 'st-8',
+    name: 'Charla de ergonomía',
+    price: 0,
+    durationMinutes: 30,
+    description:
+      'Sesión grupal informativa sin coste sobre higiene postural y autocuidado.',
+    category: 'gratis',
+    protocol: [
+      'Introducción a la higiene postural',
+      'Rutinas de pausas activas en el trabajo',
+      'Recomendaciones de autocuidado diario',
+    ],
+  },
+  {
+    id: 'st-9',
+    name: 'Insumos de terapia',
+    price: 120,
+    durationMinutes: 15,
+    description:
+      'Reposición de material fungible de la clínica: vendas, gasas y cremas.',
+    category: 'gastos',
+    protocol: [],
+  },
+  {
+    id: 'st-10',
+    name: 'Mantenimiento de camillas',
+    price: 200,
+    durationMinutes: 0,
+    description:
+      'Servicio técnico de revisión y ajuste de las camillas de la clínica.',
+    category: 'gastos',
+    protocol: [],
   },
 ]
 

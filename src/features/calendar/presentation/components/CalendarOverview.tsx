@@ -5,26 +5,34 @@ import { typography } from '../../../../core/theme/typography'
 import { ROUTE_PATHS } from '../../../../core/routes/paths'
 import type { WeekPaymentCounts } from '../../domain/appointmentSelectors'
 import type { Appointment } from '../../domain/entities/Appointment'
+import type { ServiceCategory } from '../../../appointment-types/domain/entities/ServiceType'
 import {
   APPOINTMENT_STATUS_META,
   APPOINTMENT_STATUS_ORDER,
   appointmentStatusMeta,
 } from './appointmentStatusMeta'
-import { EXPENSE_META } from './expenseMeta'
+import {
+  APPOINTMENT_CATEGORY_META,
+  UNCATEGORIZED_APPOINTMENT_META,
+} from './appointmentCategoryMeta'
 import styles from './CalendarOverview.module.css'
 
 /**
- * La leyenda no es solo de estados: el gasto es lo único rojo del calendario,
- * así que se agrega como una entrada más, sin tocar el orden de estados (que
- * usan el selector de pago y la tarjeta de pagos).
+ * La leyenda describe el color de los eventos del calendario, que ahora sigue la
+ * categoría del tipo de cita (beneficios, gastos, gratis) más las reuniones sin
+ * categoría. El estado de pago se sigue mostrando en el card "Estado de Pagos".
  */
 const LEGEND_ITEMS = [
-  ...APPOINTMENT_STATUS_ORDER.map((status) => ({
-    key: status,
-    label: APPOINTMENT_STATUS_META[status].label,
-    color: APPOINTMENT_STATUS_META[status].color,
+  ...(Object.keys(APPOINTMENT_CATEGORY_META) as ServiceCategory[]).map((category) => ({
+    key: category,
+    label: APPOINTMENT_CATEGORY_META[category].label,
+    color: APPOINTMENT_CATEGORY_META[category].color,
   })),
-  { key: 'expense', label: EXPENSE_META.label, color: EXPENSE_META.color },
+  {
+    key: 'uncategorized',
+    label: UNCATEGORIZED_APPOINTMENT_META.label,
+    color: UNCATEGORIZED_APPOINTMENT_META.color,
+  },
 ]
 
 interface CalendarOverviewProps {

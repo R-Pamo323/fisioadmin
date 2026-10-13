@@ -31,6 +31,7 @@ export function ServiceTypeFormModal({
 
   const { values, isValid, isSaving, setValue, onBlur, getError, handleSubmit } =
     useServiceTypeForm({ service, onSubmit, onDone: onClose })
+  const isFree = values.category === 'gratis'
 
   return (
     <Modal open={open} onRequestClose={onClose} size="md">
@@ -70,6 +71,19 @@ export function ServiceTypeFormModal({
           error={getError('name')}
         />
 
+        <Select
+          label="Categoría"
+          value={values.category}
+          onChange={setValue('category')}
+          onBlur={onBlur('category')}
+          options={CATEGORY_OPTIONS}
+        />
+        <p className={styles.categoryHint}>
+          Elige <strong>beneficios</strong> si el servicio genera dinero;{' '}
+          <strong>gastos</strong> si es un costo de la clínica; <strong>gratis</strong> si no
+          tiene coste para el paciente.
+        </p>
+
         <div className={styles.row}>
           <Input
             label="Precio (S/)"
@@ -80,31 +94,20 @@ export function ServiceTypeFormModal({
             onChange={setValue('price')}
             onBlur={onBlur('price')}
             error={getError('price')}
+            disabled={isFree}
           />
 
           <Input
             label="Duración (min)"
             type="number"
-            min={1}
-            placeholder="45"
+            min={values.category === 'beneficios' ? 1 : 0}
+            placeholder={values.category === 'beneficios' ? '45' : 'Opcional'}
             value={values.duration}
             onChange={setValue('duration')}
             onBlur={onBlur('duration')}
             error={getError('duration')}
           />
         </div>
-
-        <Select
-          label="Categoría"
-          value={values.category}
-          onChange={setValue('category')}
-          onBlur={onBlur('category')}
-          options={CATEGORY_OPTIONS}
-        />
-        <p className={styles.categoryHint}>
-          Elige <strong>beneficios</strong> si el servicio genera dinero; <strong>gastos</strong>{' '}
-          si es un costo de la clínica.
-        </p>
 
         <Textarea
           label="Descripción"

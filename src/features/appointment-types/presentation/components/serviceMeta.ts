@@ -1,3 +1,4 @@
+import { colors } from '../../../../core/theme/colors'
 import type { BadgeTone } from '../../../../shared/components'
 import type { ServiceCategory } from '../../domain/entities/ServiceType'
 
@@ -27,6 +28,13 @@ export const CATEGORY_META: Record<ServiceCategory, CategoryMeta> = {
     ink: '#991B1B',
     amountLabel: 'Costo',
   },
+  gratis: {
+    label: 'Gratis',
+    tone: 'warning',
+    wash: '#FEF3C7',
+    ink: '#B45309',
+    amountLabel: 'Precio',
+  },
 }
 
 export const CATEGORY_OPTIONS = (
@@ -53,10 +61,14 @@ export function getInitials(name: string): string {
 
 /**
  * El mismo número significa cosas distintas según la categoría: en beneficios
- * es lo que entra, en gastos es lo que sale. Un importe en 0 nunca se pinta de
- * rojo: el rojo queda reservado para los gastos con monto real.
+ * es lo que entra, en gastos es lo que sale y en gratis no hay cobro. Un importe
+ * en 0 nunca se pinta de rojo: el rojo queda reservado para los gastos con monto.
  */
 export function formatAmount(amount: number, category: ServiceCategory): string {
+  if (category === 'gratis') {
+    return 'Gratis'
+  }
+
   if (amount === 0) {
     return category === 'gastos' ? 'Sin costo' : 'Gratis'
   }
@@ -64,4 +76,21 @@ export function formatAmount(amount: number, category: ServiceCategory): string 
   return category === 'gastos' ? `Costo S/${amount}` : `S/${amount}`
 }
 
-export const formatDuration = (minutes: number): string => `${minutes} min`
+/**
+ * Color del importe según la categoría. Vive aquí para que la card y el modal
+ * de detalle no repitan la misma cadena de condiciones.
+ */
+export function amountColor(amount: number, category: ServiceCategory): string {
+  if (category === 'gratis') {
+    return CATEGORY_META.gratis.ink
+  }
+
+  if (amount === 0) {
+    return colors.primary
+  }
+
+  return category === 'gastos' ? colors.error : colors.textPrimary
+}
+
+export const formatDuration = (minutes: number): string =>
+  minutes > 0 ? `${minutes} min` : 'Sin duración'

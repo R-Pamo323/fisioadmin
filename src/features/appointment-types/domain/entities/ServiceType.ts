@@ -7,6 +7,8 @@ export type ServiceCategory =
   | 'beneficios'
   /** No genera dinero: es un costo de la clínica. */
   | 'gastos'
+  /** No genera ni cuesta dinero: el servicio es sin coste para el paciente. */
+  | 'gratis'
 
 export interface ServiceType {
   id: string

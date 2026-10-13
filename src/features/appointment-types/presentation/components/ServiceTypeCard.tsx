@@ -2,7 +2,7 @@ import { ChevronRight, Pencil, Trash2 } from 'lucide-react'
 import { Badge, Card, DropdownMenu } from '../../../../shared/components'
 import { colors } from '../../../../core/theme/colors'
 import type { ServiceType } from '../../domain/entities/ServiceType'
-import { CATEGORY_META, formatAmount, formatDuration, getInitials } from './serviceMeta'
+import { amountColor, CATEGORY_META, formatAmount, formatDuration, getInitials } from './serviceMeta'
 import styles from './ServiceTypeCard.module.css'
 
 interface ServiceTypeCardProps {
@@ -19,7 +19,6 @@ export function ServiceTypeCard({
   onShowDetails,
 }: ServiceTypeCardProps) {
   const meta = CATEGORY_META[service.category]
-  const isExpense = service.category === 'gastos'
 
   return (
     <Card className={styles.card}>
@@ -58,14 +57,9 @@ export function ServiceTypeCard({
           <span
             className={styles.price}
             style={{
-              // El rojo es exclusivo de los gastos con monto; un 0 ("Sin costo"
-              // o "Gratis") se pinta azul, como el resto de importes sin valor.
-              color:
-                service.price === 0
-                  ? colors.primary
-                  : isExpense
-                    ? colors.error
-                    : colors.textPrimary,
+              // El rojo es exclusivo de los gastos con monto; el amarillo
+              // identifica los gratis. Un 0 sin categoría gratis se pinta azul.
+              color: amountColor(service.price, service.category),
             }}
           >
             {formatAmount(service.price, service.category)}
