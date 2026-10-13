@@ -1,4 +1,4 @@
-import { CalendarDays, Clock, FileText, Pencil, Receipt, Trash2 } from 'lucide-react'
+import { CalendarDays, Clock, FileText, Pencil, Receipt, Tag, Trash2 } from 'lucide-react'
 import { Button } from '../../../../shared/components'
 import type { Expense } from '../../domain/entities/Expense'
 import { EXPENSE_META, formatExpenseAmount, formatExpenseDate } from './expenseMeta'
@@ -6,6 +6,8 @@ import styles from './ExpenseTooltip.module.css'
 
 export interface ExpenseTooltipState {
   expense: Expense
+  /** Nombre del tipo de cita (tipo de gasto) elegido; null si no tiene. */
+  serviceTypeName: string | null
   x: number
   y: number
 }
@@ -18,7 +20,7 @@ interface ExpenseTooltipProps {
 }
 
 export function ExpenseTooltip({ tooltip, onClose, onEdit, onDelete }: ExpenseTooltipProps) {
-  const { expense, x, y } = tooltip
+  const { expense, serviceTypeName, x, y } = tooltip
 
   const left = Math.max(8, Math.min(x + 16, window.innerWidth - 288))
   const top = Math.max(8, Math.min(y + 16, window.innerHeight - 300))
@@ -42,6 +44,10 @@ export function ExpenseTooltip({ tooltip, onClose, onEdit, onDelete }: ExpenseTo
           </span>
         </div>
         <div className={styles.rows}>
+          <div className={styles.row}>
+            <Tag size={15} className={styles.rowIcon} />
+            <span>{serviceTypeName ?? 'Sin tipo de cita'}</span>
+          </div>
           <div className={styles.row}>
             <CalendarDays size={15} className={styles.rowIcon} />
             <span>{formatExpenseDate(expense.date)}</span>

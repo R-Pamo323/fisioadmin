@@ -54,6 +54,8 @@ interface CalendarViewProps {
   expenses: Expense[]
   /** Nombre del tipo de cita → categoría, para colorear cada evento. */
   serviceCategoryByName: Map<string, ServiceCategory>
+  /** Id del tipo de cita → nombre, para mostrar el tipo de cada gasto. */
+  serviceTypeNameById: Map<string, string>
   onEdit: (appointment: Appointment) => void
   onDelete: (appointment: Appointment) => void
   onEditExpense: (expense: Expense) => void
@@ -99,6 +101,11 @@ function atHour(date: Date, hour: number): Date {
   return result
 }
 
+const isSameDay = (a: Date, b: Date): boolean =>
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate()
+
 /**
  * Los gastos se pintan en la hora "Gastos" (la última de la grilla) y no pueden
  * solaparse con una cita. Se agrupan por día en un solo evento: si hay varios,
@@ -114,23 +121,25 @@ function toExpenseEvents(expenses: Expense[]): EventInput[] {
     else byDay.set(key, [expense])
   }
 
-  return [...byDay.entries()].map(([key, dayExpenses]) => ({
-    id: `expenses-${key}`,
-    start: atHour(dayExpenses[0].date, EXPENSES_START_HOUR),
-    end: atHour(dayExpenses[0].date, EXPENSES_START_HOUR + 1),
-    allDay: false,
-    classNames: ['fc-expenses-band'],
-    extendedProps: { kind: 'expenses', expenses: dayExpenses },
-  }))
+  return [...byDay.entries()].map(([key, dayExpenses]) => {
+    const isToday = isSameDay(dayExpenses[0].date, new Date())
+
+    return {
+      id: `expenses-${key}`,
+      start: atHour(dayExpenses[0].date, EXPENSES_START_HOUR),
+      end: atHour(dayExpenses[0].date, EXPENSES_START_HOUR + 1),
+      allDay: false,
+      // El día de hoy se marca en ámbar para que se distinga del rosado normal.
+      classNames: isToday
+        ? ['fc-expenses-band', 'fc-expenses-band-today']
+        : ['fc-expenses-band'],
+      extendedProps: { kind: 'expenses', expenses: dayExpenses },
+    }
+  })
 }
 
 const capitalize = (value: string): string =>
   value.charAt(0).toUpperCase() + value.slice(1)
-
-const isSameDay = (a: Date, b: Date): boolean =>
-  a.getFullYear() === b.getFullYear() &&
-  a.getMonth() === b.getMonth() &&
-  a.getDate() === b.getDate()
 
 export function CalendarView({
   calendarRef,
@@ -139,6 +148,7 @@ export function CalendarView({
   appointments,
   expenses,
   serviceCategoryByName,
+  serviceTypeNameById,
   onEdit,
   onDelete,
   onEditExpense,
@@ -253,7 +263,8 @@ export function CalendarView({
         slotLabelInterval="01:00:00"
         slotLabelFormat={timeFormat}
         // La última hora es la hora "Gastos": su etiqueta dice "Gastos" y el
-        // fondo se tiñe de rosa, con o sin gastos, para que se lea como banda.
+        // fondo se tiñe de rosa (semitransparente, para no tapar las divisiones
+        // por día ni el amarillo de hoy), con o sin gastos, para que se lea como banda.
         slotLabelContent={(arg: SlotLabelContentArg) =>
           arg.date.getHours() === EXPENSES_START_HOUR ? (
             <span className={styles.expensesAxisLabel}>Gastos</span>
@@ -314,6 +325,8 @@ export function CalendarView({
                       closePopovers()
                       setExpenseTooltip({
                         expense,
+                        serviceTypeName:
+                          serviceTypeNameById.get(expense.serviceTypeId ?? '') ?? null,
                         x: event.clientX,
                         y: event.clientY,
                       })
@@ -321,9 +334,6 @@ export function CalendarView({
                   >
                     <EXPENSE_META.Icon size={12} color={EXPENSE_META.color} />
                     <span className={styles.expenseTitle}>{expense.title}</span>
-                    {expense.time ? (
-                      <span className={styles.expenseTime}>{expense.time}</span>
-                    ) : null}
                     <span className={styles.expenseAmount}>
                       {formatExpenseAmount(expense.amount)}
                     </span>

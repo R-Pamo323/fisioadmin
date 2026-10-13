@@ -183,6 +183,18 @@ export function Calendar() {
     return map
   }, [serviceTypes])
 
+  /**
+   * El gasto guarda el id del tipo de cita, no su nombre. Este mapa resuelve el
+   * nombre para mostrarlo en el detalle del gasto.
+   */
+  const serviceTypeNameById = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const serviceType of serviceTypes) {
+      map.set(serviceType.id, serviceType.name)
+    }
+    return map
+  }, [serviceTypes])
+
   return (
     <div className={styles.page}>
       <CalendarControls
@@ -203,6 +215,7 @@ export function Calendar() {
         appointments={appointments}
         expenses={expenses}
         serviceCategoryByName={serviceCategoryByName}
+        serviceTypeNameById={serviceTypeNameById}
         onEdit={openEdit}
         onDelete={setDeleting}
         onEditExpense={openEditExpense}

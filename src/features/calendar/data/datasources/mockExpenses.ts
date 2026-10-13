@@ -19,7 +19,7 @@ const SEED_EXPENSES: Expense[] = [
     date: dayOffset(1),
     time: '09:00',
     amount: 1500,
-    serviceTypeId: null,
+    serviceTypeId: 'st-11',
   },
   {
     id: 'e2',
@@ -28,7 +28,7 @@ const SEED_EXPENSES: Expense[] = [
     date: dayOffset(3),
     time: null,
     amount: 320,
-    serviceTypeId: null,
+    serviceTypeId: 'st-12',
   },
   {
     id: 'e3',
@@ -37,7 +37,7 @@ const SEED_EXPENSES: Expense[] = [
     date: dayOffset(4),
     time: null,
     amount: 480,
-    serviceTypeId: null,
+    serviceTypeId: 'st-13',
   },
   {
     id: 'e4',
@@ -46,7 +46,7 @@ const SEED_EXPENSES: Expense[] = [
     date: dayOffset(2),
     time: '16:00',
     amount: 350,
-    serviceTypeId: null,
+    serviceTypeId: 'st-14',
   },
 ]
 

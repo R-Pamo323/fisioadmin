@@ -136,6 +136,42 @@ const SEED_SERVICE_TYPES: ServiceType[] = [
     category: 'gastos',
     protocol: [],
   },
+  {
+    id: 'st-11',
+    name: 'Alquiler del local',
+    price: 1500,
+    durationMinutes: 0,
+    description: 'Alquiler mensual del local de la clínica.',
+    category: 'gastos',
+    protocol: [],
+  },
+  {
+    id: 'st-12',
+    name: 'Luz e internet',
+    price: 320,
+    durationMinutes: 0,
+    description: 'Servicios de luz e internet del local.',
+    category: 'gastos',
+    protocol: [],
+  },
+  {
+    id: 'st-13',
+    name: 'Insumos médicos',
+    price: 480,
+    durationMinutes: 0,
+    description: 'Compra de insumos y material descartable de la clínica.',
+    category: 'gastos',
+    protocol: [],
+  },
+  {
+    id: 'st-14',
+    name: 'Mantenimiento de equipos',
+    price: 350,
+    durationMinutes: 0,
+    description: 'Revisión y mantenimiento de los equipos de la clínica.',
+    category: 'gastos',
+    protocol: [],
+  },
 ]
 
 let serviceTypes: ServiceType[] = SEED_SERVICE_TYPES.map((service) => ({
