@@ -14,7 +14,6 @@ function dayOffset(offsetDays: number): Date {
 const SEED_EXPENSES: Expense[] = [
   {
     id: 'e1',
-    title: 'Alquiler del local',
     description: 'Mesada del mes',
     date: dayOffset(1),
     time: '09:00',
@@ -23,7 +22,6 @@ const SEED_EXPENSES: Expense[] = [
   },
   {
     id: 'e2',
-    title: 'Luz e internet',
     description: 'Factura del mes',
     date: dayOffset(3),
     time: null,
@@ -32,7 +30,6 @@ const SEED_EXPENSES: Expense[] = [
   },
   {
     id: 'e3',
-    title: 'Insumos médicos',
     description: 'Vendas, gasas y material descartable',
     date: dayOffset(4),
     time: null,
@@ -41,7 +38,6 @@ const SEED_EXPENSES: Expense[] = [
   },
   {
     id: 'e4',
-    title: 'Mantenimiento de equipos',
     description: 'Revisión de los equipos de la clínica',
     date: dayOffset(2),
     time: '16:00',

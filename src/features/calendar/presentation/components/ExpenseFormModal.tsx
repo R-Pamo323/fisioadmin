@@ -1,4 +1,6 @@
-import { X } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { ArrowRight, X } from 'lucide-react'
+import { ROUTE_PATHS } from '../../../../core/routes/paths'
 import { colors } from '../../../../core/theme/colors'
 import { typography } from '../../../../core/theme/typography'
 import { Button, Input, Modal, Select, Textarea } from '../../../../shared/components'
@@ -35,6 +37,13 @@ export function ExpenseFormModal({
     })
 
   const isEdit = mode === 'edit'
+  const navigate = useNavigate()
+
+  /** El borrador se pierde al navegar: es el flujo simple acordado. */
+  const goTo = (path: string) => {
+    onClose()
+    navigate(path)
+  }
 
   const serviceTypeOptions: SelectOption[] = [
     { value: '', label: 'Selecciona…' },
@@ -77,14 +86,23 @@ export function ExpenseFormModal({
           {EXPENSE_META.label}
         </span>
 
-        <Input
-          label="Título del gasto"
-          value={values.title}
-          onChange={setValue('title')}
-          onBlur={onBlur('title')}
-          error={getError('title')}
-          placeholder="Ej. Alquiler del local"
+        <Select
+          label="Tipo de cita"
+          value={values.serviceTypeId}
+          onChange={setValue('serviceTypeId')}
+          onBlur={onBlur('serviceTypeId')}
+          error={getError('serviceTypeId')}
+          options={serviceTypeOptions}
         />
+
+        <button
+          type="button"
+          className={styles.link}
+          onClick={() => goTo(ROUTE_PATHS.appointmentTypes)}
+        >
+          ¿No aparece el tipo? Crea uno nuevo
+          <ArrowRight size={13} />
+        </button>
 
         <Textarea
           label="Descripción"
@@ -113,26 +131,16 @@ export function ExpenseFormModal({
           />
         </div>
 
-        <div className={styles.row}>
-          <Input
-            label="Monto (S/)"
-            type="number"
-            min="0"
-            value={values.amount}
-            onChange={setValue('amount')}
-            onBlur={onBlur('amount')}
-            error={getError('amount')}
-            placeholder="0"
-          />
-          <Select
-            label="Tipo de cita"
-            value={values.serviceTypeId}
-            onChange={setValue('serviceTypeId')}
-            onBlur={onBlur('serviceTypeId')}
-            error={getError('serviceTypeId')}
-            options={serviceTypeOptions}
-          />
-        </div>
+        <Input
+          label="Monto (S/)"
+          type="number"
+          min="0"
+          value={values.amount}
+          onChange={setValue('amount')}
+          onBlur={onBlur('amount')}
+          error={getError('amount')}
+          placeholder="0"
+        />
 
         <p className={styles.hint}>
           El gasto no ocupa horario: se muestra en la hora &quot;Gastos&quot;, al final del

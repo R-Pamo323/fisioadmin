@@ -9,6 +9,8 @@ interface DeleteExpenseModalProps {
   open: boolean
   /** Gasto que se va a eliminar; null cuando el modal está cerrado. */
   expense: Expense | null
+  /** Nombre del tipo de cita (tipo de gasto); null si no resuelve. */
+  serviceTypeName: string | null
   isDeleting: boolean
   onConfirm: () => void
   onClose: () => void
@@ -17,6 +19,7 @@ interface DeleteExpenseModalProps {
 export function DeleteExpenseModal({
   open,
   expense,
+  serviceTypeName,
   isDeleting,
   onConfirm,
   onClose,
@@ -43,7 +46,7 @@ export function DeleteExpenseModal({
 
         <h3 className={styles.title}>Eliminar gasto</h3>
         <p className={styles.text}>
-          Vas a eliminar <strong>{expense.title}</strong> del{' '}
+          Vas a eliminar <strong>{serviceTypeName ?? 'Gasto'}</strong> del{' '}
           {formatExpenseDate(expense.date)} por {formatExpenseAmount(expense.amount)}. Esta acción
           no se puede deshacer.
         </p>

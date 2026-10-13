@@ -4,7 +4,6 @@ import type { ServiceType } from '../../../appointment-types/domain/entities/Ser
 import type { Expense, ExpenseDraft } from '../../domain/entities/Expense'
 
 export interface ExpenseFormValues {
-  title: string
   description: string
   date: string
   /** Hora 'HH:MM' opcional; no ocupa la grilla. */
@@ -17,7 +16,6 @@ type Field = keyof ExpenseFormValues
 type Errors = Partial<Record<Field, string>>
 
 const emptyValues: ExpenseFormValues = {
-  title: '',
   description: '',
   date: '',
   time: '',
@@ -33,7 +31,6 @@ function toDateValue(date: Date): string {
 
 function fromExpense(expense: Expense): ExpenseFormValues {
   return {
-    title: expense.title,
     description: expense.description,
     date: toDateValue(expense.date),
     time: expense.time ?? '',
@@ -44,10 +41,6 @@ function fromExpense(expense: Expense): ExpenseFormValues {
 
 function validate(values: ExpenseFormValues): Errors {
   const errors: Errors = {}
-
-  if (values.title.trim() === '') {
-    errors.title = 'Escribe el título del gasto.'
-  }
 
   if (values.date.trim() === '') {
     errors.date = 'Selecciona una fecha.'
@@ -130,7 +123,6 @@ export function useExpenseForm(options: {
       const date = new Date(`${values.date}T00:00:00`)
 
       await onSubmit({
-        title: values.title,
         description: values.description.trim(),
         date,
         time: values.time.trim() === '' ? null : values.time,

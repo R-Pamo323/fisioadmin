@@ -159,7 +159,7 @@ export function AppointmentFormModal({
               className={styles.link}
               onClick={() => goTo(ROUTE_PATHS.appointmentTypes)}
             >
-              ¿No aparece el tipo? Crear uno nuevo
+              ¿No aparece el tipo? Crea uno nuevo
               <ArrowRight size={13} />
             </button>
           </>

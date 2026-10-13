@@ -11,7 +11,6 @@ export class CreateExpense {
   execute(draft: ExpenseDraft): Promise<Expense> {
     const normalized: ExpenseDraft = {
       ...draft,
-      title: draft.title.trim(),
       description: draft.description.trim(),
     }
 

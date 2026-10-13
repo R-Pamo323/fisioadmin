@@ -333,7 +333,9 @@ export function CalendarView({
                     }}
                   >
                     <EXPENSE_META.Icon size={12} color={EXPENSE_META.color} />
-                    <span className={styles.expenseTitle}>{expense.title}</span>
+                    <span className={styles.expenseTitle}>
+                      {serviceTypeNameById.get(expense.serviceTypeId ?? '') ?? 'Gasto'}
+                    </span>
                     <span className={styles.expenseAmount}>
                       {formatExpenseAmount(expense.amount)}
                     </span>

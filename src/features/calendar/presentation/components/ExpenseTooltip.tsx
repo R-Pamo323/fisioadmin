@@ -1,4 +1,4 @@
-import { CalendarDays, Clock, FileText, Pencil, Receipt, Tag, Trash2 } from 'lucide-react'
+import { CalendarDays, Clock, FileText, Pencil, Receipt, Trash2 } from 'lucide-react'
 import { Button } from '../../../../shared/components'
 import type { Expense } from '../../domain/entities/Expense'
 import { EXPENSE_META, formatExpenseAmount, formatExpenseDate } from './expenseMeta'
@@ -35,7 +35,7 @@ export function ExpenseTooltip({ tooltip, onClose, onEdit, onDelete }: ExpenseTo
         aria-label="Detalle del gasto"
       >
         <div className={styles.header}>
-          <strong className={styles.title}>{expense.title}</strong>
+          <strong className={styles.title}>{serviceTypeName ?? 'Gasto'}</strong>
           <span
             className={styles.tag}
             style={{ color: EXPENSE_META.color, background: EXPENSE_META.background }}
@@ -44,10 +44,6 @@ export function ExpenseTooltip({ tooltip, onClose, onEdit, onDelete }: ExpenseTo
           </span>
         </div>
         <div className={styles.rows}>
-          <div className={styles.row}>
-            <Tag size={15} className={styles.rowIcon} />
-            <span>{serviceTypeName ?? 'Sin tipo de cita'}</span>
-          </div>
           <div className={styles.row}>
             <CalendarDays size={15} className={styles.rowIcon} />
             <span>{formatExpenseDate(expense.date)}</span>

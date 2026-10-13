@@ -263,6 +263,11 @@ export function Calendar() {
       <DeleteExpenseModal
         open={deletingExpense !== null}
         expense={deletingExpense}
+        serviceTypeName={
+          deletingExpense
+            ? serviceTypeNameById.get(deletingExpense.serviceTypeId ?? '') ?? null
+            : null
+        }
         isDeleting={isDeletingExpense}
         onConfirm={handleConfirmDeleteExpense}
         onClose={() => setDeletingExpense(null)}

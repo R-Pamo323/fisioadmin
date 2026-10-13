@@ -11,7 +11,6 @@ export class UpdateExpense {
   execute(id: string, patch: ExpensePatch): Promise<Expense> {
     const normalized: ExpensePatch = {
       ...patch,
-      ...(patch.title !== undefined ? { title: patch.title.trim() } : {}),
       ...(patch.description !== undefined ? { description: patch.description.trim() } : {}),
     }
 
