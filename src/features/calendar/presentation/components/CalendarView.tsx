@@ -24,6 +24,7 @@ import { ExpenseTooltip } from './ExpenseTooltip'
 import type { ExpenseTooltipState } from './ExpenseTooltip'
 import { appointmentCategoryMeta, appointmentEventStyle } from './appointmentCategoryMeta'
 import { EXPENSE_META, formatExpenseAmount } from './expenseMeta'
+import { formatAppointmentAmount } from './appointmentMeta'
 import styles from './CalendarView.module.css'
 
 export type CalendarViewType = 'timeGridWeek' | 'timeGridDay'
@@ -83,6 +84,7 @@ function toEventInput(
       patientName: appointment.patientName,
       appointmentType: appointment.appointmentType,
       description: appointment.description,
+      amount: appointment.amount,
       status: appointment.status,
       category,
     },
@@ -230,6 +232,7 @@ export function CalendarView({
       patientName: appointmentProps.patientName,
       appointmentType: appointmentProps.appointmentType,
       description: appointmentProps.description,
+      amount: appointmentProps.amount,
       status: appointmentProps.status,
       start: info.event.start ?? new Date(),
       end: info.event.end ?? new Date(),
@@ -371,6 +374,9 @@ export function CalendarView({
                   {arg.timeText}
                   {appointmentProps.appointmentType
                     ? ` · ${appointmentProps.appointmentType}`
+                    : ''}
+                  {appointmentProps.amount > 0
+                    ? ` · ${formatAppointmentAmount(appointmentProps.amount)}`
                     : ''}
                 </span>
               ) : null}

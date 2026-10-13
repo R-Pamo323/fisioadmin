@@ -26,6 +26,11 @@ export interface AppointmentFormValues {
   endTime: string
   /** Solo es editable al modificar una cita ya creada. */
   status: AppointmentStatus
+  /**
+   * Monto cobrado; solo aplica a citas de pago. Viene con el precio del tipo
+   * elegido, pero se puede ajustar (descuentos, familiares).
+   */
+  amount: string
 }
 
 type Field = keyof AppointmentFormValues
@@ -40,6 +45,7 @@ const emptyValues: AppointmentFormValues = {
   startTime: '',
   endTime: '',
   status: 'pending',
+  amount: '',
 }
 
 /** "HH:mm" → minutos desde medianoche; null si el formato no sirve. */
@@ -64,6 +70,13 @@ function toDateValue(date: Date): string {
   return `${date.getFullYear()}-${month}-${day}`
 }
 
+/** El monto debe ser un número de 0 en adelante. */
+function isValidAmount(value: string): boolean {
+  if (value.trim() === '') return false
+  const amount = Number(value)
+  return Number.isFinite(amount) && amount >= 0
+}
+
 /** El tipo se guardó por nombre, así que al editar se busca por coincidencia. */
 function fromAppointment(appointment: Appointment, serviceTypes: ServiceType[]): AppointmentFormValues {
   const isMeeting = appointment.patientId === null
@@ -80,6 +93,7 @@ function fromAppointment(appointment: Appointment, serviceTypes: ServiceType[]):
     startTime: toTimeValue(appointment.start),
     endTime: toTimeValue(appointment.end),
     status: appointment.status,
+    amount: String(appointment.amount),
   }
 }
 
@@ -144,6 +158,9 @@ export function useAppointmentForm(options: {
   /** Una cita gratis no genera cobro: siempre queda como "sin cobro". */
   const isFree = selectedServiceType?.category === 'gratis'
 
+  /** El monto solo se pide cuando el tipo elegido tiene precio. */
+  const showAmount = !isMeeting && (selectedServiceType?.price ?? 0) > 0
+
   /**
    * Cruce de horario: las citas no pueden solaparse entre sí (los gastos van en
    * su propia hora, la hora "Gastos", y no cuentan aquí). Se ignora la cita que
@@ -174,11 +191,14 @@ export function useAppointmentForm(options: {
 
   const errors = useMemo(() => {
     const base = validate(values)
+    if (showAmount && !isValidAmount(values.amount)) {
+      base.amount = 'Indica un monto válido (0 o más).'
+    }
     if (conflict && !base.endTime) {
       base.endTime = 'La hora coincide con una cita ya programada.'
     }
     return base
-  }, [conflict, values])
+  }, [conflict, showAmount, values])
 
   const isValid = Object.keys(errors).length === 0
 
@@ -195,6 +215,7 @@ export function useAppointmentForm(options: {
               ...current,
               patientId: nextValue,
               serviceTypeId: '',
+              amount: '',
               meetingTitle: '',
               status: meetingSelected
                 ? 'no_payment'
@@ -205,12 +226,15 @@ export function useAppointmentForm(options: {
           }
 
           if (field === 'serviceTypeId') {
-            // Un tipo de cita gratis nunca se cobra: su estado es "sin cobro".
+            // Un tipo de cita gratis nunca se cobra: su estado es "sin cobro". El
+            // monto, además, se rellena con el precio del tipo elegido.
             const serviceType = serviceTypes.find((item) => item.id === nextValue)
             const isFree = serviceType?.category === 'gratis'
+            const price = serviceType?.price ?? 0
             return {
               ...current,
               serviceTypeId: nextValue,
+              amount: price > 0 ? String(price) : '',
               status: isFree
                 ? 'no_payment'
                 : current.status === 'no_payment'
@@ -283,6 +307,7 @@ export function useAppointmentForm(options: {
         description: values.description.trim(),
         start,
         end,
+        amount: showAmount ? Number(values.amount) : 0,
         // Al crear, el estado se deriva; al editar, manda lo elegido. Una cita
         // gratis o una reunión nunca se cobran.
         status: isMeeting || isFree ? 'no_payment' : values.status,
@@ -291,7 +316,7 @@ export function useAppointmentForm(options: {
       setIsSaving(false)
       onDone()
     },
-    [errors, isMeeting, onDone, onSubmit, patients, serviceTypes, values],
+    [errors, isMeeting, onDone, onSubmit, patients, serviceTypes, showAmount, values],
   )
 
   return {
@@ -301,6 +326,7 @@ export function useAppointmentForm(options: {
     mode: appointment ? ('edit' as const) : ('create' as const),
     isMeeting,
     isFree,
+    showAmount,
     serviceCategory: selectedServiceType?.category ?? null,
     errors,
     setValue: change,

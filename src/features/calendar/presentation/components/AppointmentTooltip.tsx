@@ -1,7 +1,8 @@
-import { Clock, FileText, Pencil, Tag, Trash2, UserX } from 'lucide-react'
+import { Banknote, Clock, FileText, Pencil, Tag, Trash2, UserX } from 'lucide-react'
 import { Button } from '../../../../shared/components'
 import type { Appointment } from '../../domain/entities/Appointment'
 import { appointmentStatusMeta } from './appointmentStatusMeta'
+import { formatAppointmentAmount } from './appointmentMeta'
 import styles from './AppointmentTooltip.module.css'
 
 export interface TooltipState {
@@ -68,6 +69,12 @@ export function AppointmentTooltip({
               <span>Sin paciente asignado</span>
             </div>
           )}
+          {appointment.status !== 'no_payment' ? (
+            <div className={styles.row}>
+              <Banknote size={15} className={styles.rowIcon} />
+              <span>{formatAppointmentAmount(appointment.amount)}</span>
+            </div>
+          ) : null}
           {appointment.description.trim() !== '' ? (
             <div className={styles.row}>
               <FileText size={15} className={styles.rowIcon} />

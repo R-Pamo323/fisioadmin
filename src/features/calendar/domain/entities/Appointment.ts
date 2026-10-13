@@ -16,6 +16,11 @@ export interface Appointment {
   appointmentType: string
   /** Qué se va a hacer con el paciente, o de qué trata la reunión. Opcional. */
   description: string
+  /**
+   * Monto cobrado al paciente. Por defecto es el precio del tipo de cita, pero
+   * se puede ajustar (descuentos, familiares). Es 0 en citas gratis y reuniones.
+   */
+  amount: number
   start: Date
   end: Date
   status: AppointmentStatus

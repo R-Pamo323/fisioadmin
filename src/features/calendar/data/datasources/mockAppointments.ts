@@ -17,7 +17,8 @@ function dayOffset(offsetDays: number): Date {
  * Los patientId y los nombres coinciden con features/patients/data/datasources/
  * mockPatients.ts, y los tipos de cita con mockServiceTypes.ts. Las reuniones
  * llevan patientId null y las citas de tipo gratis llevan status 'no_payment':
- * ninguna de las dos genera cobro.
+ * ninguna de las dos genera cobro, así que su monto es 0. En las citas de pago
+ * el monto coincide con el precio del tipo salvo que se haya ajustado.
  */
 const SEED_APPOINTMENTS: Appointment[] = [
   {
@@ -26,6 +27,7 @@ const SEED_APPOINTMENTS: Appointment[] = [
     patientName: 'Carlos Ruiz',
     appointmentType: 'Terapia Física',
     description: 'Valoración inicial y trabajo de movilidad de hombro',
+    amount: 50,
     start: atTime(dayOffset(0), 9),
     end: atTime(dayOffset(0), 10),
     status: 'paid',
@@ -36,6 +38,7 @@ const SEED_APPOINTMENTS: Appointment[] = [
     patientName: 'Sofía Martínez',
     appointmentType: 'Rehabilitación',
     description: 'Fortalecimiento de cadena posterior y descarga lumbar',
+    amount: 70,
     start: atTime(dayOffset(0), 10, 30),
     end: atTime(dayOffset(0), 11, 30),
     status: 'pending',
@@ -46,6 +49,7 @@ const SEED_APPOINTMENTS: Appointment[] = [
     patientName: 'Lucía Fernández',
     appointmentType: 'Masaje Relaxante',
     description: 'Masaje de cuerpo completo para eliminar tensión cervical',
+    amount: 40,
     start: atTime(dayOffset(0), 12),
     end: atTime(dayOffset(0), 13),
     status: 'paid',
@@ -56,6 +60,7 @@ const SEED_APPOINTMENTS: Appointment[] = [
     patientName: 'Valentina Herrera',
     appointmentType: 'Pilates Terapéutico',
     description: 'Sesión de pilates clínico para corrección postural',
+    amount: 55,
     start: atTime(dayOffset(0), 16),
     end: atTime(dayOffset(0), 16, 40),
     status: 'pending',
@@ -66,6 +71,7 @@ const SEED_APPOINTMENTS: Appointment[] = [
     patientName: 'Reunión de equipo',
     appointmentType: '',
     description: 'Revisión semanal de casos del equipo clínico',
+    amount: 0,
     start: atTime(dayOffset(0), 19),
     end: atTime(dayOffset(0), 20),
     status: 'no_payment',
@@ -76,6 +82,7 @@ const SEED_APPOINTMENTS: Appointment[] = [
     patientName: 'Roberto Díaz',
     appointmentType: 'Terapia Lumbar',
     description: 'Terapia manual y estiramientos para lumbalgia crónica',
+    amount: 60,
     start: atTime(dayOffset(1), 9, 30),
     end: atTime(dayOffset(1), 10, 30),
     status: 'paid',
@@ -86,6 +93,7 @@ const SEED_APPOINTMENTS: Appointment[] = [
     patientName: 'Marc Esposito',
     appointmentType: 'Evaluación inicial',
     description: 'Primera valoración para definir el plan de tratamiento',
+    amount: 0,
     start: atTime(dayOffset(2), 11),
     end: atTime(dayOffset(2), 12),
     status: 'no_payment',
@@ -96,6 +104,7 @@ const SEED_APPOINTMENTS: Appointment[] = [
     patientName: 'Mantenimiento de equipos',
     appointmentType: '',
     description: 'Revisión trimestral de los equipos de la clínica',
+    amount: 0,
     start: atTime(dayOffset(2), 20, 30),
     end: atTime(dayOffset(2), 21),
     status: 'no_payment',
@@ -106,6 +115,7 @@ const SEED_APPOINTMENTS: Appointment[] = [
     patientName: 'Andrés Quispe',
     appointmentType: 'Rehabilitación',
     description: 'Continuación de la rehabilitación de rodilla post-operatoria',
+    amount: 70,
     start: atTime(dayOffset(3), 15),
     end: atTime(dayOffset(3), 16),
     status: 'paid',
@@ -116,6 +126,7 @@ const SEED_APPOINTMENTS: Appointment[] = [
     patientName: 'Diego Cueva',
     appointmentType: 'Masaje Relaxante',
     description: 'Masaje relaxante de descarga muscular',
+    amount: 40,
     start: atTime(dayOffset(4), 10),
     end: atTime(dayOffset(4), 11),
     status: 'paid',
@@ -126,6 +137,7 @@ const SEED_APPOINTMENTS: Appointment[] = [
     patientName: 'Elena Gómez',
     appointmentType: 'Cita sin cobro',
     description: 'Seguimiento sin coste de la rehabilitación de rodilla',
+    amount: 0,
     start: atTime(dayOffset(1), 12),
     end: atTime(dayOffset(1), 12, 30),
     status: 'no_payment',
@@ -136,6 +148,7 @@ const SEED_APPOINTMENTS: Appointment[] = [
     patientName: 'Roberto Díaz',
     appointmentType: 'Charla de ergonomía',
     description: 'Sesión informativa sin coste sobre higiene postural',
+    amount: 0,
     start: atTime(dayOffset(3), 17),
     end: atTime(dayOffset(3), 17, 30),
     status: 'no_payment',

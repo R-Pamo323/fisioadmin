@@ -10,6 +10,7 @@ import type { ServiceType } from '../../../appointment-types/domain/entities/Ser
 import type { Appointment, AppointmentDraft } from '../../domain/entities/Appointment'
 import { NO_PATIENT_VALUE, useAppointmentForm } from '../hooks/useAppointmentForm'
 import { PAYMENT_STATUS_OPTIONS } from './appointmentStatusMeta'
+import { formatServiceTypePrice } from './appointmentMeta'
 import styles from './AppointmentFormModal.module.css'
 
 const PLACEHOLDER_OPTION: SelectOption = { value: '', label: 'Selecciona…' }
@@ -46,6 +47,7 @@ export function AppointmentFormModal({
     isSaving,
     isMeeting,
     isFree,
+    showAmount,
     serviceCategory,
     setValue,
     onBlur,
@@ -66,12 +68,16 @@ export function AppointmentFormModal({
     ...patients.map((patient) => ({ value: patient.id, label: patient.name })),
   ]
 
+  // Los tipos de gasto no son citas: no se ofrecen al agendar. El precio se
+  // muestra entre paréntesis para saber cuánto costará la cita.
   const serviceTypeOptions: SelectOption[] = [
     PLACEHOLDER_OPTION,
-    ...serviceTypes.map((serviceType) => ({
-      value: serviceType.id,
-      label: serviceType.name,
-    })),
+    ...serviceTypes
+      .filter((serviceType) => serviceType.category !== 'gastos')
+      .map((serviceType) => ({
+        value: serviceType.id,
+        label: `${serviceType.name} (${formatServiceTypePrice(serviceType.category, serviceType.price)})`,
+      })),
   ]
 
   const close = () => {
@@ -162,6 +168,19 @@ export function AppointmentFormModal({
               ¿No aparece el tipo? Crea uno nuevo
               <ArrowRight size={13} />
             </button>
+
+            {showAmount ? (
+              <Input
+                label="Monto (S/)"
+                type="number"
+                min="0"
+                value={values.amount}
+                onChange={setValue('amount')}
+                onBlur={onBlur('amount')}
+                error={getError('amount')}
+                placeholder="0"
+              />
+            ) : null}
           </>
         )}
 
