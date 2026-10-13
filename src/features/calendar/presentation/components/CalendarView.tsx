@@ -7,6 +7,8 @@ import type {
   DayHeaderContentArg,
   EventClickArg,
   EventInput,
+  SlotLabelContentArg,
+  SlotLaneContentArg,
 } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -27,8 +29,15 @@ import styles from './CalendarView.module.css'
 export type CalendarViewType = 'timeGridWeek' | 'timeGridDay'
 
 const DAY_START_MINUTES = 8 * 60
-/** La grilla llega hasta las 22:00; el formulario no deja agendar más tarde de las 21:00. */
-const DAY_END_MINUTES = 22 * 60
+/**
+ * La grilla llega hasta las 23:00. La última hora (22:00–23:00) es la hora
+ * "Gastos"; el formulario no deja agendar más tarde de las 21:00.
+ */
+const DAY_END_MINUTES = 23 * 60
+/** Hora del día en la que se pintan los gastos: la última fila de la grilla. */
+const EXPENSES_START_HOUR = 22
+/** Gastos visibles por día en la hora "Gastos"; el resto se resume en "+N más". */
+const MAX_EXPENSE_CHIPS = 3
 
 function getNowMinutes(): number {
   const now = new Date()
@@ -41,7 +50,7 @@ interface CalendarViewProps {
   onDatesSet: (arg: DatesSetArg) => void
   /** Viene por prop para que las citas creadas en el modal aparezcan al instante. */
   appointments: Appointment[]
-  /** Gastos: van en la banda de todo el día, nunca en la grilla de horas. */
+  /** Gastos: se pintan en la hora "Gastos", al final de la grilla. */
   expenses: Expense[]
   /** Nombre del tipo de cita → categoría, para colorear cada evento. */
   serviceCategoryByName: Map<string, ServiceCategory>
@@ -78,25 +87,41 @@ function toEventInput(
   }
 }
 
+function toDateKey(date: Date): string {
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${date.getFullYear()}-${month}-${day}`
+}
+
+function atHour(date: Date, hour: number): Date {
+  const result = new Date(date)
+  result.setHours(hour, 0, 0, 0)
+  return result
+}
+
 /**
- * El gasto se declara como evento de todo el día: FullCalendar lo pinta en la
- * banda superior y por definición no puede solaparse con una cita.
+ * Los gastos se pintan en la hora "Gastos" (la última de la grilla) y no pueden
+ * solaparse con una cita. Se agrupan por día en un solo evento: si hay varios,
+ * se apilan como chips en vez de quedar uno al lado del otro como las citas.
  */
-function toExpenseEventInput(expense: Expense): EventInput {
-  return {
-    id: expense.id,
-    title: expense.title,
-    start: expense.date,
-    allDay: true,
-    extendedProps: {
-      kind: 'expense',
-      title: expense.title,
-      description: expense.description,
-      time: expense.time,
-      amount: expense.amount,
-      serviceTypeId: expense.serviceTypeId,
-    },
+function toExpenseEvents(expenses: Expense[]): EventInput[] {
+  const byDay = new Map<string, Expense[]>()
+
+  for (const expense of expenses) {
+    const key = toDateKey(expense.date)
+    const dayExpenses = byDay.get(key)
+    if (dayExpenses) dayExpenses.push(expense)
+    else byDay.set(key, [expense])
   }
+
+  return [...byDay.entries()].map(([key, dayExpenses]) => ({
+    id: `expenses-${key}`,
+    start: atHour(dayExpenses[0].date, EXPENSES_START_HOUR),
+    end: atHour(dayExpenses[0].date, EXPENSES_START_HOUR + 1),
+    allDay: false,
+    classNames: ['fc-expenses-band'],
+    extendedProps: { kind: 'expenses', expenses: dayExpenses },
+  }))
 }
 
 const capitalize = (value: string): string =>
@@ -128,7 +153,7 @@ export function CalendarView({
   const events = useMemo(
     () => [
       ...appointments.map((appointment) => toEventInput(appointment, serviceCategoryByName)),
-      ...expenses.map(toExpenseEventInput),
+      ...toExpenseEvents(expenses),
     ],
     [appointments, expenses, serviceCategoryByName],
   )
@@ -183,21 +208,8 @@ export function CalendarView({
     closePopovers()
     const props = info.event.extendedProps
 
-    if (props.kind === 'expense') {
-      const expense: Expense = {
-        id: info.event.id,
-        title: props.title,
-        description: props.description,
-        date: info.event.start ?? new Date(),
-        time: props.time,
-        amount: props.amount,
-        serviceTypeId: props.serviceTypeId,
-      }
-      setExpenseTooltip({
-        expense,
-        x: info.jsEvent.clientX,
-        y: info.jsEvent.clientY,
-      })
+    if (props.kind === 'expenses') {
+      // La hora "Gastos" agrupa varios gastos: el clic lo maneja cada chip.
       return
     }
 
@@ -228,20 +240,33 @@ export function CalendarView({
         initialView={view}
         headerToolbar={false}
         firstDay={1}
-        allDaySlot
-        allDayText="Gastos"
-        // Las citas no deben cruzarse entre sí; los gastos van en otra banda.
+        // Los gastos viven en la última hora de la grilla, no en la banda de
+        // "todo el día": así scrollean junto con las horas y quedan al final.
+        allDaySlot={false}
+        // Las citas no deben cruzarse entre sí; los gastos van en su propia hora.
         // La validación del formulario ya lo impide, esto lo refuerza al pintar.
         eventOverlap={false}
         slotEventOverlap={false}
-        // FullCalendar acota la banda por su cuenta con un "+N más", así la fila
-        // de gastos nunca se come la grilla de horas.
-        dayMaxEvents={4}
         slotMinTime="08:00:00"
-        slotMaxTime="22:00:00"
+        slotMaxTime="23:00:00"
         slotDuration="00:30:00"
         slotLabelInterval="01:00:00"
         slotLabelFormat={timeFormat}
+        // La última hora es la hora "Gastos": su etiqueta dice "Gastos" y el
+        // fondo se tiñe de rosa, con o sin gastos, para que se lea como banda.
+        slotLabelContent={(arg: SlotLabelContentArg) =>
+          arg.date.getHours() === EXPENSES_START_HOUR ? (
+            <span className={styles.expensesAxisLabel}>Gastos</span>
+          ) : (
+            arg.text
+          )
+        }
+        slotLabelClassNames={(arg: SlotLabelContentArg) =>
+          arg.date.getHours() === EXPENSES_START_HOUR ? 'fc-gastos-slot' : ''
+        }
+        slotLaneClassNames={(arg: SlotLaneContentArg) =>
+          arg.date?.getHours() === EXPENSES_START_HOUR ? 'fc-gastos-lane' : ''
+        }
         eventTimeFormat={timeFormat}
         height="100%"
         expandRows
@@ -271,16 +296,40 @@ export function CalendarView({
         eventContent={(arg) => {
           const props = arg.event.extendedProps
 
-          if (props.kind === 'expense') {
-            // Chip de la banda de gastos: título, hora opcional y monto.
+          if (props.kind === 'expenses') {
+            // Hora "Gastos": los del día, apilados. Cada chip abre su detalle.
+            const dayExpenses = (props.expenses as Expense[] | undefined) ?? []
+            const visible = dayExpenses.slice(0, MAX_EXPENSE_CHIPS)
+            const hidden = dayExpenses.length - visible.length
+
             return (
-              <div className={styles.expenseChip}>
-                <EXPENSE_META.Icon size={12} color={EXPENSE_META.color} />
-                <span className={styles.expenseTitle}>{props.title}</span>
-                {props.time ? <span className={styles.expenseTime}>{props.time}</span> : null}
-                <span className={styles.expenseAmount}>
-                  {formatExpenseAmount(props.amount)}
-                </span>
+              <div className={styles.expenseChips}>
+                {visible.map((expense) => (
+                  <button
+                    key={expense.id}
+                    type="button"
+                    className={styles.expenseChip}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      closePopovers()
+                      setExpenseTooltip({
+                        expense,
+                        x: event.clientX,
+                        y: event.clientY,
+                      })
+                    }}
+                  >
+                    <EXPENSE_META.Icon size={12} color={EXPENSE_META.color} />
+                    <span className={styles.expenseTitle}>{expense.title}</span>
+                    {expense.time ? (
+                      <span className={styles.expenseTime}>{expense.time}</span>
+                    ) : null}
+                    <span className={styles.expenseAmount}>
+                      {formatExpenseAmount(expense.amount)}
+                    </span>
+                  </button>
+                ))}
+                {hidden > 0 ? <span className={styles.expenseMore}>+{hidden} más</span> : null}
               </div>
             )
           }

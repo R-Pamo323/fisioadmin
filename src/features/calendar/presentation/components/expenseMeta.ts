@@ -11,7 +11,7 @@ export interface ExpenseMeta {
 
 /**
  * El rojo es exclusivo de los gastos: en el calendario es lo único que se
- * pinta de ese color, y nunca ocupa la grilla de horas.
+ * pinta de ese color. Vive en la hora "Gastos", al final de la grilla.
  */
 export const EXPENSE_META: ExpenseMeta = {
   label: 'Gasto',

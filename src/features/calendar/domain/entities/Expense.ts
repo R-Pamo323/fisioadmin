@@ -1,7 +1,7 @@
 /**
  * Un gasto es una salida de dinero de la clínica, no una cita. Por eso vive
  * aparte de Appointment: no tiene paciente, no tiene duración y no ocupa
- * horario en la grilla. En el calendario aparece en la banda de todo el día.
+ * horario en la grilla. En el calendario aparece en la hora "Gastos", al final.
  */
 export interface Expense {
   id: string

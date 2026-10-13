@@ -20,13 +20,6 @@
   padding: 8px 0;
 }
 
-.wrapper :global(.fc .fc-daygrid-day) {
-  border-color: #a6b0c0;
-  /* Las celdas de la banda de gastos llevan un rosado muy suave. */
-  background: #fffbfb;
-  vertical-align: top;
-}
-
 .wrapper :global(.fc .fc-timegrid-slot) {
   height: 75px;
   border-color: #a6b0c0;
@@ -100,58 +93,72 @@
 }
 
 /*
- * Banda de gastos (todo el día). Va arriba de la grilla, separada de las horas,
- * para que un gasto nunca se confunda con una cita ni ocupe su espacio.
- *
- * En FullCalendar v6 la fila de todo el día se arma con el DayTable de daygrid,
- * así que las celdas son .fc-daygrid-day y los chips .fc-daygrid-event (no
- * existe .fc-timegrid-allday). Va después de la regla global de .fc-event para
- * ganar en la cascada.
+ * Hora "Gastos". FullCalendar no permite mover la banda de "todo el día" al
+ * final de la grilla, así que los gastos se pintan en su última hora
+ * (22:00–23:00): la etiqueta del eje dice "Gastos" (centrada) y la hora entera
+ * se tiñe de rosado, con o sin gastos. Van después de las reglas de .fc-event
+ * para ganar en la cascada.
  */
-.wrapper :global(.fc .fc-timegrid-axis-cushion) {
+.wrapper :global(.fc .fc-gastos-slot .fc-timegrid-slot-label-frame) {
+  text-align: center;
+}
+
+.wrapper :global(.fc .fc-gastos-lane) {
+  background: #fff7f7;
+}
+
+.expensesAxisLabel {
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: #ef4444;
-  padding: 6px 8px;
 }
 
-.wrapper :global(.fc .fc-daygrid-event) {
-  margin: 2px 4px;
+/* Evento de la hora "Gastos": caja rosada con borde rojo, sin cursor de cita. */
+.wrapper :global(.fc .fc-expenses-band) {
   background: #fef2f2;
   border: 1px solid #ef4444;
   border-radius: 6px;
-  color: #111827;
+  cursor: default;
 }
 
-/* La banda de gastos es más alta para que el chip respire y los textos (negros
- * y rojos) se lean bien sobre el fondo rosado. */
-.wrapper :global(.fc .fc-daygrid-day-frame) {
-  min-height: 38px;
-}
-
-.wrapper :global(.fc .fc-daygrid-event .fc-event-main) {
-  padding: 0;
+.wrapper :global(.fc .fc-expenses-band .fc-event-main) {
+  height: 100%;
   overflow: hidden;
 }
 
-.wrapper :global(.fc .fc-daygrid-more-link) {
-  color: #b91c1c;
-  font-size: 12px;
-  font-weight: 600;
+.expenseChips {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  padding: 4px;
+  overflow: hidden;
 }
 
 .expenseChip {
   display: flex;
   align-items: center;
   gap: 6px;
-  height: 100%;
-  padding: 6px 9px;
-  font-size: 13px;
-  line-height: 1.25;
+  padding: 5px 8px;
+  background: #ffffff;
+  border: 1px solid #fecaca;
+  border-left: 3px solid #ef4444;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.2;
   color: #111827;
-  overflow: hidden;
+  text-align: left;
+  cursor: pointer;
+}
+
+.expenseMore {
+  padding-left: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #b91c1c;
 }
 
 .expenseTitle {

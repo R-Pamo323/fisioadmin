@@ -5,7 +5,7 @@ import { Button, Input, Modal, Select, Textarea } from '../../../../shared/compo
 import type { SelectOption } from '../../../../shared/components'
 import type { ServiceType } from '../../../appointment-types/domain/entities/ServiceType'
 import type { Expense, ExpenseDraft } from '../../domain/entities/Expense'
-import { NO_SERVICE_TYPE_VALUE, useExpenseForm } from '../hooks/useExpenseForm'
+import { useExpenseForm } from '../hooks/useExpenseForm'
 import { EXPENSE_META } from './expenseMeta'
 import styles from './ExpenseFormModal.module.css'
 
@@ -37,7 +37,7 @@ export function ExpenseFormModal({
   const isEdit = mode === 'edit'
 
   const serviceTypeOptions: SelectOption[] = [
-    { value: NO_SERVICE_TYPE_VALUE, label: 'Sin tipo de cita' },
+    { value: '', label: 'Selecciona…' },
     ...expenseServiceTypes.map((serviceType) => ({
       value: serviceType.id,
       label: `${serviceType.name} (S/${serviceType.price})`,
@@ -125,17 +125,18 @@ export function ExpenseFormModal({
             placeholder="0"
           />
           <Select
-            label="Tipo de cita (opcional)"
+            label="Tipo de cita"
             value={values.serviceTypeId}
             onChange={setValue('serviceTypeId')}
             onBlur={onBlur('serviceTypeId')}
+            error={getError('serviceTypeId')}
             options={serviceTypeOptions}
           />
         </div>
 
         <p className={styles.hint}>
-          El gasto no ocupa horario: se muestra en la banda roja de arriba del calendario y no
-          interfiere con las citas.
+          El gasto no ocupa horario: se muestra en la hora &quot;Gastos&quot;, al final del
+          calendario, y no interfiere con las citas.
         </p>
 
         <div className={styles.actions}>

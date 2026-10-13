@@ -3,9 +3,6 @@ import type { ChangeEvent, FormEvent } from 'react'
 import type { ServiceType } from '../../../appointment-types/domain/entities/ServiceType'
 import type { Expense, ExpenseDraft } from '../../domain/entities/Expense'
 
-/** Opción del selector de tipo de cita cuando el gasto no viene del catálogo. */
-export const NO_SERVICE_TYPE_VALUE = 'sin-tipo'
-
 export interface ExpenseFormValues {
   title: string
   description: string
@@ -25,7 +22,7 @@ const emptyValues: ExpenseFormValues = {
   date: '',
   time: '',
   amount: '',
-  serviceTypeId: NO_SERVICE_TYPE_VALUE,
+  serviceTypeId: '',
 }
 
 function toDateValue(date: Date): string {
@@ -41,7 +38,7 @@ function fromExpense(expense: Expense): ExpenseFormValues {
     date: toDateValue(expense.date),
     time: expense.time ?? '',
     amount: expense.amount === 0 ? '' : String(expense.amount),
-    serviceTypeId: expense.serviceTypeId ?? NO_SERVICE_TYPE_VALUE,
+    serviceTypeId: expense.serviceTypeId ?? '',
   }
 }
 
@@ -54,6 +51,10 @@ function validate(values: ExpenseFormValues): Errors {
 
   if (values.date.trim() === '') {
     errors.date = 'Selecciona una fecha.'
+  }
+
+  if (values.serviceTypeId.trim() === '') {
+    errors.serviceTypeId = 'Selecciona el tipo de cita.'
   }
 
   const amount = values.amount.trim()
@@ -91,7 +92,7 @@ export function useExpenseForm(options: {
         setValues((current) => {
           // Elegir un tipo de cita de gastos arrastra su costo, que es de donde
           // sale el monto; después se puede ajustar a mano.
-          if (field === 'serviceTypeId' && nextValue !== NO_SERVICE_TYPE_VALUE) {
+          if (field === 'serviceTypeId') {
             const serviceType = expenseServiceTypes.find((item) => item.id === nextValue)
             return {
               ...current,
@@ -125,7 +126,7 @@ export function useExpenseForm(options: {
 
       setIsSaving(true)
 
-      // Sin hora el gasto es de todo el día: la banda lo muestra igual.
+      // La hora es solo informativa: el gasto siempre vive en la hora "Gastos".
       const date = new Date(`${values.date}T00:00:00`)
 
       await onSubmit({
@@ -134,8 +135,7 @@ export function useExpenseForm(options: {
         date,
         time: values.time.trim() === '' ? null : values.time,
         amount: values.amount.trim() === '' ? 0 : Number(values.amount),
-        serviceTypeId:
-          values.serviceTypeId === NO_SERVICE_TYPE_VALUE ? null : values.serviceTypeId,
+        serviceTypeId: values.serviceTypeId,
       })
 
       setIsSaving(false)

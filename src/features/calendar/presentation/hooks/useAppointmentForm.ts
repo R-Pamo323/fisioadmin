@@ -146,8 +146,9 @@ export function useAppointmentForm(options: {
 
   /**
    * Cruce de horario: las citas no pueden solaparse entre sí (los gastos van en
-   * su propia banda y no cuentan aquí). Se ignora la cita que se está editando.
-   * Las reuniones sí ocupan el horario del terapeuta, así que también cuentan.
+   * su propia hora, la hora "Gastos", y no cuentan aquí). Se ignora la cita que
+   * se está editando. Las reuniones sí ocupan el horario del terapeuta, así que
+   * también cuentan.
    */
   const conflict = useMemo(() => {
     const start = parseTimeToMinutes(values.startTime)
