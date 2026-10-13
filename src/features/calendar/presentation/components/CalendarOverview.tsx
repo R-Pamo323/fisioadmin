@@ -13,27 +13,22 @@ import {
 } from './appointmentStatusMeta'
 import {
   APPOINTMENT_CATEGORY_META,
-  UNCATEGORIZED_APPOINTMENT_META,
 } from './appointmentCategoryMeta'
 import styles from './CalendarOverview.module.css'
 
 /**
- * La leyenda describe el color de los eventos del calendario, que ahora sigue la
- * categoría del tipo de cita (beneficios, gastos, gratis) más las reuniones sin
- * categoría. El estado de pago se sigue mostrando en el card "Estado de Pagos".
+ * La leyenda describe el color de los eventos del calendario, que sigue la
+ * categoría del tipo de cita (beneficios, gastos, gratis). Las reuniones y
+ * tareas sin categoría se combinan con gratis. El estado de pago se sigue
+ * mostrando en el card "Estado de Pagos".
  */
-const LEGEND_ITEMS = [
-  ...(Object.keys(APPOINTMENT_CATEGORY_META) as ServiceCategory[]).map((category) => ({
+const LEGEND_ITEMS = (Object.keys(APPOINTMENT_CATEGORY_META) as ServiceCategory[]).map(
+  (category) => ({
     key: category,
     label: APPOINTMENT_CATEGORY_META[category].label,
     color: APPOINTMENT_CATEGORY_META[category].color,
-  })),
-  {
-    key: 'uncategorized',
-    label: UNCATEGORIZED_APPOINTMENT_META.label,
-    color: UNCATEGORIZED_APPOINTMENT_META.color,
-  },
-]
+  }),
+)
 
 interface CalendarOverviewProps {
   appointments: Appointment[]

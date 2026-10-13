@@ -30,9 +30,9 @@ export const CATEGORY_META: Record<ServiceCategory, CategoryMeta> = {
   },
   gratis: {
     label: 'Gratis',
-    tone: 'warning',
-    wash: '#FEF3C7',
-    ink: '#B45309',
+    tone: 'violet',
+    wash: '#F5F3FF',
+    ink: '#7C3AED',
     amountLabel: 'Precio',
   },
 }

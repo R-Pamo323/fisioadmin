@@ -51,3 +51,11 @@
 .fullWidth {
   width: 100%;
 }
+
+/* Íconos de lucide dentro del botón: que no se compriman y que queden
+  alineados con el texto. El glifo queda ~1px por debajo del centro del
+  texto, así que se sube levemente para centrarlo de forma óptica. */
+.button svg {
+  flex-shrink: 0;
+  transform: translateY(-1px);
+}

@@ -283,7 +283,7 @@ export function CalendarView({
 
           const appointmentProps = props as Omit<Appointment, 'id' | 'start' | 'end'>
           // El color sale de la categoría del tipo de cita; una reunión sin tipo
-          // usa la meta de "sin categoría".
+          // (sin categoría) se combina con gratis.
           const category = (props.category ?? null) as ServiceCategory | null
           const meta = appointmentCategoryMeta(category)
           const Icon = meta.Icon

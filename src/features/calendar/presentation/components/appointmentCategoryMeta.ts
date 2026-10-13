@@ -1,4 +1,4 @@
-import { Gift, Receipt, TrendingUp, Users } from 'lucide-react'
+import { Gift, Receipt, TrendingUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { colors } from '../../../../core/theme/colors'
 import type { ServiceCategory } from '../../../appointment-types/domain/entities/ServiceType'
@@ -18,23 +18,16 @@ export interface AppointmentCategoryMeta {
 export const APPOINTMENT_CATEGORY_META: Record<ServiceCategory, AppointmentCategoryMeta> = {
   beneficios: { label: 'Beneficios', color: colors.success, background: '#ECFDF5', Icon: TrendingUp },
   gastos: { label: 'Gastos', color: colors.error, background: '#FEF2F2', Icon: Receipt },
-  gratis: { label: 'Gratis', color: '#F59E0B', background: '#FFFBEB', Icon: Gift },
+  gratis: { label: 'Gratis', color: '#7C3AED', background: '#F5F3FF', Icon: Gift },
 }
 
 /**
- * Una reunión o tarea interna no tiene tipo de cita y por tanto no tiene
- * categoría. Se mantiene el morado que ya usaba el estado "Sin cobro".
+ * Las reuniones y tareas internas no tienen tipo de cita y por tanto no tienen
+ * categoría. Se combinan con "gratis", así una cita sin categoría se dibuja
+ * con la apariencia y el color de gratis.
  */
-export const UNCATEGORIZED_APPOINTMENT_META: AppointmentCategoryMeta = {
-  label: 'Reunión',
-  color: '#7C3AED',
-  background: '#F5F3FF',
-  Icon: Users,
-}
-
-/** Resuelve la meta a partir de la categoría, o la de reunión si no hay. */
 export function appointmentCategoryMeta(
   category: ServiceCategory | null,
 ): AppointmentCategoryMeta {
-  return category ? APPOINTMENT_CATEGORY_META[category] : UNCATEGORIZED_APPOINTMENT_META
+  return APPOINTMENT_CATEGORY_META[category ?? 'gratis']
 }

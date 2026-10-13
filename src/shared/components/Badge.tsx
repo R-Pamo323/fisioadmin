@@ -2,7 +2,14 @@ import type { CSSProperties, ReactNode } from 'react'
 import { colors } from '../../core/theme/colors'
 import styles from './Badge.module.css'
 
-export type BadgeTone = 'neutral' | 'primary' | 'success' | 'info' | 'warning' | 'error'
+export type BadgeTone =
+  | 'neutral'
+  | 'primary'
+  | 'success'
+  | 'info'
+  | 'warning'
+  | 'error'
+  | 'violet'
 
 interface BadgeProps {
   children: ReactNode
@@ -32,6 +39,10 @@ const TONE_STYLES: Record<BadgeTone, TokenStyle> = {
   warning: {
     color: '#B45309',
     '--badge-bg': '#FEF3C7',
+  },
+  violet: {
+    color: '#7C3AED',
+    '--badge-bg': '#F5F3FF',
   },
   error: {
     color: colors.error,
