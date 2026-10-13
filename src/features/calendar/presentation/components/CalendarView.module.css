@@ -122,7 +122,13 @@
   background: #fef2f2;
   border: 1px solid #ef4444;
   border-radius: 6px;
-  color: #991b1b;
+  color: #111827;
+}
+
+/* La banda de gastos es más alta para que el chip respire y los textos (negros
+ * y rojos) se lean bien sobre el fondo rosado. */
+.wrapper :global(.fc .fc-daygrid-day-frame) {
+  min-height: 38px;
 }
 
 .wrapper :global(.fc .fc-daygrid-event .fc-event-main) {
@@ -139,16 +145,18 @@
 .expenseChip {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   height: 100%;
-  padding: 3px 7px;
-  font-size: 12px;
-  line-height: 1.2;
+  padding: 6px 9px;
+  font-size: 13px;
+  line-height: 1.25;
+  color: #111827;
   overflow: hidden;
 }
 
 .expenseTitle {
   font-weight: 600;
+  color: #111827;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -33,8 +33,12 @@ export function appointmentStatusMeta(status: AppointmentStatus): AppointmentSta
   return APPOINTMENT_STATUS_META[status]
 }
 
-/** Opciones del selector de estado, solo usado al editar una cita. */
-export const APPOINTMENT_STATUS_OPTIONS: SelectOption[] = APPOINTMENT_STATUS_ORDER.map(
+/**
+ * Opciones del selector de estado. Solo se ofrecen los estados de una cita de
+ * pago (pagada o pendiente): el "sin cobro" lo llevan por definición las citas
+ * gratis y las reuniones, donde el selector ni se muestra.
+ */
+export const PAYMENT_STATUS_OPTIONS: SelectOption[] = (['paid', 'pending'] as const).map(
   (status) => ({
     value: status,
     label: APPOINTMENT_STATUS_META[status].label,

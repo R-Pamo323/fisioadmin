@@ -124,10 +124,12 @@ export function useAppointmentForm(options: {
   appointment: Appointment | null
   patients: Patient[]
   serviceTypes: ServiceType[]
+  /** Todas las citas; sirven para impedir horarios que se crucen. */
+  appointments: Appointment[]
   onSubmit: (draft: AppointmentDraft) => Promise<void>
   onDone: () => void
 }) {
-  const { appointment, patients, serviceTypes, onSubmit, onDone } = options
+  const { appointment, patients, serviceTypes, appointments, onSubmit, onDone } = options
 
   const [values, setValues] = useState<AppointmentFormValues>(() =>
     appointment ? fromAppointment(appointment, serviceTypes) : emptyValues,
@@ -136,9 +138,48 @@ export function useAppointmentForm(options: {
   const [submitAttempted, setSubmitAttempted] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
-  const errors = useMemo(() => validate(values), [values])
-  const isValid = Object.keys(errors).length === 0
   const isMeeting = values.patientId === NO_PATIENT_VALUE
+  const selectedServiceType =
+    serviceTypes.find((serviceType) => serviceType.id === values.serviceTypeId) ?? null
+  /** Una cita gratis no genera cobro: siempre queda como "sin cobro". */
+  const isFree = selectedServiceType?.category === 'gratis'
+
+  /**
+   * Cruce de horario: las citas no pueden solaparse entre sí (los gastos van en
+   * su propia banda y no cuentan aquí). Se ignora la cita que se está editando.
+   * Las reuniones sí ocupan el horario del terapeuta, así que también cuentan.
+   */
+  const conflict = useMemo(() => {
+    const start = parseTimeToMinutes(values.startTime)
+    const end = parseTimeToMinutes(values.endTime)
+    if (values.date === '' || start === null || end === null || end <= start) return null
+
+    const editingId = appointment?.id ?? null
+
+    return (
+      appointments.find((other) => {
+        if (other.id === editingId) return false
+        if (toDateValue(other.start) !== values.date) return false
+
+        const otherStart =
+          other.start.getHours() * 60 + other.start.getMinutes() + other.start.getSeconds() / 60
+        const otherEnd =
+          other.end.getHours() * 60 + other.end.getMinutes() + other.end.getSeconds() / 60
+
+        return start < otherEnd && end > otherStart
+      }) ?? null
+    )
+  }, [appointment?.id, appointments, values.date, values.endTime, values.startTime])
+
+  const errors = useMemo(() => {
+    const base = validate(values)
+    if (conflict && !base.endTime) {
+      base.endTime = 'La hora coincide con una cita ya programada.'
+    }
+    return base
+  }, [conflict, values])
+
+  const isValid = Object.keys(errors).length === 0
 
   const change = useCallback(
     (field: Field) =>
@@ -177,6 +218,15 @@ export function useAppointmentForm(options: {
             }
           }
 
+          if (field === 'status') {
+            // El estado solo lo controla una cita de pago: en gratis o reunión se
+            // queda en "sin cobro" aunque llegue un cambio.
+            const serviceType = serviceTypes.find((item) => item.id === current.serviceTypeId)
+            const currentIsFree = serviceType?.category === 'gratis'
+            const currentIsMeeting = current.patientId === NO_PATIENT_VALUE
+            if (currentIsFree || currentIsMeeting) return current
+          }
+
           return { ...current, [field]: nextValue }
         })
       },
@@ -206,7 +256,7 @@ export function useAppointmentForm(options: {
     async (event: FormEvent) => {
       event.preventDefault()
       setSubmitAttempted(true)
-      if (Object.keys(validate(values)).length > 0) return
+      if (Object.keys(errors).length > 0) return
 
       setIsSaving(true)
 
@@ -240,7 +290,7 @@ export function useAppointmentForm(options: {
       setIsSaving(false)
       onDone()
     },
-    [isMeeting, onDone, onSubmit, patients, serviceTypes, values],
+    [errors, isMeeting, onDone, onSubmit, patients, serviceTypes, values],
   )
 
   return {
@@ -249,6 +299,8 @@ export function useAppointmentForm(options: {
     isSaving,
     mode: appointment ? ('edit' as const) : ('create' as const),
     isMeeting,
+    isFree,
+    serviceCategory: selectedServiceType?.category ?? null,
     errors,
     setValue: change,
     onBlur: blur,

@@ -221,6 +221,7 @@ export function Calendar() {
         appointment={editing}
         patients={patients}
         serviceTypes={serviceTypes}
+        appointments={appointments}
         isLoading={isCatalogLoading}
         onSubmit={handleSubmit}
         onClose={closeForm}

@@ -5,30 +5,44 @@ import { typography } from '../../../../core/theme/typography'
 import { ROUTE_PATHS } from '../../../../core/routes/paths'
 import type { WeekPaymentCounts } from '../../domain/appointmentSelectors'
 import type { Appointment } from '../../domain/entities/Appointment'
-import type { ServiceCategory } from '../../../appointment-types/domain/entities/ServiceType'
 import {
   APPOINTMENT_STATUS_META,
   APPOINTMENT_STATUS_ORDER,
   appointmentStatusMeta,
 } from './appointmentStatusMeta'
-import {
-  APPOINTMENT_CATEGORY_META,
-} from './appointmentCategoryMeta'
+import { APPOINTMENT_CATEGORY_META } from './appointmentCategoryMeta'
 import styles from './CalendarOverview.module.css'
 
+interface LegendItem {
+  key: string
+  label: string
+  colors: string[]
+}
+
 /**
- * La leyenda describe el color de los eventos del calendario, que sigue la
- * categoría del tipo de cita (beneficios, gastos, gratis). Las reuniones y
- * tareas sin categoría se combinan con gratis. El estado de pago se sigue
- * mostrando en el card "Estado de Pagos".
+ * La leyenda describe el color de los eventos del calendario. Beneficios se
+ * divide por estado de pago (verde pagado, azul pendiente) pero sigue siendo una
+ * sola categoría; Gastos y Gratis tienen su color propio. Las reuniones y tareas
+ * sin categoría se combinan con gratis. El estado de pago se sigue mostrando en
+ * el card "Estado de Pagos".
  */
-const LEGEND_ITEMS = (Object.keys(APPOINTMENT_CATEGORY_META) as ServiceCategory[]).map(
-  (category) => ({
-    key: category,
-    label: APPOINTMENT_CATEGORY_META[category].label,
-    color: APPOINTMENT_CATEGORY_META[category].color,
-  }),
-)
+const LEGEND_ITEMS: LegendItem[] = [
+  {
+    key: 'beneficios',
+    label: APPOINTMENT_CATEGORY_META.beneficios.label,
+    colors: [colors.success, colors.pendingText],
+  },
+  {
+    key: 'gastos',
+    label: APPOINTMENT_CATEGORY_META.gastos.label,
+    colors: [APPOINTMENT_CATEGORY_META.gastos.color],
+  },
+  {
+    key: 'gratis',
+    label: APPOINTMENT_CATEGORY_META.gratis.label,
+    colors: [APPOINTMENT_CATEGORY_META.gratis.color],
+  },
+]
 
 interface CalendarOverviewProps {
   appointments: Appointment[]
@@ -127,7 +141,11 @@ export function CalendarOverview({ appointments, next, payments }: CalendarOverv
         <div className={styles.legend}>
           {LEGEND_ITEMS.map((item) => (
             <div key={item.key} className={styles.legendItem}>
-              <span className={styles.legendDot} style={{ background: item.color }} />
+              <span className={styles.legendDots}>
+                {item.colors.map((color) => (
+                  <span key={color} className={styles.legendDot} style={{ background: color }} />
+                ))}
+              </span>
               <span style={typography.small}>{item.label}</span>
             </div>
           ))}

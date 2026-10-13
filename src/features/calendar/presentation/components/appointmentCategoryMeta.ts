@@ -2,6 +2,7 @@ import { Gift, Receipt, TrendingUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { colors } from '../../../../core/theme/colors'
 import type { ServiceCategory } from '../../../appointment-types/domain/entities/ServiceType'
+import type { AppointmentStatus } from '../../domain/entities/Appointment'
 
 export interface AppointmentCategoryMeta {
   label: string
@@ -30,4 +31,28 @@ export function appointmentCategoryMeta(
   category: ServiceCategory | null,
 ): AppointmentCategoryMeta {
   return APPOINTMENT_CATEGORY_META[category ?? 'gratis']
+}
+
+export interface AppointmentEventStyle {
+  color: string
+  background: string
+}
+
+/**
+ * Color del evento en el calendario. Una cita de Beneficios es un ingreso, así
+ * que se pinta según su estado de pago: verde si ya está pagada y azul oscuro
+ * si sigue pendiente. Ambos colores siguen dentro de la categoría "Beneficios"
+ * (mismo ícono y etiqueta). Gastos y Gratis conservan el color de su categoría.
+ */
+export function appointmentEventStyle(
+  category: ServiceCategory | null,
+  status: AppointmentStatus,
+): AppointmentEventStyle {
+  if (category === 'beneficios') {
+    if (status === 'paid') return { color: colors.success, background: '#ECFDF5' }
+    if (status === 'pending') return { color: colors.pendingText, background: '#EFF6FF' }
+  }
+
+  const meta = APPOINTMENT_CATEGORY_META[category ?? 'gratis']
+  return { color: meta.color, background: meta.background }
 }

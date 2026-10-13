@@ -20,7 +20,7 @@ import { AppointmentTooltip } from './AppointmentTooltip'
 import type { TooltipState } from './AppointmentTooltip'
 import { ExpenseTooltip } from './ExpenseTooltip'
 import type { ExpenseTooltipState } from './ExpenseTooltip'
-import { appointmentCategoryMeta } from './appointmentCategoryMeta'
+import { appointmentCategoryMeta, appointmentEventStyle } from './appointmentCategoryMeta'
 import { EXPENSE_META, formatExpenseAmount } from './expenseMeta'
 import styles from './CalendarView.module.css'
 
@@ -230,6 +230,10 @@ export function CalendarView({
         firstDay={1}
         allDaySlot
         allDayText="Gastos"
+        // Las citas no deben cruzarse entre sí; los gastos van en otra banda.
+        // La validación del formulario ya lo impide, esto lo refuerza al pintar.
+        eventOverlap={false}
+        slotEventOverlap={false}
         // FullCalendar acota la banda por su cuenta con un "+N más", así la fila
         // de gastos nunca se come la grilla de horas.
         dayMaxEvents={4}
@@ -282,21 +286,23 @@ export function CalendarView({
           }
 
           const appointmentProps = props as Omit<Appointment, 'id' | 'start' | 'end'>
-          // El color sale de la categoría del tipo de cita; una reunión sin tipo
-          // (sin categoría) se combina con gratis.
+          // El color de un Beneficios refleja su estado de pago (verde pagado,
+          // azul pendiente); Gastos y Gratis conservan el de su categoría. Una
+          // reunión sin tipo se combina con gratis.
           const category = (props.category ?? null) as ServiceCategory | null
           const meta = appointmentCategoryMeta(category)
+          const eventStyle = appointmentEventStyle(category, appointmentProps.status)
           const Icon = meta.Icon
           return (
             <div
               className={styles.eventCard}
               style={{
-                borderColor: meta.color,
-                background: meta.background,
+                borderColor: eventStyle.color,
+                background: eventStyle.background,
               }}
             >
               <div className={styles.eventTitle}>
-                <Icon size={12} color={meta.color} />
+                <Icon size={12} color={eventStyle.color} />
                 <span>{appointmentProps.patientName}</span>
               </div>
               {arg.timeText ? (

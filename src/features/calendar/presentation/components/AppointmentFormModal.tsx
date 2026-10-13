@@ -9,7 +9,7 @@ import type { Patient } from '../../../patients/domain/entities/Patient'
 import type { ServiceType } from '../../../appointment-types/domain/entities/ServiceType'
 import type { Appointment, AppointmentDraft } from '../../domain/entities/Appointment'
 import { NO_PATIENT_VALUE, useAppointmentForm } from '../hooks/useAppointmentForm'
-import { APPOINTMENT_STATUS_OPTIONS } from './appointmentStatusMeta'
+import { PAYMENT_STATUS_OPTIONS } from './appointmentStatusMeta'
 import styles from './AppointmentFormModal.module.css'
 
 const PLACEHOLDER_OPTION: SelectOption = { value: '', label: 'Selecciona…' }
@@ -20,6 +20,8 @@ interface AppointmentFormModalProps {
   appointment: Appointment | null
   patients: Patient[]
   serviceTypes: ServiceType[]
+  /** Todas las citas; sirven para impedir horarios que se crucen. */
+  appointments: Appointment[]
   isLoading: boolean
   onSubmit: (draft: AppointmentDraft) => Promise<void>
   onClose: () => void
@@ -30,6 +32,7 @@ export function AppointmentFormModal({
   appointment,
   patients,
   serviceTypes,
+  appointments,
   isLoading,
   onSubmit,
   onClose,
@@ -37,8 +40,25 @@ export function AppointmentFormModal({
   const isEdit = appointment !== null
   const navigate = useNavigate()
 
-  const { values, isValid, isSaving, mode, isMeeting, setValue, onBlur, getError, handleSubmit } =
-    useAppointmentForm({ appointment, patients, serviceTypes, onSubmit, onDone: onClose })
+  const {
+    values,
+    isValid,
+    isSaving,
+    isMeeting,
+    isFree,
+    serviceCategory,
+    setValue,
+    onBlur,
+    getError,
+    handleSubmit,
+  } = useAppointmentForm({
+    appointment,
+    patients,
+    serviceTypes,
+    appointments,
+    onSubmit,
+    onDone: onClose,
+  })
 
   const patientOptions: SelectOption[] = [
     PLACEHOLDER_OPTION,
@@ -186,13 +206,15 @@ export function AppointmentFormModal({
           />
         </div>
 
-        {mode === 'edit' ? (
+        {isFree ? (
+          <p className={styles.hint}>Cita sin costo: no aplica estado de pago.</p>
+        ) : serviceCategory === 'beneficios' ? (
           <Select
             label="Estado de pago"
             value={values.status}
             onChange={setValue('status')}
             onBlur={onBlur('status')}
-            options={APPOINTMENT_STATUS_OPTIONS}
+            options={PAYMENT_STATUS_OPTIONS}
             disabled={isLoading}
           />
         ) : null}

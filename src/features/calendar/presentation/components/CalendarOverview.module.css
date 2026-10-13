@@ -183,6 +183,12 @@
   gap: 10px;
 }
 
+.legendDots {
+  display: inline-flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
 .legendDot {
   width: 14px;
   height: 14px;
