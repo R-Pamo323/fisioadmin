@@ -136,8 +136,6 @@ export function usePatientForm(options: {
       email: values.email,
       phone: values.phone,
       diagnosis: values.diagnosis,
-      // La última visita solo cambia al guardar un paciente nuevo.
-      lastVisitAt: patient ? patient.lastVisitAt : new Date().toISOString(),
     })
 
     setIsSaving(false)

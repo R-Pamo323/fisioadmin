@@ -1,12 +1,5 @@
 import type { Patient, PatientDraft } from '../../domain/entities/Patient'
 
-/** Fecha ISO de hace `days` días, para que el texto relativo siempre sea exacto. */
-function daysAgo(days: number): string {
-  const date = new Date()
-  date.setDate(date.getDate() - days)
-  return date.toISOString()
-}
-
 const SEED_PATIENTS: Patient[] = [
   {
     id: 'pt-1',
@@ -16,7 +9,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'carlos.ruiz@correo.com',
     phone: '987 654 321',
     diagnosis: 'Lumbalgia crónica con discopatía L4-L5',
-    lastVisitAt: daysAgo(3),
   },
   {
     id: 'pt-2',
@@ -26,7 +18,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'elena.gomez@correo.com',
     phone: '987 654 322',
     diagnosis: 'Rehabilitación post-operatoria de LCA',
-    lastVisitAt: daysAgo(1),
   },
   {
     id: 'pt-3',
@@ -36,7 +27,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'marc.esposito@correo.com',
     phone: '987 654 323',
     diagnosis: 'Cervicalgia por sedentarismo y postura laboral',
-    lastVisitAt: daysAgo(7),
   },
   {
     id: 'pt-4',
@@ -46,7 +36,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'sofia.martinez@correo.com',
     phone: '987 654 324',
     diagnosis: 'Artrosis de rodilla y contracturas de flexores',
-    lastVisitAt: daysAgo(45),
   },
   {
     id: 'pt-5',
@@ -56,7 +45,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'roberto.diaz@correo.com',
     phone: '987 654 325',
     diagnosis: 'Epicondilitis bilateral por uso de martillo',
-    lastVisitAt: daysAgo(12),
   },
   {
     id: 'pt-6',
@@ -66,7 +54,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'valentina.herrera@correo.com',
     phone: '987 654 326',
     diagnosis: 'Escoliosis idiopática juvenil',
-    lastVisitAt: daysAgo(5),
   },
   {
     id: 'pt-7',
@@ -76,7 +63,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'andres.quispe@correo.com',
     phone: '987 654 327',
     diagnosis: 'Hemiparesia espástica leve, neurodesarrollo',
-    lastVisitAt: daysAgo(2),
   },
   {
     id: 'pt-8',
@@ -86,7 +72,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'lucia.fernandez@correo.com',
     phone: '987 654 328',
     diagnosis: 'Dolor crónico de miembro inferior',
-    lastVisitAt: daysAgo(18),
   },
   {
     id: 'pt-9',
@@ -96,7 +81,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'diego.cueva@correo.com',
     phone: '987 654 329',
     diagnosis: 'Fibromialgia con fatiga persistente',
-    lastVisitAt: daysAgo(25),
   },
 ]
 

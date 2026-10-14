@@ -1,4 +1,7 @@
-import type { Appointment } from '../../../calendar/domain/entities/Appointment'
+import type {
+  Appointment,
+  AppointmentStatus,
+} from '../../../calendar/domain/entities/Appointment'
 import type { Patient } from '../../domain/entities/Patient'
 
 /**
@@ -7,13 +10,29 @@ import type { Patient } from '../../domain/entities/Patient'
  */
 export type PatientStatus = 'pendiente' | 'pagado' | 'sin_tratamiento'
 
-/** Paciente con su tratamiento y estado, calculados desde sus citas. */
+/** Una sesión ya realizada, tal como se lista en el historial del paciente. */
+export interface PatientSession {
+  id: string
+  /** Inicio de la cita en ISO; se usa para ordenar y para el texto relativo. */
+  date: string
+  /** Tipo de cita: el "servicio" que se muestra en el historial. */
+  service: string
+  notes: string
+  status: AppointmentStatus
+  amount: number
+}
+
+/** Paciente con su tratamiento, estado e historial, calculados desde sus citas. */
 export interface PatientView extends Patient {
   /** Tipo de la cita más reciente; cadena vacía si el paciente no tiene citas. */
   treatment: string
   status: PatientStatus
   /** Cita más reciente; sirve para marcar el tratamiento como pagado. */
   latestAppointment: Appointment | null
+  /** Sesiones ya realizadas, de la más reciente a la más antigua. */
+  sessions: PatientSession[]
+  /** Última cita pagada ya realizada, en ISO; null si no hay ninguna. */
+  lastVisitAt: string | null
 }
 
 /**
@@ -48,16 +67,49 @@ export function resolvePatientStatus(latest: Appointment | null): PatientStatus 
   return 'sin_tratamiento'
 }
 
+/**
+ * Sesiones del paciente que ya se realizaron (`start <= now`), gratis y de
+ * beneficios, de la más reciente a la más antigua. Se excluyen las reuniones por
+ * no tener paciente.
+ */
+export function selectPatientSessions(
+  appointments: ReadonlyArray<Appointment>,
+  patientId: string,
+  now: Date = new Date(),
+): PatientSession[] {
+  return appointments
+    .filter(
+      (appointment) =>
+        appointment.patientId === patientId &&
+        appointment.start.getTime() <= now.getTime(),
+    )
+    // `filter` devuelve un array nuevo, así que ordenar in-place no muta la entrada.
+    .sort((a, b) => b.start.getTime() - a.start.getTime())
+    .map((appointment) => ({
+      id: appointment.id,
+      date: appointment.start.toISOString(),
+      service: appointment.appointmentType,
+      notes: appointment.description,
+      status: appointment.status,
+      amount: appointment.amount,
+    }))
+}
+
 export function toPatientView(
   patient: Patient,
   appointments: ReadonlyArray<Appointment>,
 ): PatientView {
   const latestAppointment = selectLatestPatientAppointment(appointments, patient.id)
+  const sessions = selectPatientSessions(appointments, patient.id)
 
   return {
     ...patient,
     treatment: latestAppointment?.appointmentType ?? '',
     status: resolvePatientStatus(latestAppointment),
     latestAppointment,
+    sessions,
+    // La última visita es la sesión pagada más reciente; `sessions` ya viene
+    // ordenado de la más nueva a la más antigua.
+    lastVisitAt: sessions.find((session) => session.status === 'paid')?.date ?? null,
   }
 }

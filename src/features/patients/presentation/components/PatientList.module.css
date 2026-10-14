@@ -147,6 +147,12 @@
   text-overflow: ellipsis;
 }
 
+.visitEmpty {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
 .visit {
   display: flex;
   flex-direction: column;
@@ -244,6 +250,11 @@
   .treatmentEmpty {
     text-align: right;
     white-space: normal;
+  }
+
+  .visitEmpty {
+    display: block;
+    text-align: right;
   }
 
   .actions {

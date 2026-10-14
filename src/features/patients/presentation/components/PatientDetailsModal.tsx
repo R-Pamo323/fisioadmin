@@ -2,8 +2,9 @@ import { CalendarDays, CheckCircle2, Mail, Phone, Stethoscope, X } from 'lucide-
 import { Avatar, Badge, Button, Modal } from '../../../../shared/components'
 import { colors } from '../../../../core/theme/colors'
 import { typography } from '../../../../core/theme/typography'
+import { formatAppointmentAmount } from '../../../calendar/presentation/components/appointmentMeta'
+import { APPOINTMENT_STATUS_META } from '../../../calendar/presentation/components/appointmentStatusMeta'
 import type { PatientView } from './patientTreatment'
-import { getVisitHistory } from './patientHistory'
 import { GENDER_OPTIONS, STATUS_META, formatRelativeVisit, formatVisitDate } from './patientMeta'
 import styles from './PatientDetailsModal.module.css'
 
@@ -22,7 +23,7 @@ export function PatientDetailsModal({
   if (!patient) return null
 
   const status = STATUS_META[patient.status]
-  const history = getVisitHistory(patient.id)
+  const sessions = patient.sessions
   const genderLabel =
     GENDER_OPTIONS.find((option) => option.value === patient.gender)?.label ??
     patient.gender
@@ -74,7 +75,9 @@ export function PatientDetailsModal({
           <span className={styles.fact}>
             <CalendarDays size={15} className={styles.factIcon} />
             <span className={styles.factValue}>
-              Última visita {formatVisitDate(patient.lastVisitAt)}
+              {patient.lastVisitAt
+                ? `Última visita ${formatVisitDate(patient.lastVisitAt)}`
+                : 'Sin visitas'}
             </span>
           </span>
         </div>
@@ -100,35 +103,54 @@ export function PatientDetailsModal({
 
         <section className={`${styles.section} ${styles.sectionScroll}`}>
           <h4 className={styles.sectionTitle}>
-            Historial de visitas
-            {history.length > 0 ? (
-              <span className={styles.visitCount}>{history.length}</span>
+            Historial de sesiones
+            {sessions.length > 0 ? (
+              <span className={styles.visitCount}>{sessions.length}</span>
             ) : null}
           </h4>
 
-          {history.length === 0 ? (
+          {sessions.length === 0 ? (
             <p className={styles.emptyHistory}>
-              Este paciente todavía no tiene visitas registradas.
+              Este paciente todavía no tiene sesiones realizadas.
             </p>
           ) : (
             <ol className={styles.visits}>
-              {history.map((visit) => (
-                <li key={visit.id} className={styles.visit}>
-                  <span className={styles.visitMarker} />
-                  <div className={styles.visitBody}>
-                    <strong className={styles.visitService}>{visit.service}</strong>
-                    <span className={styles.visitMeta}>
-                      <span className={styles.visitDate}>
-                        {formatVisitDate(visit.date)}
+              {sessions.map((session) => {
+                const payment = APPOINTMENT_STATUS_META[session.status]
+                const PaymentIcon = payment.Icon
+
+                return (
+                  <li key={session.id} className={styles.visit}>
+                    <span className={styles.visitMarker} />
+                    <div className={styles.visitBody}>
+                      <div className={styles.visitHead}>
+                        <strong className={styles.visitService}>{session.service}</strong>
+                        <span
+                          className={styles.visitPayment}
+                          style={{ color: payment.color, background: payment.background }}
+                        >
+                          <PaymentIcon size={13} />
+                          {payment.label}
+                          {session.status !== 'no_payment'
+                            ? ` · ${formatAppointmentAmount(session.amount)}`
+                            : ''}
+                        </span>
+                      </div>
+                      <span className={styles.visitMeta}>
+                        <span className={styles.visitDate}>
+                          {formatVisitDate(session.date)}
+                        </span>
+                        <span className={styles.visitRelative}>
+                          - {formatRelativeVisit(session.date)}
+                        </span>
                       </span>
-                      <span className={styles.visitRelative}>
-                        - {formatRelativeVisit(visit.date)}
-                      </span>
-                    </span>
-                    <p className={styles.visitNotes}>{visit.notes}</p>
-                  </div>
-                </li>
-              ))}
+                      {session.notes ? (
+                        <p className={styles.visitNotes}>{session.notes}</p>
+                      ) : null}
+                    </div>
+                  </li>
+                )
+              })}
             </ol>
           )}
         </section>

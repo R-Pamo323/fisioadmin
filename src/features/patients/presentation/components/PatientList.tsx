@@ -84,14 +84,18 @@ export function PatientList({
             </div>
 
             <div className={styles.cell} data-label="Última visita">
-              <span className={styles.visit}>
-                <strong className={styles.visitDate}>
-                  {formatVisitDate(patient.lastVisitAt)}
-                </strong>
-                <span className={styles.visitRelative}>
-                  {formatRelativeVisit(patient.lastVisitAt)}
+              {patient.lastVisitAt ? (
+                <span className={styles.visit}>
+                  <strong className={styles.visitDate}>
+                    {formatVisitDate(patient.lastVisitAt)}
+                  </strong>
+                  <span className={styles.visitRelative}>
+                    {formatRelativeVisit(patient.lastVisitAt)}
+                  </span>
                 </span>
-              </span>
+              ) : (
+                <span className={styles.visitEmpty}>—</span>
+              )}
             </div>
 
             <div className={styles.cell} data-label="Estado">

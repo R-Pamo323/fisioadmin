@@ -137,7 +137,7 @@ export function usePatients() {
     // Del más reciente al más antiguo, con desempate alfabético por nombre.
     return filtered.sort(
       (a, b) =>
-        toTimestamp(b.lastVisitAt) - toTimestamp(a.lastVisitAt) ||
+        toTimestamp(b.lastVisitAt ?? '') - toTimestamp(a.lastVisitAt ?? '') ||
         a.name.localeCompare(b.name, 'es'),
     )
   }, [views, search, statusFilter])

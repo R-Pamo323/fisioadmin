@@ -10,8 +10,6 @@ export interface Patient {
   phone: string
   /** Diagnóstico o descripción clínica breve. */
   diagnosis: string
-  /** Última visita en formato ISO; se usa para el texto relativo. */
-  lastVisitAt: string
 }
 
 export type PatientDraft = Omit<Patient, 'id'>
