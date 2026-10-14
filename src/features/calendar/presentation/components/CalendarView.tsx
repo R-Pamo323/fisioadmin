@@ -357,6 +357,13 @@ export function CalendarView({
           const meta = appointmentCategoryMeta(category)
           const eventStyle = appointmentEventStyle(category, appointmentProps.status)
           const Icon = meta.Icon
+          // La tercera línea junta el tipo y el precio separados por un guion.
+          const typeAndPrice = [
+            appointmentProps.appointmentType,
+            appointmentProps.amount > 0 ? formatAppointmentAmount(appointmentProps.amount) : '',
+          ]
+            .filter((part) => part !== '')
+            .join(' - ')
           return (
             <div
               className={styles.eventCard}
@@ -365,21 +372,13 @@ export function CalendarView({
                 background: eventStyle.background,
               }}
             >
+              {/* Tres líneas: paciente, horario y tipo con precio. */}
               <div className={styles.eventTitle}>
                 <Icon size={12} color={eventStyle.color} />
                 <span>{appointmentProps.patientName}</span>
               </div>
-              {arg.timeText ? (
-                <span className={styles.eventMeta}>
-                  {arg.timeText}
-                  {appointmentProps.appointmentType
-                    ? ` · ${appointmentProps.appointmentType}`
-                    : ''}
-                  {appointmentProps.amount > 0
-                    ? ` · ${formatAppointmentAmount(appointmentProps.amount)}`
-                    : ''}
-                </span>
-              ) : null}
+              {arg.timeText ? <span className={styles.eventMeta}>{arg.timeText}</span> : null}
+              {typeAndPrice ? <span className={styles.eventMeta}>{typeAndPrice}</span> : null}
             </div>
           )
         }}
