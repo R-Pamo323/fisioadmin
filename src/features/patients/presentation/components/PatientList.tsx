@@ -1,7 +1,7 @@
 import { History, Mail, Pencil, Phone, Trash2 } from 'lucide-react'
 import { Avatar, Badge, DropdownMenu } from '../../../../shared/components'
 import { colors } from '../../../../core/theme/colors'
-import type { Patient } from '../../domain/entities/Patient'
+import type { PatientView } from './patientTreatment'
 import {
   STATUS_META,
   formatRelativeVisit,
@@ -10,10 +10,10 @@ import {
 import styles from './PatientList.module.css'
 
 interface PatientListProps {
-  patients: Patient[]
-  onEdit: (patient: Patient) => void
-  onDelete: (patient: Patient) => void
-  onShowHistory: (patient: Patient) => void
+  patients: PatientView[]
+  onEdit: (patient: PatientView) => void
+  onDelete: (patient: PatientView) => void
+  onShowHistory: (patient: PatientView) => void
 }
 
 export function PatientList({
@@ -69,14 +69,18 @@ export function PatientList({
             </div>
 
             <div className={styles.cell} data-label="Tratamiento actual">
-              <button
-                type="button"
-                className={styles.treatment}
-                style={{ color: colors.primary }}
-                onClick={() => onShowHistory(patient)}
-              >
-                {patient.treatment}
-              </button>
+              {patient.treatment ? (
+                <button
+                  type="button"
+                  className={styles.treatment}
+                  style={{ color: colors.primary }}
+                  onClick={() => onShowHistory(patient)}
+                >
+                  {patient.treatment}
+                </button>
+              ) : (
+                <span className={styles.treatmentEmpty}>Sin tratamiento</span>
+              )}
             </div>
 
             <div className={styles.cell} data-label="Última visita">

@@ -15,7 +15,6 @@ export class CreatePatient {
       email: draft.email.trim().toLowerCase(),
       phone: draft.phone.trim(),
       diagnosis: draft.diagnosis.trim(),
-      treatment: draft.treatment.trim(),
     })
   }
 }

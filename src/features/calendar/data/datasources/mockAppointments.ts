@@ -149,8 +149,8 @@ const SEED_APPOINTMENTS: Appointment[] = [
     appointmentType: 'Charla de ergonomía',
     description: 'Sesión informativa sin coste sobre higiene postural',
     amount: 0,
-    start: atTime(dayOffset(3), 17),
-    end: atTime(dayOffset(3), 17, 30),
+    start: atTime(dayOffset(0), 17, 30),
+    end: atTime(dayOffset(0), 18),
     status: 'no_payment',
   },
 ]

@@ -136,6 +136,17 @@
   text-decoration: underline;
 }
 
+.treatmentEmpty {
+  display: block;
+  width: 100%;
+  font-size: 13px;
+  font-weight: 500;
+  color: #9ca3af;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .visit {
   display: flex;
   flex-direction: column;
@@ -226,6 +237,11 @@
   }
 
   .treatment {
+    text-align: right;
+    white-space: normal;
+  }
+
+  .treatmentEmpty {
     text-align: right;
     white-space: normal;
   }

@@ -1,5 +1,3 @@
-export type PatientStatus = 'activo' | 'pendiente' | 'finalizado'
-
 export type PatientGender = 'femenino' | 'masculino'
 
 export interface Patient {
@@ -12,9 +10,6 @@ export interface Patient {
   phone: string
   /** Diagnóstico o descripción clínica breve. */
   diagnosis: string
-  /** Tratamiento que el paciente tiene en curso. */
-  treatment: string
-  status: PatientStatus
   /** Última visita en formato ISO; se usa para el texto relativo. */
   lastVisitAt: string
 }

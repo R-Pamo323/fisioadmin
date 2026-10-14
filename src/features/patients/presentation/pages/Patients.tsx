@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { Plus, SearchX, Users } from 'lucide-react'
 import { Button, Card, SectionHeader } from '../../../../shared/components'
 import { colors } from '../../../../core/theme/colors'
-import type { Patient, PatientDraft } from '../../domain/entities/Patient'
+import type { PatientDraft } from '../../domain/entities/Patient'
+import type { PatientView } from '../components/patientTreatment'
 import { DataProtectionNotice } from '../components/DataProtectionNotice'
 import { DemographicSummary } from '../components/DemographicSummary'
 import { PatientDetailsModal } from '../components/PatientDetailsModal'
@@ -25,13 +26,18 @@ export function Patients() {
     create,
     update,
     remove,
+    markAsPaid,
   } = usePatients()
 
   const [formOpen, setFormOpen] = useState(false)
-  const [editing, setEditing] = useState<Patient | null>(null)
-  const [details, setDetails] = useState<Patient | null>(null)
+  const [editing, setEditing] = useState<PatientView | null>(null)
+  /** Id del paciente en detalle; la vista se recalcula con los datos vivos. */
+  const [detailsId, setDetailsId] = useState<string | null>(null)
   /** Cambia en cada apertura para reiniciar el estado del formulario. */
   const [formSession, setFormSession] = useState(0)
+
+  const details =
+    patients.find((patient) => patient.id === detailsId) ?? null
 
   const openCreate = () => {
     setEditing(null)
@@ -39,7 +45,7 @@ export function Patients() {
     setFormOpen(true)
   }
 
-  const openEdit = (patient: Patient) => {
+  const openEdit = (patient: PatientView) => {
     setEditing(patient)
     setFormSession((session) => session + 1)
     setFormOpen(true)
@@ -59,8 +65,12 @@ export function Patients() {
     await create(draft)
   }
 
-  const handleDelete = (patient: Patient) => {
+  const handleDelete = (patient: PatientView) => {
     void remove(patient.id)
+  }
+
+  const handleMarkAsPaid = (patient: PatientView) => {
+    void markAsPaid(patient.id)
   }
 
   const hasFilters = search.trim() !== '' || statusFilter !== 'todos'
@@ -111,7 +121,7 @@ export function Patients() {
               patients={visiblePatients}
               onEdit={openEdit}
               onDelete={handleDelete}
-              onShowHistory={setDetails}
+              onShowHistory={(patient) => setDetailsId(patient.id)}
             />
           </div>
         )}
@@ -133,7 +143,11 @@ export function Patients() {
         onClose={closeForm}
       />
 
-      <PatientDetailsModal patient={details} onClose={() => setDetails(null)} />
+      <PatientDetailsModal
+        patient={details}
+        onClose={() => setDetailsId(null)}
+        onMarkAsPaid={handleMarkAsPaid}
+      />
     </div>
   )
 }

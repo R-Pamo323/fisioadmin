@@ -19,9 +19,6 @@ export class UpdatePatient {
       ...(patch.diagnosis !== undefined
         ? { diagnosis: patch.diagnosis.trim() }
         : {}),
-      ...(patch.treatment !== undefined
-        ? { treatment: patch.treatment.trim() }
-        : {}),
     }
 
     return this.repository.update(id, normalized)

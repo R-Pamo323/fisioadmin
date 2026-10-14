@@ -1,10 +1,7 @@
 import { colors } from '../../../../core/theme/colors'
 import type { BadgeTone, SelectOption } from '../../../../shared/components'
-import type {
-  Patient,
-  PatientGender,
-  PatientStatus,
-} from '../../domain/entities/Patient'
+import type { Patient, PatientGender } from '../../domain/entities/Patient'
+import type { PatientStatus } from './patientTreatment'
 
 export interface StatusMeta {
   label: string
@@ -12,17 +9,10 @@ export interface StatusMeta {
 }
 
 export const STATUS_META: Record<PatientStatus, StatusMeta> = {
-  activo: { label: 'Activo', tone: 'success' },
   pendiente: { label: 'Pendiente', tone: 'info' },
-  finalizado: { label: 'Finalizado', tone: 'neutral' },
+  pagado: { label: 'Pagado', tone: 'success' },
+  sin_tratamiento: { label: 'Sin tratamiento', tone: 'neutral' },
 }
-
-export const STATUS_OPTIONS: SelectOption[] = (
-  Object.keys(STATUS_META) as PatientStatus[]
-).map((status) => ({ value: status, label: STATUS_META[status].label }))
-
-/** Estado por defecto de un paciente nuevo. */
-export const DEFAULT_STATUS: PatientStatus = 'activo'
 
 export const GENDER_OPTIONS: SelectOption[] = [
   { value: 'masculino', label: 'Masculino' },

@@ -4,9 +4,8 @@ import type {
   Patient,
   PatientDraft,
   PatientGender,
-  PatientStatus,
 } from '../../domain/entities/Patient'
-import { DEFAULT_GENDER, DEFAULT_STATUS } from '../components/patientMeta'
+import { DEFAULT_GENDER } from '../components/patientMeta'
 
 export interface PatientFormValues {
   name: string
@@ -15,8 +14,6 @@ export interface PatientFormValues {
   email: string
   phone: string
   diagnosis: string
-  treatment: string
-  status: PatientStatus
 }
 
 type FormField = keyof PatientFormValues
@@ -29,8 +26,6 @@ const emptyValues: PatientFormValues = {
   email: '',
   phone: '',
   diagnosis: '',
-  treatment: '',
-  status: DEFAULT_STATUS,
 }
 
 const fromPatient = (patient: Patient): PatientFormValues => ({
@@ -40,8 +35,6 @@ const fromPatient = (patient: Patient): PatientFormValues => ({
   email: patient.email,
   phone: patient.phone,
   diagnosis: patient.diagnosis,
-  treatment: patient.treatment,
-  status: patient.status,
 })
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
@@ -78,10 +71,6 @@ function validate(values: PatientFormValues): FormErrors {
 
   if (values.phone.trim() === '') {
     errors.phone = 'El teléfono es obligatorio.'
-  }
-
-  if (values.treatment.trim() === '') {
-    errors.treatment = 'Indica el tratamiento actual del paciente.'
   }
 
   return errors
@@ -147,8 +136,6 @@ export function usePatientForm(options: {
       email: values.email,
       phone: values.phone,
       diagnosis: values.diagnosis,
-      treatment: values.treatment,
-      status: values.status,
       // La última visita solo cambia al guardar un paciente nuevo.
       lastVisitAt: patient ? patient.lastVisitAt : new Date().toISOString(),
     })

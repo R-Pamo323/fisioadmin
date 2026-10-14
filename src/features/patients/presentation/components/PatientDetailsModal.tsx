@@ -1,18 +1,24 @@
-import { CalendarDays, Mail, Phone, Stethoscope, X } from 'lucide-react'
+import { CalendarDays, CheckCircle2, Mail, Phone, Stethoscope, X } from 'lucide-react'
 import { Avatar, Badge, Button, Modal } from '../../../../shared/components'
 import { colors } from '../../../../core/theme/colors'
 import { typography } from '../../../../core/theme/typography'
-import type { Patient } from '../../domain/entities/Patient'
+import type { PatientView } from './patientTreatment'
 import { getVisitHistory } from './patientHistory'
 import { GENDER_OPTIONS, STATUS_META, formatRelativeVisit, formatVisitDate } from './patientMeta'
 import styles from './PatientDetailsModal.module.css'
 
 interface PatientDetailsModalProps {
-  patient: Patient | null
+  patient: PatientView | null
   onClose: () => void
+  /** Marca como pagado el tratamiento actual; solo aplica si está pendiente. */
+  onMarkAsPaid?: (patient: PatientView) => void
 }
 
-export function PatientDetailsModal({ patient, onClose }: PatientDetailsModalProps) {
+export function PatientDetailsModal({
+  patient,
+  onClose,
+  onMarkAsPaid,
+}: PatientDetailsModalProps) {
   if (!patient) return null
 
   const status = STATUS_META[patient.status]
@@ -83,9 +89,13 @@ export function PatientDetailsModal({ patient, onClose }: PatientDetailsModalPro
           ) : (
             <p className={styles.diagnosis}>Sin diagnóstico registrado.</p>
           )}
-          <p className={styles.treatment} style={{ color: colors.primary }}>
-            {patient.treatment}
-          </p>
+          {patient.treatment ? (
+            <p className={styles.treatment} style={{ color: colors.primary }}>
+              {patient.treatment}
+            </p>
+          ) : (
+            <p className={styles.diagnosis}>Sin tratamiento asignado.</p>
+          )}
         </section>
 
         <section className={`${styles.section} ${styles.sectionScroll}`}>
@@ -122,6 +132,13 @@ export function PatientDetailsModal({ patient, onClose }: PatientDetailsModalPro
             </ol>
           )}
         </section>
+
+        {patient.status === 'pendiente' && onMarkAsPaid ? (
+          <Button variant="secondary" fullWidth onClick={() => onMarkAsPaid(patient)}>
+            <CheckCircle2 size={16} />
+            Marcar como pagado
+          </Button>
+        ) : null}
 
         <Button fullWidth onClick={onClose}>
           Cerrar

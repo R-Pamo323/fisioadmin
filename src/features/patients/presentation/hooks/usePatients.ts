@@ -5,7 +5,16 @@ import { CreatePatient } from '../../domain/usecases/CreatePatient'
 import { DeletePatient } from '../../domain/usecases/DeletePatient'
 import { GetPatients } from '../../domain/usecases/GetPatients'
 import { UpdatePatient } from '../../domain/usecases/UpdatePatient'
+import type { Appointment } from '../../../calendar/domain/entities/Appointment'
+import { MockAppointmentRepository } from '../../../calendar/data/repositories/MockAppointmentRepository'
+import { GetAppointments } from '../../../calendar/domain/usecases/GetAppointments'
+import { UpdateAppointment } from '../../../calendar/domain/usecases/UpdateAppointment'
 import { toTimestamp } from '../components/patientMeta'
+import type { PatientView } from '../components/patientTreatment'
+import {
+  selectLatestPatientAppointment,
+  toPatientView,
+} from '../components/patientTreatment'
 
 const repository = new MockPatientRepository()
 const getPatients = new GetPatients(repository)
@@ -13,28 +22,49 @@ const createPatient = new CreatePatient(repository)
 const updatePatient = new UpdatePatient(repository)
 const deletePatient = new DeletePatient(repository)
 
+/*
+ * El paciente no guarda tratamiento ni estado: se derivan de su cita más
+ * reciente, así que esta pantalla también lee (y marca como pagada) esa cita.
+ */
+const appointmentRepository = new MockAppointmentRepository()
+const getAppointments = new GetAppointments(appointmentRepository)
+const updateAppointment = new UpdateAppointment(appointmentRepository)
+
 const normalize = (value: string) => value.trim().toLowerCase()
 
-export type PatientStatusFilter = 'todos' | 'activo' | 'pendiente'
+export type PatientStatusFilter =
+  | 'todos'
+  | 'pendiente'
+  | 'pagado'
+  | 'sin_tratamiento'
 
 export function usePatients() {
   const [patients, setPatients] = useState<Patient[]>([])
+  const [appointments, setAppointments] = useState<Appointment[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<PatientStatusFilter>('todos')
 
   const refresh = useCallback(async () => {
-    const next = await getPatients.execute()
-    setPatients(next)
+    const [nextPatients, nextAppointments] = await Promise.all([
+      getPatients.execute(),
+      getAppointments.execute(),
+    ])
+    setPatients(nextPatients)
+    setAppointments(nextAppointments)
   }, [])
 
   useEffect(() => {
     let active = true
 
     void (async () => {
-      const next = await getPatients.execute()
+      const [nextPatients, nextAppointments] = await Promise.all([
+        getPatients.execute(),
+        getAppointments.execute(),
+      ])
       if (!active) return
-      setPatients(next)
+      setPatients(nextPatients)
+      setAppointments(nextAppointments)
       setIsLoading(false)
     })()
 
@@ -67,10 +97,30 @@ export function usePatients() {
     [refresh],
   )
 
+  /**
+   * Marca como pagada la cita más reciente del paciente; es lo que cierra el
+   * tratamiento y habilita que pueda empezar otro.
+   */
+  const markAsPaid = useCallback(
+    async (patientId: string) => {
+      const latest = selectLatestPatientAppointment(appointments, patientId)
+      if (!latest || latest.status !== 'pending') return
+
+      await updateAppointment.execute(latest.id, { status: 'paid' })
+      await refresh()
+    },
+    [appointments, refresh],
+  )
+
+  const views = useMemo(
+    () => patients.map((patient) => toPatientView(patient, appointments)),
+    [patients, appointments],
+  )
+
   const visiblePatients = useMemo(() => {
     const term = normalize(search)
 
-    const filtered = patients.filter((patient) => {
+    const filtered = views.filter((patient) => {
       if (statusFilter !== 'todos' && patient.status !== statusFilter) return false
       if (term === '') return true
 
@@ -78,6 +128,7 @@ export function usePatients() {
         normalize(patient.name).includes(term) ||
         normalize(patient.email).includes(term) ||
         normalize(patient.diagnosis).includes(term) ||
+        normalize(patient.phone).includes(term) ||
         normalize(patient.treatment).includes(term)
       )
     })
@@ -89,19 +140,22 @@ export function usePatients() {
         toTimestamp(b.lastVisitAt) - toTimestamp(a.lastVisitAt) ||
         a.name.localeCompare(b.name, 'es'),
     )
-  }, [patients, search, statusFilter])
+  }, [views, search, statusFilter])
 
   const statusCounts = useMemo(
     () => ({
-      todos: patients.length,
-      activo: patients.filter((patient) => patient.status === 'activo').length,
-      pendiente: patients.filter((patient) => patient.status === 'pendiente').length,
+      todos: views.length,
+      pendiente: views.filter((patient) => patient.status === 'pendiente').length,
+      pagado: views.filter((patient) => patient.status === 'pagado').length,
+      sin_tratamiento: views.filter(
+        (patient) => patient.status === 'sin_tratamiento',
+      ).length,
     }),
-    [patients],
+    [views],
   )
 
   return {
-    patients,
+    patients: views,
     visiblePatients,
     statusCounts,
     isLoading,
@@ -112,5 +166,6 @@ export function usePatients() {
     create,
     update,
     remove,
+    markAsPaid,
   }
 }

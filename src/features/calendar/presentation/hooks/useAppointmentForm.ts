@@ -155,6 +155,8 @@ export function useAppointmentForm(options: {
   const isMeeting = values.patientId === NO_PATIENT_VALUE
   const selectedServiceType =
     serviceTypes.find((serviceType) => serviceType.id === values.serviceTypeId) ?? null
+  /** Solo el nombre: es lo que identifica el tratamiento al comparar citas. */
+  const selectedServiceTypeName = selectedServiceType?.name ?? null
   /** Una cita gratis no genera cobro: siempre queda como "sin cobro". */
   const isFree = selectedServiceType?.category === 'gratis'
 
@@ -189,6 +191,35 @@ export function useAppointmentForm(options: {
     )
   }, [appointment?.id, appointments, values.date, values.endTime, values.startTime])
 
+  /**
+   * Un paciente no puede tener dos tratamientos a la vez: mientras su cita más
+   * reciente siga pendiente de pago, solo puede agendarse el mismo tipo. La cita
+   * en edición se ignora, así que se compara contra las demás.
+   */
+  const treatmentConflict = useMemo(() => {
+    if (isMeeting || selectedServiceTypeName === null) return false
+
+    const editingId = appointment?.id ?? null
+    let latest: Appointment | null = null
+
+    for (const other of appointments) {
+      if (other.patientId !== values.patientId || other.id === editingId) continue
+      if (!latest || other.start.getTime() > latest.start.getTime()) latest = other
+    }
+
+    return (
+      latest !== null &&
+      latest.status === 'pending' &&
+      latest.appointmentType !== selectedServiceTypeName
+    )
+  }, [
+    appointment?.id,
+    appointments,
+    isMeeting,
+    selectedServiceTypeName,
+    values.patientId,
+  ])
+
   const errors = useMemo(() => {
     const base = validate(values)
     if (showAmount && !isValidAmount(values.amount)) {
@@ -197,8 +228,12 @@ export function useAppointmentForm(options: {
     if (conflict && !base.endTime) {
       base.endTime = 'La hora coincide con una cita ya programada.'
     }
+    if (treatmentConflict && !base.serviceTypeId) {
+      base.serviceTypeId =
+        'El paciente tiene un tratamiento pendiente. Márcalo como pagado antes de agendar uno nuevo.'
+    }
     return base
-  }, [conflict, showAmount, values])
+  }, [conflict, showAmount, treatmentConflict, values])
 
   const isValid = Object.keys(errors).length === 0
 
@@ -206,6 +241,13 @@ export function useAppointmentForm(options: {
     (field: Field) =>
       (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const nextValue = event.target.value
+
+        // El choque de tratamiento depende del tipo elegido: al cambiarlo pedimos
+        // que el error aparezca de inmediato y no solo al salir del campo.
+        if (field === 'serviceTypeId') {
+          setTouched((current) => ({ ...current, serviceTypeId: true }))
+        }
+
         setValues((current) => {
           if (field === 'patientId') {
             // Cambiar entre paciente y reunión invalida lo que ya no aplica, y el

@@ -20,8 +20,13 @@ export function PatientFilters({
 }: PatientFiltersProps) {
   const options: SegmentOption[] = [
     { value: 'todos', label: 'Todos', count: statusCounts.todos },
-    { value: 'activo', label: 'Activos', count: statusCounts.activo },
     { value: 'pendiente', label: 'Pendientes', count: statusCounts.pendiente },
+    { value: 'pagado', label: 'Pagados', count: statusCounts.pagado },
+    {
+      value: 'sin_tratamiento',
+      label: 'Sin tratamiento',
+      count: statusCounts.sin_tratamiento,
+    },
   ]
 
   return (

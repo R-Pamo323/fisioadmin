@@ -10,7 +10,7 @@ import { colors } from '../../../../core/theme/colors'
 import { typography } from '../../../../core/theme/typography'
 import type { Patient, PatientDraft } from '../../domain/entities/Patient'
 import { usePatientForm } from '../hooks/usePatientForm'
-import { GENDER_OPTIONS, STATUS_OPTIONS } from './patientMeta'
+import { GENDER_OPTIONS } from './patientMeta'
 import styles from './PatientFormModal.module.css'
 
 interface PatientFormModalProps {
@@ -117,22 +117,6 @@ export function PatientFormModal({
           rows={3}
           value={values.diagnosis}
           onChange={setValue('diagnosis')}
-        />
-
-        <Input
-          label="Tratamiento actual"
-          placeholder="Ej. Terapia manual + ejercicios de Jessfield"
-          value={values.treatment}
-          onChange={setValue('treatment')}
-          onBlur={onBlur('treatment')}
-          error={getError('treatment')}
-        />
-
-        <Select
-          label="Estado"
-          value={values.status}
-          onChange={setValue('status')}
-          options={STATUS_OPTIONS}
         />
 
         <div className={styles.actions}>

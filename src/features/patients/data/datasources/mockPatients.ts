@@ -16,8 +16,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'carlos.ruiz@correo.com',
     phone: '987 654 321',
     diagnosis: 'Lumbalgia crónica con discopatía L4-L5',
-    treatment: 'Terapia manual + ejercicios de Jessfield',
-    status: 'activo',
     lastVisitAt: daysAgo(3),
   },
   {
@@ -28,8 +26,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'elena.gomez@correo.com',
     phone: '987 654 322',
     diagnosis: 'Rehabilitación post-operatoria de LCA',
-    treatment: 'Protocolo de carga progresiva de rodilla',
-    status: 'activo',
     lastVisitAt: daysAgo(1),
   },
   {
@@ -40,8 +36,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'marc.esposito@correo.com',
     phone: '987 654 323',
     diagnosis: 'Cervicalgia por sedentarismo y postura laboral',
-    treatment: 'Terapia manual + estiramientos',
-    status: 'pendiente',
     lastVisitAt: daysAgo(7),
   },
   {
@@ -52,8 +46,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'sofia.martinez@correo.com',
     phone: '987 654 324',
     diagnosis: 'Artrosis de rodilla y contracturas de flexores',
-    treatment: 'Ejercicios asistidos + infiltraciones',
-    status: 'finalizado',
     lastVisitAt: daysAgo(45),
   },
   {
@@ -64,8 +56,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'roberto.diaz@correo.com',
     phone: '987 654 325',
     diagnosis: 'Epicondilitis bilateral por uso de martillo',
-    treatment: 'Ondas de choque + pausas activas',
-    status: 'activo',
     lastVisitAt: daysAgo(12),
   },
   {
@@ -76,8 +66,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'valentina.herrera@correo.com',
     phone: '987 654 326',
     diagnosis: 'Escoliosis idiopática juvenil',
-    treatment: 'Método Schroth + control postural',
-    status: 'activo',
     lastVisitAt: daysAgo(5),
   },
   {
@@ -88,8 +76,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'andres.quispe@correo.com',
     phone: '987 654 327',
     diagnosis: 'Hemiparesia espástica leve, neurodesarrollo',
-    treatment: 'Terapia infantil del neurodesarrollo',
-    status: 'pendiente',
     lastVisitAt: daysAgo(2),
   },
   {
@@ -100,8 +86,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'lucia.fernandez@correo.com',
     phone: '987 654 328',
     diagnosis: 'Dolor crónico de miembro inferior',
-    treatment: 'Fortalecimiento de psoas e isquiotibiales',
-    status: 'activo',
     lastVisitAt: daysAgo(18),
   },
   {
@@ -112,8 +96,6 @@ const SEED_PATIENTS: Patient[] = [
     email: 'diego.cueva@correo.com',
     phone: '987 654 329',
     diagnosis: 'Fibromialgia con fatiga persistente',
-    treatment: 'Terapia somática + acompañamiento',
-    status: 'pendiente',
     lastVisitAt: daysAgo(25),
   },
 ]
