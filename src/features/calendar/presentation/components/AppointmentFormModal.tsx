@@ -210,6 +210,7 @@ export function AppointmentFormModal({
           <Input
             label="Hora de inicio"
             type="time"
+            min="08:00"
             value={values.startTime}
             onChange={setValue('startTime')}
             onBlur={onBlur('startTime')}
@@ -218,6 +219,7 @@ export function AppointmentFormModal({
           <Input
             label="Hora de fin"
             type="time"
+            max="22:00"
             value={values.endTime}
             onChange={setValue('endTime')}
             onBlur={onBlur('endTime')}

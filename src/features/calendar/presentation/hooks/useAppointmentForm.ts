@@ -8,8 +8,11 @@ import type {
   AppointmentStatus,
 } from '../../domain/entities/Appointment'
 
-/** La grilla muestra hasta las 22:00, pero no se agenda más allá de las 21:00. */
-export const LAST_BOOKABLE_MINUTES = 21 * 60
+/** Primera hora agendable: la grilla arranca a las 08:00. */
+export const FIRST_BOOKABLE_MINUTES = 8 * 60
+
+/** Última hora agendable: una cita no puede terminar después de las 22:00. */
+export const LAST_BOOKABLE_MINUTES = 22 * 60
 
 /** Opción del selector de paciente cuando la cita no corresponde a nadie. */
 export const NO_PATIENT_VALUE = 'sin-paciente'
@@ -120,12 +123,14 @@ function validate(values: AppointmentFormValues): Errors {
 
   if (start === null) {
     errors.startTime = 'Indica la hora de inicio.'
+  } else if (start < FIRST_BOOKABLE_MINUTES) {
+    errors.startTime = 'La primera hora disponible es las 08:00.'
   }
 
   if (end === null) {
     errors.endTime = 'Indica la hora de fin.'
   } else if (end > LAST_BOOKABLE_MINUTES) {
-    errors.endTime = 'La última hora disponible es las 21:00.'
+    errors.endTime = 'La última hora disponible es las 22:00.'
   } else if (start !== null && end <= start) {
     errors.endTime = 'La hora de fin debe ser posterior a la de inicio.'
   }

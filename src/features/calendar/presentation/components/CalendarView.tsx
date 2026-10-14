@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { RefObject } from 'react'
 import { createPortal } from 'react-dom'
 import FullCalendar from '@fullcalendar/react'
@@ -32,7 +32,7 @@ export type CalendarViewType = 'timeGridWeek' | 'timeGridDay'
 const DAY_START_MINUTES = 8 * 60
 /**
  * La grilla llega hasta las 23:00. La última hora (22:00–23:00) es la hora
- * "Gastos"; el formulario no deja agendar más tarde de las 21:00.
+ * "Gastos"; el formulario no deja agendar más tarde de las 22:00.
  */
 const DAY_END_MINUTES = 23 * 60
 /** Hora del día en la que se pintan los gastos: la última fila de la grilla. */
@@ -159,6 +159,8 @@ export function CalendarView({
   const [tooltip, setTooltip] = useState<TooltipState | null>(null)
   const [expenseTooltip, setExpenseTooltip] = useState<ExpenseTooltipState | null>(null)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
+  /** Tipo de la vista pintada; sirve para recentrar al montar y al cambiarla. */
+  const lastViewTypeRef = useRef<string | null>(null)
   const [bodyEl, setBodyEl] = useState<HTMLElement | null>(null)
   const [nowMinutes, setNowMinutes] = useState(getNowMinutes)
 
@@ -181,19 +183,48 @@ export function CalendarView({
     if (el !== bodyEl) setBodyEl(el)
   })
 
+  /**
+   * Deja la hora actual (la línea roja) centrada en el área visible. El offset
+   * se calcula igual que la línea: proporción del día por el alto de la grilla.
+   */
+  const centerOnNow = useCallback(() => {
+    const body = wrapperRef.current?.querySelector<HTMLElement>('.fc-timegrid-body')
+    if (!body) return
+
+    const scroller = body.closest<HTMLElement>('.fc-scroller')
+    if (!scroller) return
+
+    const now = getNowMinutes()
+    const minutes = Math.min(Math.max(now, DAY_START_MINUTES), DAY_END_MINUTES)
+    const ratio = (minutes - DAY_START_MINUTES) / (DAY_END_MINUTES - DAY_START_MINUTES)
+    const nowOffset = ratio * body.offsetHeight
+
+    const scrollerRect = scroller.getBoundingClientRect()
+    const bodyTop = body.getBoundingClientRect().top - scrollerRect.top
+    const nowAbsolute = scroller.scrollTop + bodyTop + nowOffset
+
+    scroller.scrollTop = nowAbsolute - scroller.clientHeight / 2
+  }, [])
+
   useEffect(() => {
     if (!bodyEl) return undefined
 
     setNowMinutes(getNowMinutes())
+    // `rAF` espera a que FullCalendar termine de medir la grilla antes de centrar.
+    const frame = window.requestAnimationFrame(centerOnNow)
     const interval = window.setInterval(() => setNowMinutes(getNowMinutes()), 60_000)
-    const onResize = () => setNowMinutes(getNowMinutes())
+    const onResize = () => {
+      setNowMinutes(getNowMinutes())
+      centerOnNow()
+    }
     window.addEventListener('resize', onResize)
 
     return () => {
+      window.cancelAnimationFrame(frame)
       window.clearInterval(interval)
       window.removeEventListener('resize', onResize)
     }
-  }, [bodyEl])
+  }, [bodyEl, centerOnNow])
 
   let nowLineTop = 0
   let nowLineLeft = 0
@@ -213,6 +244,13 @@ export function CalendarView({
   const handleDatesSet = (arg: DatesSetArg) => {
     closePopovers()
     onDatesSet(arg)
+
+    // Con `scrollTimeReset={false}` el scroll se conserva al navegar, así que solo
+    // hay que recentrar al montar y al cambiar de tipo de vista (Día ↔ Semana).
+    if (arg.view.type !== lastViewTypeRef.current) {
+      lastViewTypeRef.current = arg.view.type
+      window.requestAnimationFrame(centerOnNow)
+    }
   }
 
   const handleEventClick = (info: EventClickArg) => {
@@ -262,6 +300,8 @@ export function CalendarView({
         slotEventOverlap={false}
         slotMinTime="08:00:00"
         slotMaxTime="23:00:00"
+        // Conserva el scroll al navegar: el centrado en la hora actual no salta.
+        scrollTimeReset={false}
         slotDuration="00:30:00"
         slotLabelInterval="01:00:00"
         slotLabelFormat={timeFormat}
