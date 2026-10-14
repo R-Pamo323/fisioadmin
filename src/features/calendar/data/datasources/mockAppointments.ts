@@ -13,6 +13,20 @@ function dayOffset(offsetDays: number): Date {
   return date
 }
 
+/**
+ * Fecha (00:00) del próximo día de la semana indicado (0=domingo … 6=sábado),
+ * siempre en el futuro. La clínica no trabaja sábado ni domingo, así que las
+ * citas de ejemplo caen en jueves/viernes aunque la app se abra en fin de semana.
+ */
+function upcomingWeekday(weekday: number): Date {
+  const date = new Date()
+  date.setHours(0, 0, 0, 0)
+  let delta = (weekday - date.getDay() + 7) % 7
+  if (delta === 0) delta = 7
+  date.setDate(date.getDate() + delta)
+  return date
+}
+
 /*
  * Los patientId y los nombres coinciden con features/patients/data/datasources/
  * mockPatients.ts, y los tipos de cita con mockServiceTypes.ts. Las reuniones
@@ -20,10 +34,12 @@ function dayOffset(offsetDays: number): Date {
  * ninguna de las dos genera cobro, así que su monto es 0. En las citas de pago
  * el monto coincide con el precio del tipo salvo que se haya ajustado.
  *
- * El historial del paciente se arma con sus citas ya realizadas, así que
- * pt-1 (Carlos), pt-2 (Elena), pt-3 (Marc) y pt-7 (Andrés) tienen varias citas
- * pasadas; el resto de pacientes no tiene citas. Solo se conservan las
- * reuniones (sin paciente) y la cita de hoy de Carlos.
+ * El historial y el tratamiento del paciente se arman con sus citas ya
+ * realizadas, así que pt-1 (Carlos), pt-2 (Elena), pt-3 (Marc) y pt-7 (Andrés)
+ * tienen varias citas pasadas. pt-10, pt-11 y pt-12 solo tienen una cita futura
+ * (jueves/viernes), por lo que aparecen "sin tratamiento" hasta que llegue el
+ * día. También se conservan las reuniones (sin paciente) y la cita de hoy de
+ * Carlos.
  */
 const SEED_APPOINTMENTS: Appointment[] = [
   {
@@ -230,6 +246,42 @@ const SEED_APPOINTMENTS: Appointment[] = [
     amount: 70,
     start: atTime(dayOffset(-8), 15),
     end: atTime(dayOffset(-8), 16),
+    status: 'paid',
+  },
+
+  // Citas futuras: hasta que no llegue el día no cuentan como tratamiento, así
+  // que estos pacientes aparecen "sin tratamiento" en Pacientes.
+  {
+    id: 'a28',
+    patientId: 'pt-10',
+    patientName: 'Nuria Salas',
+    appointmentType: 'Terapia Física',
+    description: 'Primera sesión tras la valoración del esguince',
+    amount: 50,
+    start: atTime(upcomingWeekday(5), 10),
+    end: atTime(upcomingWeekday(5), 10, 45),
+    status: 'pending',
+  },
+  {
+    id: 'a29',
+    patientId: 'pt-11',
+    patientName: 'Tomás Rivas',
+    appointmentType: 'Rehabilitación',
+    description: 'Inicio del plan de rehabilitación del manguito rotador',
+    amount: 70,
+    start: atTime(upcomingWeekday(5), 11, 30),
+    end: atTime(upcomingWeekday(5), 12, 30),
+    status: 'pending',
+  },
+  {
+    id: 'a30',
+    patientId: 'pt-12',
+    patientName: 'Paula Mendoza',
+    appointmentType: 'Terapia Física',
+    description: 'Sesión pagada por adelantado para el jueves',
+    amount: 50,
+    start: atTime(upcomingWeekday(4), 9),
+    end: atTime(upcomingWeekday(4), 9, 45),
     status: 'paid',
   },
 ]

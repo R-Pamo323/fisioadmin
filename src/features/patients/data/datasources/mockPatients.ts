@@ -82,6 +82,34 @@ const SEED_PATIENTS: Patient[] = [
     phone: '987 654 329',
     diagnosis: 'Fibromialgia con fatiga persistente',
   },
+  // Pacientes solo con cita futura: todavía no tienen tratamiento en curso.
+  {
+    id: 'pt-10',
+    name: 'Nuria Salas',
+    age: 27,
+    gender: 'femenino',
+    email: 'nuria.salas@correo.com',
+    phone: '987 654 330',
+    diagnosis: 'Esguince de tobillo en recuperación',
+  },
+  {
+    id: 'pt-11',
+    name: 'Tomás Rivas',
+    age: 48,
+    gender: 'masculino',
+    email: 'tomas.rivas@correo.com',
+    phone: '987 654 331',
+    diagnosis: 'Tendinitis del manguito rotador',
+  },
+  {
+    id: 'pt-12',
+    name: 'Paula Mendoza',
+    age: 35,
+    gender: 'femenino',
+    email: 'paula.mendoza@correo.com',
+    phone: '987 654 332',
+    diagnosis: 'Contractura cervical por estrés',
+  },
 ]
 
 let patients: Patient[] = SEED_PATIENTS.map((patient) => ({ ...patient }))

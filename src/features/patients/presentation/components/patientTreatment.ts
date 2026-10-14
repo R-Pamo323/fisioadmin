@@ -5,8 +5,9 @@ import type {
 import type { Patient } from '../../domain/entities/Patient'
 
 /**
- * Estado de pago del paciente, derivado de la cita más reciente que tiene en el
- * calendario. El paciente ya no guarda el estado: se calcula al leerlo.
+ * Estado de pago del paciente, derivado de la cita ya realizada más reciente que
+ * tiene en el calendario. El paciente ya no guarda el estado: se calcula al
+ * leerlo.
  */
 export type PatientStatus = 'pendiente' | 'pagado' | 'sin_tratamiento'
 
@@ -24,10 +25,10 @@ export interface PatientSession {
 
 /** Paciente con su tratamiento, estado e historial, calculados desde sus citas. */
 export interface PatientView extends Patient {
-  /** Tipo de la cita más reciente; cadena vacía si el paciente no tiene citas. */
+  /** Tipo de la cita ya realizada más reciente; vacío si aún no tiene ninguna. */
   treatment: string
   status: PatientStatus
-  /** Cita más reciente; sirve para marcar el tratamiento como pagado. */
+  /** Cita ya realizada más reciente; sirve para marcar el tratamiento pagado. */
   latestAppointment: Appointment | null
   /** Sesiones ya realizadas, de la más reciente a la más antigua. */
   sessions: PatientSession[]
@@ -36,17 +37,21 @@ export interface PatientView extends Patient {
 }
 
 /**
- * Cita más reciente del paciente por fecha de inicio. Las reuniones no cuentan
- * porque no tienen paciente (`patientId === null`).
+ * Cita ya realizada más reciente del paciente por fecha de inicio. Una cita con
+ * `start > now` todavía no ha llegado, así que no cuenta como tratamiento en
+ * curso: hasta que ocurra, el paciente sigue "sin tratamiento". Las reuniones no
+ * cuentan porque no tienen paciente (`patientId === null`).
  */
 export function selectLatestPatientAppointment(
   appointments: ReadonlyArray<Appointment>,
   patientId: string,
+  now: Date = new Date(),
 ): Appointment | null {
   let latest: Appointment | null = null
 
   for (const appointment of appointments) {
     if (appointment.patientId !== patientId) continue
+    if (appointment.start.getTime() > now.getTime()) continue
     if (!latest || appointment.start.getTime() > latest.start.getTime()) {
       latest = appointment
     }
@@ -57,8 +62,8 @@ export function selectLatestPatientAppointment(
 
 /**
  * Una cita de pago pendiente deja al paciente "pendiente"; una pagada, "pagado".
- * Una cita gratis no genera cobro y un paciente sin citas tampoco tiene nada que
- * pagar: en ambos casos queda "sin tratamiento".
+ * Una cita gratis no genera cobro y un paciente sin citas realizadas tampoco
+ * tiene nada que pagar: en ambos casos queda "sin tratamiento".
  */
 export function resolvePatientStatus(latest: Appointment | null): PatientStatus {
   if (!latest) return 'sin_tratamiento'
