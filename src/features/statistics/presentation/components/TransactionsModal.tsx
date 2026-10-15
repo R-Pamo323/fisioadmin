@@ -54,8 +54,10 @@ export function TransactionsModal({
         <div className={styles.scroll} ref={scrollRef}>
           {isLoading ? (
             <p className={styles.loading}>Cargando transacciones...</p>
-          ) : (
+          ) : transactions.length > 0 ? (
             <TransactionsTable transactions={visible} variant="roomy" />
+          ) : (
+            <p className={styles.loading}>Sin transacciones en este año</p>
           )}
         </div>
 

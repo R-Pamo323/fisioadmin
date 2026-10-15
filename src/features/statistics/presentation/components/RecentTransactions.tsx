@@ -25,7 +25,11 @@ export function RecentTransactions({ transactions, onViewAll }: RecentTransactio
       </header>
 
       <div className={styles.tableScroll}>
-        <TransactionsTable transactions={transactions} />
+        {transactions.length > 0 ? (
+          <TransactionsTable transactions={transactions} />
+        ) : (
+          <p className={styles.empty}>Sin transacciones en este año</p>
+        )}
       </div>
     </Card>
   )

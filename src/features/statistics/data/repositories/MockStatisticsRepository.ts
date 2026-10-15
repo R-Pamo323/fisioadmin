@@ -6,30 +6,27 @@ import {
 } from '../../domain/statisticsSelectors'
 import { MockAppointmentRepository } from '../../../calendar/data/repositories/MockAppointmentRepository'
 import { MockExpenseRepository } from '../../../calendar/data/repositories/MockExpenseRepository'
-import { MockPatientRepository } from '../../../patients/data/repositories/MockPatientRepository'
 
 /*
- * Las estadísticas ya no tienen mocks propios: se derivan de las citas, los
- * gastos y los pacientes. Se leen por sus repositorios públicos (no importando
- * sus datasources), igual que hace el calendario con el catálogo.
+ * Las estadísticas no tienen mocks propios: se derivan de las citas y los
+ * gastos. Se leen por sus repositorios públicos (no importando sus datasources),
+ * igual que hace el calendario con el catálogo.
  */
 const appointmentRepository = new MockAppointmentRepository()
 const expenseRepository = new MockExpenseRepository()
-const patientRepository = new MockPatientRepository()
 
 export class MockStatisticsRepository implements StatisticsRepository {
-  async getOverview(): Promise<StatisticsOverview> {
-    const [appointments, expenses, patients] = await Promise.all([
+  async getOverview(year: number): Promise<StatisticsOverview> {
+    const [appointments, expenses] = await Promise.all([
       appointmentRepository.list(),
       expenseRepository.list(),
-      patientRepository.list(),
     ])
 
-    return buildStatisticsOverview(appointments, patients, expenses)
+    return buildStatisticsOverview(appointments, expenses, year)
   }
 
-  async getTransactions(): Promise<Transaction[]> {
+  async getTransactions(year: number): Promise<Transaction[]> {
     const appointments = await appointmentRepository.list()
-    return selectTransactions(appointments)
+    return selectTransactions(appointments, year)
   }
 }

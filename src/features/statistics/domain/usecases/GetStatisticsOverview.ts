@@ -8,7 +8,7 @@ export class GetStatisticsOverview {
     this.repository = repository
   }
 
-  execute(): Promise<StatisticsOverview> {
-    return this.repository.getOverview()
+  execute(year: number): Promise<StatisticsOverview> {
+    return this.repository.getOverview(year)
   }
 }

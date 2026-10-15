@@ -8,7 +8,7 @@ export class GetTransactions {
     this.repository = repository
   }
 
-  execute(): Promise<Transaction[]> {
-    return this.repository.getTransactions()
+  execute(year: number): Promise<Transaction[]> {
+    return this.repository.getTransactions(year)
   }
 }

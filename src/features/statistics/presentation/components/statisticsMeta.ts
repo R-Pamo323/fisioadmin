@@ -5,16 +5,14 @@ import type { TransactionStatus } from '../../domain/entities/Statistics'
 /** El formateo de moneda vive en el dominio porque las métricas ya vienen formateadas. */
 export { formatCurrency } from '../../domain/statisticsFormat'
 
-const compactCurrencyFormatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
+const compactAmountFormatter = new Intl.NumberFormat('en-US', {
   notation: 'compact',
   maximumFractionDigits: 1,
 })
 
-/** Ticks del eje Y: "$0", "$5K", "$12.5K". El importe completo vive en el tooltip. */
+/** Ticks del eje Y: "S/0", "S/5K", "S/12.5K". El importe completo vive en el tooltip. */
 export const formatCompactCurrency = (value: number): string =>
-  compactCurrencyFormatter.format(value)
+  `S/${compactAmountFormatter.format(value)}`
 
 const dateFormatter = new Intl.DateTimeFormat('es-ES', {
   day: 'numeric',

@@ -12,7 +12,7 @@ export interface MetricCard {
   id: string
   /** Etiqueta visible, ej. "Ingresos Totales". */
   label: string
-  /** Ya formateado para mostrar, ej. "$630.00". */
+  /** Ya formateado para mostrar, ej. "S/630.00". */
   value: string
   /** Texto en mayúsculas debajo; opcional. */
   caption?: string
@@ -52,8 +52,10 @@ export interface PaymentBucket {
 }
 
 export interface StatisticsOverview {
+  /** Años navegables del selector, de más antiguo a más reciente. */
+  years: number[]
   metrics: MetricCard[]
-  /** Meses con datos, de más antiguo a más reciente. */
+  /** Los 12 meses del año seleccionado (Ene–Dic); los vacíos quedan en 0. */
   monthly: RevenuePoint[]
   appointmentShare: ShareSlice[]
   /** Solo las más recientes para el card; la lista completa la trae GetTransactions. */

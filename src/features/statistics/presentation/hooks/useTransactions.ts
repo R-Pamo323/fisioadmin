@@ -6,8 +6,8 @@ import { GetTransactions } from '../../domain/usecases/GetTransactions'
 const repository = new MockStatisticsRepository()
 const getTransactions = new GetTransactions(repository)
 
-/** Carga diferida: solo pide datos cuando el modal se abre por primera vez. */
-export function useTransactions(isOpen: boolean) {
+/** Carga diferida: solo pide datos cuando el modal se abre, y por año elegido. */
+export function useTransactions(year: number, isOpen: boolean) {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
@@ -18,7 +18,7 @@ export function useTransactions(isOpen: boolean) {
     setIsLoading(true)
 
     void (async () => {
-      const next = await getTransactions.execute()
+      const next = await getTransactions.execute(year)
       if (!active) return
       setTransactions(next)
       setIsLoading(false)
@@ -27,7 +27,7 @@ export function useTransactions(isOpen: boolean) {
     return () => {
       active = false
     }
-  }, [isOpen])
+  }, [year, isOpen])
 
   return { transactions, isLoading }
 }

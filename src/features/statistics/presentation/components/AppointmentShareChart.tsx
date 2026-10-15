@@ -18,37 +18,43 @@ export function AppointmentShareChart({ data }: AppointmentShareChartProps) {
         <p className={styles.subtitle}>Volumen de ingresos según especialidad</p>
       </header>
 
-      <div className={styles.plot}>
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Tooltip content={<ChartTooltip valueFormatter={formatPercentValue} />} />
-            <Pie
-              data={data}
-              dataKey="percent"
-              nameKey="name"
-              innerRadius="58%"
-              outerRadius="82%"
-              paddingAngle={2}
-              stroke="#FFFFFF"
-              strokeWidth={2}
-            >
-              {data.map((slice) => (
-                <Cell key={slice.id} fill={slice.color} />
-              ))}
-            </Pie>
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
+      {data.length > 0 ? (
+        <>
+          <div className={styles.plot}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Tooltip content={<ChartTooltip valueFormatter={formatPercentValue} />} />
+                <Pie
+                  data={data}
+                  dataKey="percent"
+                  nameKey="name"
+                  innerRadius="58%"
+                  outerRadius="82%"
+                  paddingAngle={2}
+                  stroke="#FFFFFF"
+                  strokeWidth={2}
+                >
+                  {data.map((slice) => (
+                    <Cell key={slice.id} fill={slice.color} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
 
-      <ul className={styles.legend}>
-        {data.map((slice) => (
-          <li key={slice.id} className={styles.legendItem}>
-            <span className={styles.legendDot} style={{ background: slice.color }} />
-            <span className={styles.legendName}>{slice.name}</span>
-            <strong className={styles.legendValue}>{slice.percent}%</strong>
-          </li>
-        ))}
-      </ul>
+          <ul className={styles.legend}>
+            {data.map((slice) => (
+              <li key={slice.id} className={styles.legendItem}>
+                <span className={styles.legendDot} style={{ background: slice.color }} />
+                <span className={styles.legendName}>{slice.name}</span>
+                <strong className={styles.legendValue}>{slice.percent}%</strong>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <p className={styles.empty}>Sin datos en este año</p>
+      )}
     </Card>
   )
 }

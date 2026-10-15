@@ -1,6 +1,5 @@
 import type { Appointment } from '../../calendar/domain/entities/Appointment'
 import type { Expense } from '../../calendar/domain/entities/Expense'
-import type { Patient } from '../../patients/domain/entities/Patient'
 import type {
   MetricCard,
   PaymentBucket,
@@ -13,9 +12,9 @@ import { formatCurrency } from './statisticsFormat'
 
 /**
  * Selectores puros: reciben los datos ya leídos de sus mocks en vez de leerlos
- * ellos mismos, igual que `appointmentSelectors` en el calendario. Todas las
- * cifras se calculan solo con lo que ya ocurrió (`start`/`date` <= `now`): una
- * cita pagada por adelantado no entra en las estadísticas hasta que llega su día.
+ * ellos mismos, igual que `appointmentSelectors` en el calendario. Todo se mide
+ * sobre el año elegido y solo con lo que ya ocurrió (`start`/`date` <= `now`):
+ * una cita pagada por adelantado no entra hasta que llega su día.
  */
 
 /** Cuántas filas caben en el card; el modal usa la lista completa. */
@@ -24,19 +23,29 @@ const RECENT_TRANSACTIONS_COUNT = 5
 /** Paleta de la distribución; se asigna por volumen (el mayor primero). */
 const SHARE_COLORS = ['#0EA5E9', '#6366F1', '#F59E0B', '#10B981', '#8B5CF6', '#EF4444']
 
+/** Índices de los 12 meses: el eje del gráfico siempre los muestra todos. */
+const MONTH_INDEXES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
 const monthFormatter = new Intl.DateTimeFormat('es-ES', { month: 'short' })
 
 function isRealized(date: Date, now: Date): boolean {
   return date.getTime() <= now.getTime()
 }
 
-/** Citas de un paciente ya realizadas; excluye reuniones y tareas internas. */
+/** La fecha pertenece al año elegido y además ya ocurrió. */
+function isRealizedIn(date: Date, year: number, now: Date): boolean {
+  return date.getFullYear() === year && isRealized(date, now)
+}
+
+/** Citas de un paciente del año ya realizadas; excluye reuniones y tareas. */
 function realizedPatientAppointments(
   appointments: ReadonlyArray<Appointment>,
+  year: number,
   now: Date,
 ): Appointment[] {
   return appointments.filter(
-    (appointment) => appointment.patientId !== null && isRealized(appointment.start, now),
+    (appointment) =>
+      appointment.patientId !== null && isRealizedIn(appointment.start, year, now),
   )
 }
 
@@ -44,12 +53,8 @@ function sumAmount(appointments: ReadonlyArray<Appointment>): number {
   return appointments.reduce((sum, appointment) => sum + appointment.amount, 0)
 }
 
-function monthKey(date: Date): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-}
-
-function monthLabel(date: Date): string {
-  const label = monthFormatter.format(date).replace('.', '')
+function monthLabel(year: number, month: number): string {
+  const label = monthFormatter.format(new Date(year, month, 1)).replace('.', '')
   return label.charAt(0).toUpperCase() + label.slice(1)
 }
 
@@ -64,14 +69,45 @@ function slugify(value: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
+/** Años que el selector puede recorrer: los que tienen datos y, al menos, el pasado. */
+export function selectAvailableYears(
+  appointments: ReadonlyArray<Appointment>,
+  expenses: ReadonlyArray<Expense>,
+  now: Date = new Date(),
+): number[] {
+  const currentYear = now.getFullYear()
+
+  // El año pasado siempre es navegable aunque esté vacío.
+  let minYear = currentYear - 1
+
+  for (const appointment of appointments) {
+    minYear = Math.min(minYear, appointment.start.getFullYear())
+  }
+
+  for (const expense of expenses) {
+    minYear = Math.min(minYear, expense.date.getFullYear())
+  }
+
+  const years: number[] = []
+  for (let year = minYear; year <= currentYear; year += 1) {
+    years.push(year)
+  }
+
+  return years
+}
+
 export function selectMetrics(
   appointments: ReadonlyArray<Appointment>,
-  patients: ReadonlyArray<Patient>,
+  year: number,
   now: Date = new Date(),
 ): MetricCard[] {
-  const realized = realizedPatientAppointments(appointments, now)
+  const realized = realizedPatientAppointments(appointments, year, now)
   const paid = sumAmount(realized.filter((appointment) => appointment.status === 'paid'))
   const pending = realized.filter((appointment) => appointment.status === 'pending')
+
+  // "Pacientes" es la gente atendida en el año: pacientes distintos con al menos
+  // una cita realizada en ese año, sin repetir.
+  const attendedPatients = new Set(realized.map((appointment) => appointment.patientId))
 
   return [
     {
@@ -88,8 +124,8 @@ export function selectMetrics(
     {
       id: 'patients',
       label: 'Pacientes',
-      value: String(patients.length),
-      caption: 'NÚMERO PACIENTES',
+      value: String(attendedPatients.size),
+      caption: 'ATENDIDOS EN EL AÑO',
     },
     {
       id: 'pending-collection',
@@ -104,56 +140,46 @@ export function selectMetrics(
   ]
 }
 
-/** Ingresos (citas pagadas) y gastos por mes, solo de los meses que tienen datos. */
+/** Ingresos (citas pagadas) y gastos de cada mes del año; siempre los 12 meses. */
 export function selectMonthly(
   appointments: ReadonlyArray<Appointment>,
   expenses: ReadonlyArray<Expense>,
+  year: number,
   now: Date = new Date(),
 ): RevenuePoint[] {
-  const buckets = new Map<
-    string,
-    { order: number; label: string; ingresos: number; gastos: number }
-  >()
-
-  const bucketFor = (date: Date) => {
-    const key = monthKey(date)
-    let bucket = buckets.get(key)
-
-    if (!bucket) {
-      const first = new Date(date.getFullYear(), date.getMonth(), 1)
-      bucket = { order: first.getTime(), label: monthLabel(first), ingresos: 0, gastos: 0 }
-      buckets.set(key, bucket)
-    }
-
-    return bucket
-  }
+  const points = MONTH_INDEXES.map<RevenuePoint>((month) => ({
+    label: monthLabel(year, month),
+    ingresos: 0,
+    gastos: 0,
+  }))
 
   for (const appointment of appointments) {
-    if (appointment.status !== 'paid' || !isRealized(appointment.start, now)) continue
-    bucketFor(appointment.start).ingresos += appointment.amount
+    if (appointment.status !== 'paid') continue
+    if (!isRealizedIn(appointment.start, year, now)) continue
+
+    points[appointment.start.getMonth()].ingresos += appointment.amount
   }
 
   for (const expense of expenses) {
-    if (!isRealized(expense.date, now)) continue
-    bucketFor(expense.date).gastos += expense.amount
+    if (!isRealizedIn(expense.date, year, now)) continue
+
+    points[expense.date.getMonth()].gastos += expense.amount
   }
 
-  return [...buckets.values()]
-    .sort((a, b) => a.order - b.order)
-    .filter((bucket) => bucket.ingresos > 0 || bucket.gastos > 0)
-    .map(({ label, ingresos, gastos }) => ({ label, ingresos, gastos }))
+  return points
 }
 
-/** Reparto de los ingresos ya cobrados por tipo de cita (de mayor a menor). */
+/** Reparto de los ingresos cobrados en el año por tipo de cita (de mayor a menor). */
 export function selectAppointmentShare(
   appointments: ReadonlyArray<Appointment>,
+  year: number,
   now: Date = new Date(),
 ): ShareSlice[] {
   const totals = new Map<string, number>()
   let grandTotal = 0
 
   for (const appointment of appointments) {
-    if (appointment.status !== 'paid' || !isRealized(appointment.start, now)) continue
+    if (appointment.status !== 'paid' || !isRealizedIn(appointment.start, year, now)) continue
     if (appointment.amount <= 0) continue
 
     const name = appointment.appointmentType.trim() || 'Sin tipo'
@@ -179,12 +205,13 @@ export function selectAppointmentShare(
   return slices
 }
 
-/** Cobrado y pendiente sobre lo ya realizado, para el gráfico de estado de pagos. */
+/** Cobrado y pendiente del año, para el gráfico de estado de pagos. */
 export function selectPaymentBuckets(
   appointments: ReadonlyArray<Appointment>,
+  year: number,
   now: Date = new Date(),
 ): PaymentBucket[] {
-  const realized = realizedPatientAppointments(appointments, now)
+  const realized = realizedPatientAppointments(appointments, year, now)
 
   return [
     {
@@ -202,12 +229,13 @@ export function selectPaymentBuckets(
   ]
 }
 
-/** Movimientos con cobro ya realizados, del más reciente al más antiguo. */
+/** Movimientos con cobro del año ya realizados, del más reciente al más antiguo. */
 export function selectTransactions(
   appointments: ReadonlyArray<Appointment>,
+  year: number,
   now: Date = new Date(),
 ): Transaction[] {
-  return realizedPatientAppointments(appointments, now)
+  return realizedPatientAppointments(appointments, year, now)
     .filter(
       (appointment) => appointment.status === 'paid' || appointment.status === 'pending',
     )
@@ -224,15 +252,16 @@ export function selectTransactions(
 
 export function buildStatisticsOverview(
   appointments: ReadonlyArray<Appointment>,
-  patients: ReadonlyArray<Patient>,
   expenses: ReadonlyArray<Expense>,
+  year: number,
   now: Date = new Date(),
 ): StatisticsOverview {
   return {
-    metrics: selectMetrics(appointments, patients, now),
-    monthly: selectMonthly(appointments, expenses, now),
-    appointmentShare: selectAppointmentShare(appointments, now),
-    transactions: selectTransactions(appointments, now).slice(0, RECENT_TRANSACTIONS_COUNT),
-    payments: selectPaymentBuckets(appointments, now),
+    years: selectAvailableYears(appointments, expenses, now),
+    metrics: selectMetrics(appointments, year, now),
+    monthly: selectMonthly(appointments, expenses, year, now),
+    appointmentShare: selectAppointmentShare(appointments, year, now),
+    transactions: selectTransactions(appointments, year, now).slice(0, RECENT_TRANSACTIONS_COUNT),
+    payments: selectPaymentBuckets(appointments, year, now),
   }
 }

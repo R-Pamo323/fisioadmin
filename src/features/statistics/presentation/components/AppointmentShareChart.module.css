@@ -65,3 +65,14 @@
   font-weight: 700;
   color: #111827;
 }
+
+.empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  min-height: 200px;
+  font-size: 14px;
+  color: #9ca3af;
+}

@@ -6,16 +6,26 @@ import { RecentTransactions } from '../components/RecentTransactions'
 import { RevenueBarChart } from '../components/RevenueBarChart'
 import { StatCard } from '../components/StatCard'
 import { TransactionsModal } from '../components/TransactionsModal'
+import { YearSelector } from '../components/YearSelector'
 import { useStatistics } from '../hooks/useStatistics'
 import { useTransactions } from '../hooks/useTransactions'
 import styles from './Statistics.module.css'
 
+const currentYear = new Date().getFullYear()
+
 export function Statistics() {
-  const { overview, isLoading } = useStatistics()
+  const [selectedYear, setSelectedYear] = useState(currentYear)
   const [isTransactionsOpen, setIsTransactionsOpen] = useState(false)
   /** Cambia en cada apertura para reiniciar la página del modal. */
   const [transactionsSession, setTransactionsSession] = useState(0)
-  const { transactions, isLoading: isTransactionsLoading } = useTransactions(isTransactionsOpen)
+  const { overview, isLoading } = useStatistics(selectedYear)
+  const { transactions, isLoading: isTransactionsLoading } = useTransactions(
+    selectedYear,
+    isTransactionsOpen,
+  )
+
+  // Mientras carga el primer resumen, el selector ya permite ver el año pasado.
+  const years = overview?.years ?? [currentYear - 1, currentYear]
 
   const openTransactions = () => {
     setTransactionsSession((session) => session + 1)
@@ -37,6 +47,14 @@ export function Statistics() {
       <SectionHeader
         title="Estadísticas"
         subtitle="Monitoriza la salud financiera de tu clínica"
+        actions={
+          <YearSelector
+            year={selectedYear}
+            minYear={years[0]}
+            maxYear={years[years.length - 1]}
+            onChange={setSelectedYear}
+          />
+        }
       />
 
       <div className={styles.metrics}>
