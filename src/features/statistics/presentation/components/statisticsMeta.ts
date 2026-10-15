@@ -2,19 +2,8 @@ import { colors } from '../../../../core/theme/colors'
 import type { BadgeTone } from '../../../../shared/components'
 import type { TransactionStatus } from '../../domain/entities/Statistics'
 
-/** Formato de moneda tal como aparece en el mock: "$1,205.00". */
-const currencyFormatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-})
-
-export const formatCurrency = (value: number): string => currencyFormatter.format(value)
-
-/** "+12.4%" / "-3.2%" */
-export const formatPercent = (value: number): string =>
-  `${value > 0 ? '+' : ''}${value.toFixed(1)}%`
+/** El formateo de moneda vive en el dominio porque las métricas ya vienen formateadas. */
+export { formatCurrency } from '../../domain/statisticsFormat'
 
 const compactCurrencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -47,7 +36,6 @@ interface StatusMeta {
 export const TRANSACTION_STATUS_META: Record<TransactionStatus, StatusMeta> = {
   pagado: { label: 'Pagado', tone: 'success' },
   pendiente: { label: 'Pendiente', tone: 'info' },
-  vencido: { label: 'Vencido', tone: 'error' },
 }
 
 /** Definición única de columnas: la comparten el card y el modal de transacciones. */

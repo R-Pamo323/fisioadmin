@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { AlertTriangle, CheckCircle2, Clock } from 'lucide-react'
+import { CheckCircle2, Clock } from 'lucide-react'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { Card, ProgressBar } from '../../../../shared/components'
 import type { PaymentBucket } from '../../domain/entities/Statistics'
@@ -14,7 +14,6 @@ interface PaymentStatusChartProps {
 const BUCKET_ICONS: Record<string, LucideIcon> = {
   paid: CheckCircle2,
   pending: Clock,
-  overdue: AlertTriangle,
 }
 
 export function PaymentStatusChart({ data }: PaymentStatusChartProps) {

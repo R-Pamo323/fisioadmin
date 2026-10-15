@@ -1,15 +1,7 @@
 /** Tono del badge opcional de una métrica, sin depender de tipos de UI. */
 export type MetricBadgeTone = 'info' | 'warning' | 'error' | 'success'
 
-export type TrendDirection = 'up' | 'down'
-
-export type TransactionStatus = 'pagado' | 'pendiente' | 'vencido'
-
-export interface MetricTrend {
-  /** Variación porcentual, con signo. */
-  percent: number
-  direction: TrendDirection
-}
+export type TransactionStatus = 'pagado' | 'pendiente'
 
 export interface MetricBadge {
   label: string
@@ -20,16 +12,15 @@ export interface MetricCard {
   id: string
   /** Etiqueta visible, ej. "Ingresos Totales". */
   label: string
-  /** Ya formateado para mostrar, ej. "$12,450.00". */
+  /** Ya formateado para mostrar, ej. "$630.00". */
   value: string
-  /** Texto en mayúsculas debajo, ej. "VS. MES ANTERIOR". */
-  caption: string
-  trend?: MetricTrend
+  /** Texto en mayúsculas debajo; opcional. */
+  caption?: string
   badge?: MetricBadge
 }
 
 export interface RevenuePoint {
-  /** Etiqueta del eje X: "Ene".."Dic". */
+  /** Etiqueta del eje X, ej. "Sep". */
   label: string
   ingresos: number
   gastos: number
@@ -62,7 +53,7 @@ export interface PaymentBucket {
 
 export interface StatisticsOverview {
   metrics: MetricCard[]
-  /** Ene-Dic, con el scroll horizontal resolviendo los meses fuera de vista. */
+  /** Meses con datos, de más antiguo a más reciente. */
   monthly: RevenuePoint[]
   appointmentShare: ShareSlice[]
   /** Solo las más recientes para el card; la lista completa la trae GetTransactions. */

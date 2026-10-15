@@ -22,16 +22,6 @@
   color: #6b7280;
 }
 
-.trend {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  flex-shrink: 0;
-  font-size: 13px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
 .value {
   font-size: 26px;
   font-weight: 700;

@@ -19,8 +19,11 @@ import {
 } from './statisticsMeta'
 import styles from './RevenueBarChart.module.css'
 
-/** Ancho mínimo del lienzo: mantiene las 12 barras legibles y genera el scroll. */
+/** Ancho mínimo del lienzo con 12 meses: mantiene las barras legibles y genera el scroll. */
 const CANVAS_MIN_WIDTH = 1200
+
+/** Ancho base por mes; con pocos meses el lienzo se encoge y no estira las barras. */
+const CANVAS_MIN_WIDTH_PER_POINT = 100
 
 /** Ancho máximo por barra; el resto del espacio va como aire entre meses. */
 const MAX_BAR_SIZE = 30
@@ -30,6 +33,13 @@ interface RevenueBarChartProps {
 }
 
 export function RevenueBarChart({ data }: RevenueBarChartProps) {
+  // Con los datos reales el gráfico puede tener solo 2-3 meses: el lienzo se
+  // ajusta a los meses presentes en vez de quedar en un ancho fijo con scroll.
+  const canvasMinWidth = Math.min(
+    CANVAS_MIN_WIDTH,
+    Math.max(360, data.length * CANVAS_MIN_WIDTH_PER_POINT),
+  )
+
   return (
     <Card className={styles.card}>
       <header className={styles.head}>
@@ -40,7 +50,7 @@ export function RevenueBarChart({ data }: RevenueBarChartProps) {
       {/* El scroll vive en el contenedor y el lienzo nunca baja del ancho mínimo:
           así las barras no se estrechan al encoger el card de dos columnas. */}
       <div className={styles.scroll}>
-        <div className={styles.canvas} style={{ minWidth: CANVAS_MIN_WIDTH }}>
+        <div className={styles.canvas} style={{ minWidth: canvasMinWidth }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={data}
