@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
-import { MockSupportRepository } from '../../data/repositories/MockSupportRepository'
+import { SupabaseSupportRepository } from '../../data/repositories/SupabaseSupportRepository'
 import { SendSupportMessage } from '../../domain/usecases/SendSupportMessage'
 
-const sendSupportMessage = new SendSupportMessage(new MockSupportRepository())
+const sendSupportMessage = new SendSupportMessage(new SupabaseSupportRepository())
 
 export interface SupportFormValues {
   title: string

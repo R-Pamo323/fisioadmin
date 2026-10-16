@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
-import { MockExpenseRepository } from '../../data/repositories/MockExpenseRepository'
+import { SupabaseExpenseRepository } from '../../data/repositories/SupabaseExpenseRepository'
 import type { Expense, ExpenseDraft, ExpensePatch } from '../../domain/entities/Expense'
 import { CreateExpense } from '../../domain/usecases/CreateExpense'
 import { DeleteExpense } from '../../domain/usecases/DeleteExpense'
 import { GetExpenses } from '../../domain/usecases/GetExpenses'
 import { UpdateExpense } from '../../domain/usecases/UpdateExpense'
 
-const repository = new MockExpenseRepository()
+const repository = new SupabaseExpenseRepository()
 const getExpenses = new GetExpenses(repository)
 const createExpense = new CreateExpense(repository)
 const updateExpense = new UpdateExpense(repository)

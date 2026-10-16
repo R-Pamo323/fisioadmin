@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { MockAppointmentRepository } from '../../data/repositories/MockAppointmentRepository'
+import { SupabaseAppointmentRepository } from '../../data/repositories/SupabaseAppointmentRepository'
 import type {
   Appointment,
   AppointmentDraft,
@@ -10,7 +10,7 @@ import { DeleteAppointment } from '../../domain/usecases/DeleteAppointment'
 import { GetAppointments } from '../../domain/usecases/GetAppointments'
 import { UpdateAppointment } from '../../domain/usecases/UpdateAppointment'
 
-const repository = new MockAppointmentRepository()
+const repository = new SupabaseAppointmentRepository()
 const getAppointments = new GetAppointments(repository)
 const createAppointment = new CreateAppointment(repository)
 const updateAppointment = new UpdateAppointment(repository)

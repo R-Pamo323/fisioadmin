@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { ROUTE_PATHS } from '../../../../core/routes/paths'
+import { signOut } from '../../../../shared/lib/auth'
 import { SectionHeader } from '../../../../shared/components'
 import { LogoutCard } from '../components/LogoutCard'
 import { ProfileCard } from '../components/ProfileCard'
@@ -16,7 +17,9 @@ export function Settings() {
   const navigate = useNavigate()
   const { profile, isLoading, isSaving, setProfileField, save } = useSettingsProfile()
 
-  const handleLogout = () => navigate(ROUTE_PATHS.login)
+  const handleLogout = () => {
+    void signOut().then(() => navigate(ROUTE_PATHS.login))
+  }
 
   return (
     <div className={styles.page}>

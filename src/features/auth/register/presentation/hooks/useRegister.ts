@@ -1,10 +1,10 @@
 import type { FormEvent } from 'react'
 import { useState } from 'react'
 import { EMAIL_REGEX } from '../../../shared/presentation/constants'
-import { MockRegisterRepository } from '../../data/repositories/MockRegisterRepository'
+import { SupabaseRegisterRepository } from '../../data/repositories/SupabaseRegisterRepository'
 import { RegisterUser } from '../../domain/usecases/RegisterUser'
 
-const registerUser = new RegisterUser(new MockRegisterRepository())
+const registerUser = new RegisterUser(new SupabaseRegisterRepository())
 
 interface RegisterModalState {
   variant: 'success' | 'error'

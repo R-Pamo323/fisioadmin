@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Patient, PatientDraft } from '../../domain/entities/Patient'
-import { MockPatientRepository } from '../../data/repositories/MockPatientRepository'
+import { SupabasePatientRepository } from '../../data/repositories/SupabasePatientRepository'
 import { CreatePatient } from '../../domain/usecases/CreatePatient'
 import { DeletePatient } from '../../domain/usecases/DeletePatient'
 import { GetPatients } from '../../domain/usecases/GetPatients'
 import { UpdatePatient } from '../../domain/usecases/UpdatePatient'
 import type { Appointment } from '../../../calendar/domain/entities/Appointment'
-import { MockAppointmentRepository } from '../../../calendar/data/repositories/MockAppointmentRepository'
+import { SupabaseAppointmentRepository } from '../../../calendar/data/repositories/SupabaseAppointmentRepository'
 import { GetAppointments } from '../../../calendar/domain/usecases/GetAppointments'
 import { UpdateAppointment } from '../../../calendar/domain/usecases/UpdateAppointment'
 import { toTimestamp } from '../components/patientMeta'
@@ -15,7 +15,7 @@ import {
   toPatientView,
 } from '../components/patientTreatment'
 
-const repository = new MockPatientRepository()
+const repository = new SupabasePatientRepository()
 const getPatients = new GetPatients(repository)
 const createPatient = new CreatePatient(repository)
 const updatePatient = new UpdatePatient(repository)
@@ -25,7 +25,7 @@ const deletePatient = new DeletePatient(repository)
  * El paciente no guarda tratamiento ni estado: se derivan de su cita más
  * reciente, así que esta pantalla también lee (y marca como pagada) esa cita.
  */
-const appointmentRepository = new MockAppointmentRepository()
+const appointmentRepository = new SupabaseAppointmentRepository()
 const getAppointments = new GetAppointments(appointmentRepository)
 const updateAppointment = new UpdateAppointment(appointmentRepository)
 

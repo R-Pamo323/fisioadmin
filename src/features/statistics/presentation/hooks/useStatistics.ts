@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { StatisticsOverview } from '../../domain/entities/Statistics'
-import { MockStatisticsRepository } from '../../data/repositories/MockStatisticsRepository'
+import { SupabaseStatisticsRepository } from '../../data/repositories/SupabaseStatisticsRepository'
 import { GetStatisticsOverview } from '../../domain/usecases/GetStatisticsOverview'
 
-const repository = new MockStatisticsRepository()
+const repository = new SupabaseStatisticsRepository()
 const getStatisticsOverview = new GetStatisticsOverview(repository)
 
 export function useStatistics(year: number) {

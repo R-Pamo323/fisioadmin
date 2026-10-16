@@ -4,13 +4,13 @@ import type {
   ServiceTypeDraft,
   ServiceTypePatch,
 } from '../../domain/entities/ServiceType'
-import { MockServiceTypeRepository } from '../../data/repositories/MockServiceTypeRepository'
+import { SupabaseServiceTypeRepository } from '../../data/repositories/SupabaseServiceTypeRepository'
 import { CreateServiceType } from '../../domain/usecases/CreateServiceType'
 import { DeleteServiceType } from '../../domain/usecases/DeleteServiceType'
 import { GetServiceTypes } from '../../domain/usecases/GetServiceTypes'
 import { UpdateServiceType } from '../../domain/usecases/UpdateServiceType'
 
-const repository = new MockServiceTypeRepository()
+const repository = new SupabaseServiceTypeRepository()
 const getServiceTypes = new GetServiceTypes(repository)
 const createServiceType = new CreateServiceType(repository)
 const updateServiceType = new UpdateServiceType(repository)

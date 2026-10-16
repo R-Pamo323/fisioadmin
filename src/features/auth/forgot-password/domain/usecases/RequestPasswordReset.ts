@@ -1,6 +1,7 @@
 import type { PasswordResetRepository } from '../repositories/PasswordResetRepository'
 
-export const RESET_CODE_LENGTH = 4
+/** Longitud del código OTP que envía Supabase por correo (6 dígitos por defecto). */
+export const RESET_CODE_LENGTH = 6
 
 export class RequestPasswordReset {
   private readonly repository: PasswordResetRepository

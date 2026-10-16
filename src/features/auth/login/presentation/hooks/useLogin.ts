@@ -4,16 +4,16 @@ import { useNavigate } from 'react-router-dom'
 import { ROUTE_PATHS } from '../../../../../core/routes/paths'
 import type { LoginErrorCode } from '../../../shared/domain/types'
 import { EMAIL_REGEX } from '../../../shared/presentation/constants'
-import { MockLoginRepository } from '../../data/repositories/MockLoginRepository'
+import { SupabaseLoginRepository } from '../../data/repositories/SupabaseLoginRepository'
 import { LoginUser } from '../../domain/usecases/LoginUser'
 
-const loginUser = new LoginUser(new MockLoginRepository())
+const loginUser = new LoginUser(new SupabaseLoginRepository())
 
 const ERROR_MESSAGES: Record<LoginErrorCode, string> = {
   email_not_registered:
     'Este correo no está registrado. Comprueba la dirección o crea una cuenta.',
   invalid_credentials:
-    'La contraseña no es correcta. Revísala e inténtalo de nuevo.',
+    'Correo o contraseña incorrectos. Revísalos e inténtalo de nuevo.',
 }
 
 export function useLogin() {

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import type { Transaction } from '../../domain/entities/Statistics'
-import { MockStatisticsRepository } from '../../data/repositories/MockStatisticsRepository'
+import { SupabaseStatisticsRepository } from '../../data/repositories/SupabaseStatisticsRepository'
 import { GetTransactions } from '../../domain/usecases/GetTransactions'
 
-const repository = new MockStatisticsRepository()
+const repository = new SupabaseStatisticsRepository()
 const getTransactions = new GetTransactions(repository)
 
 /** Carga diferida: solo pide datos cuando el modal se abre, y por año elegido. */

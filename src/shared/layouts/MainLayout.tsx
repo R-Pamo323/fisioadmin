@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react'
 import { ROUTE_PATHS } from '../../core/routes/paths'
+import { signOut } from '../lib/auth'
 import { DropdownMenu, LogoMark } from '../components'
 import styles from './MainLayout.module.css'
 
@@ -117,7 +118,9 @@ export function MainLayout() {
                   label: 'Cerrar sesión',
                   icon: <LogOut size={15} />,
                   tone: 'danger',
-                  onSelect: () => navigate(ROUTE_PATHS.login),
+                  onSelect: () => {
+                    void signOut().then(() => navigate(ROUTE_PATHS.login))
+                  },
                 },
               ]}
               trigger={

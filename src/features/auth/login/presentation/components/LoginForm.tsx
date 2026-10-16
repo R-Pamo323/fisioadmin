@@ -11,6 +11,7 @@ import {
 import { ROUTE_PATHS } from '../../../../../core/routes/paths'
 import { colors } from '../../../../../core/theme/colors'
 import { typography } from '../../../../../core/theme/typography'
+import { SHOW_REGISTER_LINK } from '../../../shared/presentation/constants'
 import { useLogin } from '../hooks/useLogin'
 import styles from './LoginForm.module.css'
 
@@ -142,28 +143,30 @@ export function LoginForm() {
         style={{ borderColor: colors.border }}
       ></div>
 
-      <p
-        className={styles.signup}
-        style={{
-          color: colors.textSecondary,
-          fontFamily: typography.fontFamily,
-          fontSize: typography.body.fontSize,
-          fontWeight: typography.body.fontWeight,
-        }}
-      >
-        ¿No tienes una cuenta?{' '}
-        <Link
-          to={ROUTE_PATHS.register}
+      {SHOW_REGISTER_LINK && (
+        <p
+          className={styles.signup}
           style={{
-            color: colors.primary,
+            color: colors.textSecondary,
             fontFamily: typography.fontFamily,
             fontSize: typography.body.fontSize,
-            fontWeight: 600,
+            fontWeight: typography.body.fontWeight,
           }}
         >
-          Regístrate
-        </Link>
-      </p>
+          ¿No tienes una cuenta?{' '}
+          <Link
+            to={ROUTE_PATHS.register}
+            style={{
+              color: colors.primary,
+              fontFamily: typography.fontFamily,
+              fontSize: typography.body.fontSize,
+              fontWeight: 600,
+            }}
+          >
+            Regístrate
+          </Link>
+        </p>
+      )}
 
       <footer
         className={styles.footer}

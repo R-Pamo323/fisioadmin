@@ -2,11 +2,11 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ROUTE_PATHS } from '../../../../../core/routes/paths'
 import { EMAIL_REGEX } from '../../../shared/presentation/constants'
-import { MockPasswordResetRepository } from '../../data/repositories/MockPasswordResetRepository'
+import { SupabasePasswordResetRepository } from '../../data/repositories/SupabasePasswordResetRepository'
 import { RequestPasswordReset, RESET_CODE_LENGTH } from '../../domain/usecases/RequestPasswordReset'
 import { VerifyResetCode } from '../../domain/usecases/VerifyResetCode'
 
-const repository = new MockPasswordResetRepository()
+const repository = new SupabasePasswordResetRepository()
 const requestPasswordReset = new RequestPasswordReset(repository)
 const verifyResetCode = new VerifyResetCode(repository)
 
@@ -86,7 +86,7 @@ export function usePasswordReset() {
     setIsChecking(false)
 
     if (result === 'invalid_length') {
-      setCodeError('Introduce el código de 4 dígitos.')
+      setCodeError('Introduce el código de 6 dígitos.')
       return
     }
 
@@ -100,10 +100,12 @@ export function usePasswordReset() {
     setSuccessOpen(true)
   }
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setCode('')
     setCodeError('')
     setSecondsLeft(RESEND_SECONDS)
+    // Vuelve a pedir el código a Supabase para el correo ya validado.
+    await requestPasswordReset.execute(sentTo)
   }
 
   const handleChangeEmail = () => {

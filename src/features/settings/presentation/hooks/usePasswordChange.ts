@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
-import { MockSettingsRepository } from '../../data/repositories/MockSettingsRepository'
+import { SupabaseSettingsRepository } from '../../data/repositories/SupabaseSettingsRepository'
 import { ChangePassword } from '../../domain/usecases/ChangePassword'
 import { SAVED_MESSAGE_MS } from '../constants'
 
-const changePassword = new ChangePassword(new MockSettingsRepository())
+const changePassword = new ChangePassword(new SupabaseSettingsRepository())
 
 /** Misma regla y mismo mensaje que el registro (useRegister). */
 const MIN_PASSWORD_LENGTH = 8

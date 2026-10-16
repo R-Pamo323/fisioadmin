@@ -9,6 +9,7 @@ import { AppointmentTypes } from '../../features/appointment-types/presentation/
 import { Settings } from '../../features/settings/presentation/pages/Settings'
 import { Support } from '../../features/support/presentation/pages/Support'
 import { MainLayout } from '../../shared/layouts/MainLayout'
+import { RequireAuth } from './RequireAuth'
 import { ROUTE_PATHS } from './paths'
 
 export function AppRouter() {
@@ -18,17 +19,19 @@ export function AppRouter() {
         <Route path={ROUTE_PATHS.login} element={<Login />} />
         <Route path={ROUTE_PATHS.forgotPassword} element={<ForgotPassword />} />
         <Route path={ROUTE_PATHS.register} element={<Register />} />
-        <Route element={<MainLayout />}>
-          <Route path={ROUTE_PATHS.calendar} element={<Calendar />} />
-          <Route path={ROUTE_PATHS.patients} element={<Patients />} />
-          <Route
-            path={ROUTE_PATHS.legacyStatistics}
-            element={<Navigate to={ROUTE_PATHS.statistics} replace />}
-          />
-          <Route path={ROUTE_PATHS.statistics} element={<Statistics />} />
-          <Route path={ROUTE_PATHS.appointmentTypes} element={<AppointmentTypes />} />
-          <Route path={ROUTE_PATHS.settings} element={<Settings />} />
-          <Route path={ROUTE_PATHS.support} element={<Support />} />
+        <Route element={<RequireAuth />}>
+          <Route element={<MainLayout />}>
+            <Route path={ROUTE_PATHS.calendar} element={<Calendar />} />
+            <Route path={ROUTE_PATHS.patients} element={<Patients />} />
+            <Route
+              path={ROUTE_PATHS.legacyStatistics}
+              element={<Navigate to={ROUTE_PATHS.statistics} replace />}
+            />
+            <Route path={ROUTE_PATHS.statistics} element={<Statistics />} />
+            <Route path={ROUTE_PATHS.appointmentTypes} element={<AppointmentTypes />} />
+            <Route path={ROUTE_PATHS.settings} element={<Settings />} />
+            <Route path={ROUTE_PATHS.support} element={<Support />} />
+          </Route>
         </Route>
         <Route path="*" element={<Navigate to={ROUTE_PATHS.login} replace />} />
       </Routes>

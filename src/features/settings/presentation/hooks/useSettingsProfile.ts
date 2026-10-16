@@ -4,11 +4,11 @@ import type {
   SettingsProfile,
   SettingsProfileField,
 } from '../../domain/entities/SettingsProfile'
-import { MockSettingsRepository } from '../../data/repositories/MockSettingsRepository'
+import { SupabaseSettingsRepository } from '../../data/repositories/SupabaseSettingsRepository'
 import { GetSettingsProfile } from '../../domain/usecases/GetSettingsProfile'
 import { UpdateSettingsProfile } from '../../domain/usecases/UpdateSettingsProfile'
 
-const repository = new MockSettingsRepository()
+const repository = new SupabaseSettingsRepository()
 const getSettingsProfile = new GetSettingsProfile(repository)
 const updateSettingsProfile = new UpdateSettingsProfile(repository)
 
