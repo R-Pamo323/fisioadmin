@@ -100,8 +100,8 @@ export function ServiceTypeFormModal({
           <Input
             label="Duración (min)"
             type="number"
-            min={values.category === 'beneficios' ? 1 : 0}
-            placeholder={values.category === 'beneficios' ? '45' : 'Opcional'}
+            min={values.category === 'gastos' ? 0 : 1}
+            placeholder={values.category === 'gastos' ? 'Opcional' : '45'}
             value={values.duration}
             onChange={setValue('duration')}
             onBlur={onBlur('duration')}
@@ -116,6 +116,7 @@ export function ServiceTypeFormModal({
           value={values.description}
           onChange={setValue('description')}
           onBlur={onBlur('description')}
+          error={getError('description')}
         />
 
         <Textarea

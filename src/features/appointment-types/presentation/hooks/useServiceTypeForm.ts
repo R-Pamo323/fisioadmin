@@ -55,21 +55,21 @@ function validate(values: ServiceTypeFormValues): FormErrors {
     errors.name = 'El nombre del servicio es obligatorio.'
   }
 
-  // Gratis no tiene precio: queda fijo en 0 y no se valida. En beneficios y
-  // gastos el precio (tarifa o costo) es obligatorio.
-  if (values.category !== 'gratis') {
-    const price = parseNumber(values.price)
-    if (price === null) {
-      errors.price = 'Indica el precio del servicio.'
-    } else if (price < 0) {
-      errors.price = 'El precio no puede ser negativo.'
-    }
+  // El precio siempre es obligatorio. En gratis el servicio no cobra, así que
+  // el único valor válido es 0 (el campo queda fijo ahí).
+  const price = parseNumber(values.price)
+  if (price === null) {
+    errors.price = 'Indica el precio del servicio.'
+  } else if (price < 0) {
+    errors.price = 'El precio no puede ser negativo.'
+  } else if (values.category === 'gratis' && price !== 0) {
+    errors.price = 'Un servicio gratis debe tener precio 0.'
   }
 
-  // La duración solo es obligatoria para los beneficios; en gastos y gratis es
-  // opcional y un 0 equivale a "sin duración".
+  // La duración solo es opcional en gastos; en beneficios y gratis es
+  // obligatoria. Un 0 en gastos equivale a "sin duración".
   const duration = parseNumber(values.duration)
-  if (values.category === 'beneficios') {
+  if (values.category !== 'gastos') {
     if (duration === null) {
       errors.duration = 'La duración en minutos es obligatoria.'
     } else if (duration <= 0) {
@@ -77,6 +77,10 @@ function validate(values: ServiceTypeFormValues): FormErrors {
     }
   } else if (duration !== null && duration < 0) {
     errors.duration = 'La duración no puede ser negativa.'
+  }
+
+  if (values.description.trim() === '') {
+    errors.description = 'La descripción del servicio es obligatoria.'
   }
 
   return errors
