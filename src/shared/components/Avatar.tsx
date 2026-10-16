@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import styles from './Avatar.module.css'
+import { getInitials } from '../utils/text'
 
 interface AvatarProps {
   /** Nombre del paciente; se usa para las iniciales y para elegir el color. */
@@ -17,17 +18,6 @@ const PALETTE = [
   { bg: '#FEF3C7', fg: '#B45309' },
   { bg: '#FCE7F3', fg: '#BE185D' },
 ] as const
-
-export function initialsFromName(name: string): string {
-  const words = name.trim().split(/\s+/).filter(Boolean)
-
-  if (words.length === 0) return '?'
-
-  const first = words[0].charAt(0)
-  const last = words.length > 1 ? words[words.length - 1].charAt(0) : ''
-
-  return `${first}${last}`.toUpperCase()
-}
 
 function pickPaletteColor(name: string): (typeof PALETTE)[number] {
   let hash = 0
@@ -63,7 +53,7 @@ export function Avatar({ name, src, size = 40, className }: AvatarProps) {
       style={{ ...boxStyle, background: bg, color: fg }}
       aria-hidden="true"
     >
-      {initialsFromName(name)}
+      {getInitials(name)}
     </span>
   )
 }

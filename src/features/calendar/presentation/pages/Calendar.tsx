@@ -21,10 +21,8 @@ import { useAppointments } from '../hooks/useAppointments'
 import { useExpenses } from '../hooks/useExpenses'
 import { useAppointmentCatalog } from '../hooks/useAppointmentCatalog'
 import { useIsMobile } from '../hooks/useMediaQuery'
+import { capitalize } from '../../../../shared/utils/text'
 import styles from './Calendar.module.css'
-
-const capitalize = (value: string): string =>
-  value.charAt(0).toUpperCase() + value.slice(1)
 
 function formatCalendarTitle(start: Date, end: Date): string {
   const monthOf = (date: Date): string =>
@@ -69,9 +67,13 @@ export function Calendar() {
   const [deletingExpense, setDeletingExpense] = useState<Expense | null>(null)
   const [isDeletingExpense, setIsDeletingExpense] = useState(false)
 
-  useEffect(() => {
+  const [lastIsMobile, setLastIsMobile] = useState(isMobile)
+
+  // Ajuste en render (no en efecto): al pasar a móvil/escritorio la vista acompaña.
+  if (isMobile !== lastIsMobile) {
+    setLastIsMobile(isMobile)
     setView(isMobile ? 'timeGridDay' : 'timeGridWeek')
-  }, [isMobile])
+  }
 
   useEffect(() => {
     const api = calendarRef.current?.getApi()

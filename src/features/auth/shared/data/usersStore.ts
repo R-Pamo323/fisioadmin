@@ -18,5 +18,3 @@ export const usersStore = {
     REGISTERED_USERS[normalizeEmail(email)] = password
   },
 }
-
-export const MOCK_LOGIN_PASSWORD = REGISTERED_USERS['juan.perez@fisioadmin.com']

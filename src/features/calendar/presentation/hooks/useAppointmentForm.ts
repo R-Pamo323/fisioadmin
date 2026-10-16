@@ -7,6 +7,7 @@ import type {
   AppointmentDraft,
   AppointmentStatus,
 } from '../../domain/entities/Appointment'
+import { toDateInputValue } from '../../../../shared/utils/date'
 
 /** Primera hora agendable: la grilla arranca a las 08:00. */
 export const FIRST_BOOKABLE_MINUTES = 8 * 60
@@ -17,7 +18,7 @@ export const LAST_BOOKABLE_MINUTES = 22 * 60
 /** Opción del selector de paciente cuando la cita no corresponde a nadie. */
 export const NO_PATIENT_VALUE = 'sin-paciente'
 
-export interface AppointmentFormValues {
+interface AppointmentFormValues {
   patientId: string
   serviceTypeId: string
   /** Título de la reunión; solo se usa cuando no hay paciente. */
@@ -52,7 +53,7 @@ const emptyValues: AppointmentFormValues = {
 }
 
 /** "HH:mm" → minutos desde medianoche; null si el formato no sirve. */
-export function parseTimeToMinutes(value: string): number | null {
+function parseTimeToMinutes(value: string): number | null {
   const match = /^(\d{1,2}):(\d{2})$/.exec(value)
   if (!match) return null
 
@@ -67,12 +68,6 @@ function toTimeValue(date: Date): string {
   return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
 }
 
-function toDateValue(date: Date): string {
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${date.getFullYear()}-${month}-${day}`
-}
-
 /** El monto debe ser un número de 0 en adelante. */
 function isValidAmount(value: string): boolean {
   if (value.trim() === '') return false
@@ -85,14 +80,14 @@ function fromAppointment(appointment: Appointment, serviceTypes: ServiceType[]):
   const isMeeting = appointment.patientId === null
 
   return {
-    patientId: isMeeting ? NO_PATIENT_VALUE : appointment.patientId,
+    patientId: isMeeting ? NO_PATIENT_VALUE : (appointment.patientId ?? NO_PATIENT_VALUE),
     serviceTypeId: isMeeting
       ? ''
       : (serviceTypes.find((serviceType) => serviceType.name === appointment.appointmentType)?.id ??
         ''),
     meetingTitle: isMeeting ? appointment.patientName : '',
     description: appointment.description,
-    date: toDateValue(appointment.start),
+    date: toDateInputValue(appointment.start),
     startTime: toTimeValue(appointment.start),
     endTime: toTimeValue(appointment.end),
     status: appointment.status,
@@ -184,7 +179,7 @@ export function useAppointmentForm(options: {
     return (
       appointments.find((other) => {
         if (other.id === editingId) return false
-        if (toDateValue(other.start) !== values.date) return false
+        if (toDateInputValue(other.start) !== values.date) return false
 
         const otherStart =
           other.start.getHours() * 60 + other.start.getMinutes() + other.start.getSeconds() / 60

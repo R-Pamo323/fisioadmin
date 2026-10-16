@@ -54,7 +54,7 @@ export function Pagination({
   }
 
   return (
-    <nav className={[styles.root, className ?? ''].filter(Boolean).join(' ')}>
+    <nav className={[styles.root, className ?? ''].filter(Boolean).join(' ')} aria-label={ariaLabel}>
       {summary ? <span className={styles.summary}>{summary}</span> : null}
 
       {totalPages > 1 ? (

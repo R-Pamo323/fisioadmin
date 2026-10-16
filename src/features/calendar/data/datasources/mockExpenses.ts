@@ -1,11 +1,5 @@
 import type { Expense, ExpenseDraft, ExpensePatch } from '../../domain/entities/Expense'
-
-function dayOffset(offsetDays: number): Date {
-  const date = new Date()
-  date.setDate(date.getDate() + offsetDays)
-  date.setHours(0, 0, 0, 0)
-  return date
-}
+import { dayOffset } from './mockDates'
 
 /*
  * Los gastos no son citas: no ocupan horario, por eso no llevan hora de inicio

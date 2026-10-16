@@ -10,7 +10,6 @@ import { MockAppointmentRepository } from '../../../calendar/data/repositories/M
 import { GetAppointments } from '../../../calendar/domain/usecases/GetAppointments'
 import { UpdateAppointment } from '../../../calendar/domain/usecases/UpdateAppointment'
 import { toTimestamp } from '../components/patientMeta'
-import type { PatientView } from '../components/patientTreatment'
 import {
   selectLatestPatientAppointment,
   toPatientView,

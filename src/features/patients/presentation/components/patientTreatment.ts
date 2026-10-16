@@ -12,7 +12,7 @@ import type { Patient } from '../../domain/entities/Patient'
 export type PatientStatus = 'pendiente' | 'pagado' | 'sin_tratamiento'
 
 /** Una sesión ya realizada, tal como se lista en el historial del paciente. */
-export interface PatientSession {
+interface PatientSession {
   id: string
   /** Inicio de la cita en ISO; se usa para ordenar y para el texto relativo. */
   date: string
@@ -65,7 +65,7 @@ export function selectLatestPatientAppointment(
  * Una cita gratis no genera cobro y un paciente sin citas realizadas tampoco
  * tiene nada que pagar: en ambos casos queda "sin tratamiento".
  */
-export function resolvePatientStatus(latest: Appointment | null): PatientStatus {
+function resolvePatientStatus(latest: Appointment | null): PatientStatus {
   if (!latest) return 'sin_tratamiento'
   if (latest.status === 'paid') return 'pagado'
   if (latest.status === 'pending') return 'pendiente'
@@ -77,7 +77,7 @@ export function resolvePatientStatus(latest: Appointment | null): PatientStatus 
  * beneficios, de la más reciente a la más antigua. Se excluyen las reuniones por
  * no tener paciente.
  */
-export function selectPatientSessions(
+function selectPatientSessions(
   appointments: ReadonlyArray<Appointment>,
   patientId: string,
   now: Date = new Date(),

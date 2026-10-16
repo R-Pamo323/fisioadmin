@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react'
 import { colors } from '../../../../core/theme/colors'
 import { typography } from '../../../../core/theme/typography'
 import { ROUTE_PATHS } from '../../../../core/routes/paths'
+import { formatHourMinute } from '../../../../shared/utils/date'
 import type { WeekPaymentCounts } from '../../domain/appointmentSelectors'
 import type { Appointment } from '../../domain/entities/Appointment'
 import {
@@ -50,9 +51,6 @@ interface CalendarOverviewProps {
   payments: WeekPaymentCounts
 }
 
-const formatTime = (date: Date): string =>
-  new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' }).format(date)
-
 function minutesUntil(start: Date): string {
   const diff = Math.max(0, Math.round((start.getTime() - Date.now()) / 60000))
   if (diff < 60) return `En ${diff} min`
@@ -74,7 +72,7 @@ export function CalendarOverview({ appointments, next, payments }: CalendarOverv
               const status = appointmentStatusMeta(appointment.status)
               return (
                 <li key={appointment.id} className={styles.todayRow}>
-                  <span className={styles.todayTime}>{formatTime(appointment.start)}</span>
+                  <span className={styles.todayTime}>{formatHourMinute(appointment.start)}</span>
                   <div className={styles.todayInfo}>
                     <strong>{appointment.patientName}</strong>
                     <span>{appointment.appointmentType || 'Sin tipo de cita'}</span>
@@ -101,7 +99,7 @@ export function CalendarOverview({ appointments, next, payments }: CalendarOverv
         </h3>
         {next ? (
           <>
-            <div className={styles.nextTime}>{formatTime(next.start)}</div>
+            <div className={styles.nextTime}>{formatHourMinute(next.start)}</div>
             <div className={styles.nextInfo}>
               <strong>{next.patientName}</strong>
               <span>{next.appointmentType || 'Sin tipo de cita'}</span>

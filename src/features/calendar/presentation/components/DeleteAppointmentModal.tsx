@@ -1,10 +1,7 @@
-import { AlertTriangle, X } from 'lucide-react'
-import { colors } from '../../../../core/theme/colors'
-import { Button, Modal } from '../../../../shared/components'
 import type { Appointment } from '../../domain/entities/Appointment'
-import styles from './DeleteAppointmentModal.module.css'
+import { DeleteConfirmModal } from './DeleteConfirmModal'
 
-const formatTime = (date: Date): string =>
+const formatWhen = (date: Date): string =>
   new Intl.DateTimeFormat('es-ES', {
     weekday: 'short',
     day: 'numeric',
@@ -31,38 +28,18 @@ export function DeleteAppointmentModal({
   if (!appointment) return null
 
   return (
-    <Modal open={open} onRequestClose={onClose} size="sm">
-      <div className={styles.body}>
-        <div className={styles.header}>
-          <span className={styles.icon}>
-            <AlertTriangle size={20} />
-          </span>
-          <button
-            type="button"
-            className={styles.close}
-            onClick={onClose}
-            aria-label="Cerrar"
-            style={{ color: colors.textSecondary }}
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        <h3 className={styles.title}>Eliminar cita</h3>
-        <p className={styles.text}>
+    <DeleteConfirmModal
+      open={open}
+      title="Eliminar cita"
+      message={
+        <>
           Vas a eliminar <strong>{appointment.patientName}</strong> del{' '}
-          {formatTime(appointment.start)}. Esta acción no se puede deshacer.
-        </p>
-
-        <div className={styles.actions}>
-          <Button variant="secondary" onClick={onClose} disabled={isDeleting}>
-            Cancelar
-          </Button>
-          <Button variant="danger" onClick={onConfirm} disabled={isDeleting}>
-            {isDeleting ? 'Eliminando…' : 'Eliminar'}
-          </Button>
-        </div>
-      </div>
-    </Modal>
+          {formatWhen(appointment.start)}. Esta acción no se puede deshacer.
+        </>
+      }
+      isDeleting={isDeleting}
+      onConfirm={onConfirm}
+      onClose={onClose}
+    />
   )
 }

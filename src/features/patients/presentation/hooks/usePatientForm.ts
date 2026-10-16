@@ -7,7 +7,7 @@ import type {
 } from '../../domain/entities/Patient'
 import { DEFAULT_GENDER } from '../components/patientMeta'
 
-export interface PatientFormValues {
+interface PatientFormValues {
   name: string
   age: string
   gender: PatientGender

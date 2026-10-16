@@ -3,6 +3,7 @@ import { ArrowRight, X } from 'lucide-react'
 import { ROUTE_PATHS } from '../../../../core/routes/paths'
 import { colors } from '../../../../core/theme/colors'
 import { typography } from '../../../../core/theme/typography'
+import { formatSoles } from '../../../../shared/utils/currency'
 import { Button, Input, Modal, Select, Textarea } from '../../../../shared/components'
 import type { SelectOption } from '../../../../shared/components'
 import type { ServiceType } from '../../../appointment-types/domain/entities/ServiceType'
@@ -49,7 +50,7 @@ export function ExpenseFormModal({
     { value: '', label: 'Selecciona…' },
     ...expenseServiceTypes.map((serviceType) => ({
       value: serviceType.id,
-      label: `${serviceType.name} (S/${serviceType.price})`,
+      label: `${serviceType.name} (${formatSoles(serviceType.price)})`,
     })),
   ]
 

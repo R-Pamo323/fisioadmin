@@ -1,18 +1,23 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
 
-export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState<boolean>(() => window.matchMedia(query).matches)
+/** Se suscribe a una media query y avisa cuando cambia. */
+function subscribeToQuery(query: string, onChange: () => void): () => void {
+  const mediaQueryList = window.matchMedia(query)
+  mediaQueryList.addEventListener('change', onChange)
+  return () => mediaQueryList.removeEventListener('change', onChange)
+}
 
-  useEffect(() => {
-    const mql = window.matchMedia(query)
-    const onChange = () => setMatches(mql.matches)
+function useMediaQuery(query: string): boolean {
+  const subscribe = useCallback(
+    (onChange: () => void) => subscribeToQuery(query, onChange),
+    [query],
+  )
 
-    setMatches(mql.matches)
-    mql.addEventListener('change', onChange)
-    return () => mql.removeEventListener('change', onChange)
-  }, [query])
-
-  return matches
+  return useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia(query).matches,
+    () => false,
+  )
 }
 
 export function useIsMobile(): boolean {

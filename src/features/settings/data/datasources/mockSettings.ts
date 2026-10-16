@@ -6,7 +6,7 @@ import type { SettingsProfile } from '../../domain/entities/SettingsProfile'
  * juan.perez@fisioadmin.com (features/auth/shared/data/usersStore.ts), así que
  * sirve para probar tanto el acierto como el error de "contraseña actual".
  */
-export const MOCK_CURRENT_PASSWORD = 'fisioadmin'
+const MOCK_CURRENT_PASSWORD = 'fisioadmin'
 
 /** Misma regla que valida el registro (useRegister.validatePassword). */
 const MIN_PASSWORD_LENGTH = 8

@@ -1,9 +1,6 @@
-import { AlertTriangle, X } from 'lucide-react'
-import { colors } from '../../../../core/theme/colors'
-import { Button, Modal } from '../../../../shared/components'
 import type { Expense } from '../../domain/entities/Expense'
 import { formatExpenseAmount, formatExpenseDate } from './expenseMeta'
-import styles from './DeleteExpenseModal.module.css'
+import { DeleteConfirmModal } from './DeleteConfirmModal'
 
 interface DeleteExpenseModalProps {
   open: boolean
@@ -27,39 +24,19 @@ export function DeleteExpenseModal({
   if (!expense) return null
 
   return (
-    <Modal open={open} onRequestClose={onClose} size="sm">
-      <div className={styles.body}>
-        <div className={styles.header}>
-          <span className={styles.icon}>
-            <AlertTriangle size={20} />
-          </span>
-          <button
-            type="button"
-            className={styles.close}
-            onClick={onClose}
-            aria-label="Cerrar"
-            style={{ color: colors.textSecondary }}
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        <h3 className={styles.title}>Eliminar gasto</h3>
-        <p className={styles.text}>
+    <DeleteConfirmModal
+      open={open}
+      title="Eliminar gasto"
+      message={
+        <>
           Vas a eliminar <strong>{serviceTypeName ?? 'Gasto'}</strong> del{' '}
           {formatExpenseDate(expense.date)} por {formatExpenseAmount(expense.amount)}. Esta acción
           no se puede deshacer.
-        </p>
-
-        <div className={styles.actions}>
-          <Button variant="secondary" onClick={onClose} disabled={isDeleting}>
-            Cancelar
-          </Button>
-          <Button variant="danger" onClick={onConfirm} disabled={isDeleting}>
-            {isDeleting ? 'Eliminando…' : 'Eliminar'}
-          </Button>
-        </div>
-      </div>
-    </Modal>
+        </>
+      }
+      isDeleting={isDeleting}
+      onConfirm={onConfirm}
+      onClose={onClose}
+    />
   )
 }

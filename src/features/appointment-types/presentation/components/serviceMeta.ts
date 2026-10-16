@@ -1,8 +1,9 @@
 import { colors } from '../../../../core/theme/colors'
 import type { BadgeTone } from '../../../../shared/components'
+import { formatSoles } from '../../../../shared/utils/currency'
 import type { ServiceCategory } from '../../domain/entities/ServiceType'
 
-export interface CategoryMeta {
+interface CategoryMeta {
   label: string
   tone: BadgeTone
   /** Wash usado detrás de las iniciales en la card. */
@@ -45,21 +46,6 @@ export const CATEGORY_OPTIONS = (
 export const DEFAULT_CATEGORY: ServiceCategory = 'beneficios'
 
 /**
- * Iniciales para la card del servicio: primera letra de hasta dos palabras.
- * "Terapia Física" → TF, "Masaje Relaxante" → MR, "Pilates" → P.
- */
-export function getInitials(name: string): string {
-  const words = name.trim().split(/\s+/).filter((word) => word !== '')
-
-  if (words.length === 0) return '?'
-
-  return words
-    .slice(0, 2)
-    .map((word) => word.charAt(0).toLocaleUpperCase('es'))
-    .join('')
-}
-
-/**
  * El mismo número significa cosas distintas según la categoría: en beneficios
  * es lo que entra, en gastos es lo que sale y en gratis no hay cobro. Un importe
  * en 0 nunca se pinta de rojo: el rojo queda reservado para los gastos con monto.
@@ -73,7 +59,7 @@ export function formatAmount(amount: number, category: ServiceCategory): string 
     return category === 'gastos' ? 'Sin costo' : 'Gratis'
   }
 
-  return category === 'gastos' ? `Costo S/${amount}` : `S/${amount}`
+  return category === 'gastos' ? `Costo ${formatSoles(amount)}` : formatSoles(amount)
 }
 
 /**

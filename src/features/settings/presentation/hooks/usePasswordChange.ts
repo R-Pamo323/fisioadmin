@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { MockSettingsRepository } from '../../data/repositories/MockSettingsRepository'
 import { ChangePassword } from '../../domain/usecases/ChangePassword'
+import { SAVED_MESSAGE_MS } from '../constants'
 
 const changePassword = new ChangePassword(new MockSettingsRepository())
 
 /** Misma regla y mismo mensaje que el registro (useRegister). */
 const MIN_PASSWORD_LENGTH = 8
-
-const SAVED_MESSAGE_MS = 2500
 
 const validateCurrent = (value: string) => {
   if (value === '') return 'Introduce tu contraseña actual.'

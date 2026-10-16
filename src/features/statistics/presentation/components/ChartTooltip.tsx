@@ -2,7 +2,7 @@ import type { TooltipContentProps } from 'recharts'
 import { formatCurrency } from './statisticsMeta'
 import styles from './ChartTooltip.module.css'
 
-type ChartTooltipProps = TooltipContentProps<number, string> & {
+type ChartTooltipProps = Partial<TooltipContentProps<number, string>> & {
   /** Cada gráfico decide cómo formatea sus valores. */
   valueFormatter?: (value: number) => string
 }

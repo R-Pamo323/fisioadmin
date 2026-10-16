@@ -1,7 +1,7 @@
 import type { PasswordResetRepository } from '../repositories/PasswordResetRepository'
 import { RESET_CODE_LENGTH } from './RequestPasswordReset'
 
-export type VerifyResetCodeResult = 'invalid_length' | 'invalid_code' | 'ok'
+type VerifyResetCodeResult = 'invalid_length' | 'invalid_code' | 'ok'
 
 export class VerifyResetCode {
   private readonly repository: PasswordResetRepository

@@ -2,7 +2,8 @@ import { ChevronRight, Pencil, Trash2 } from 'lucide-react'
 import { Badge, Card, DropdownMenu } from '../../../../shared/components'
 import { colors } from '../../../../core/theme/colors'
 import type { ServiceType } from '../../domain/entities/ServiceType'
-import { amountColor, CATEGORY_META, formatAmount, formatDuration, getInitials } from './serviceMeta'
+import { amountColor, CATEGORY_META, formatAmount, formatDuration } from './serviceMeta'
+import { getInitials } from '../../../../shared/utils/text'
 import styles from './ServiceTypeCard.module.css'
 
 interface ServiceTypeCardProps {

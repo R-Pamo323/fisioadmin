@@ -9,19 +9,19 @@ const getTransactions = new GetTransactions(repository)
 /** Carga diferida: solo pide datos cuando el modal se abre, y por año elegido. */
 export function useTransactions(year: number, isOpen: boolean) {
   const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  /** Año cuya carga ya terminó; permite derivar el "cargando" sin efectos. */
+  const [loadedYear, setLoadedYear] = useState<number | null>(null)
 
   useEffect(() => {
     if (!isOpen) return
 
     let active = true
-    setIsLoading(true)
 
     void (async () => {
       const next = await getTransactions.execute(year)
       if (!active) return
       setTransactions(next)
-      setIsLoading(false)
+      setLoadedYear(year)
     })()
 
     return () => {
@@ -29,5 +29,5 @@ export function useTransactions(year: number, isOpen: boolean) {
     }
   }, [year, isOpen])
 
-  return { transactions, isLoading }
+  return { transactions, isLoading: isOpen && loadedYear !== year }
 }

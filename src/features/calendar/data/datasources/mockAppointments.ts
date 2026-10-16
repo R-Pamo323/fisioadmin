@@ -1,16 +1,10 @@
 import type { Appointment, AppointmentDraft, AppointmentPatch } from '../../domain/entities/Appointment'
+import { dayOffset } from './mockDates'
 
 function atTime(date: Date, hours: number, minutes = 0): Date {
   const result = new Date(date)
   result.setHours(hours, minutes, 0, 0)
   return result
-}
-
-function dayOffset(offsetDays: number): Date {
-  const date = new Date()
-  date.setDate(date.getDate() + offsetDays)
-  date.setHours(0, 0, 0, 0)
-  return date
 }
 
 /**

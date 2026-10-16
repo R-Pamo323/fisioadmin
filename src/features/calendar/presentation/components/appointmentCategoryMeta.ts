@@ -4,7 +4,7 @@ import { colors } from '../../../../core/theme/colors'
 import type { ServiceCategory } from '../../../appointment-types/domain/entities/ServiceType'
 import type { AppointmentStatus } from '../../domain/entities/Appointment'
 
-export interface AppointmentCategoryMeta {
+interface AppointmentCategoryMeta {
   label: string
   color: string
   background: string
@@ -33,7 +33,7 @@ export function appointmentCategoryMeta(
   return APPOINTMENT_CATEGORY_META[category ?? 'gratis']
 }
 
-export interface AppointmentEventStyle {
+interface AppointmentEventStyle {
   color: string
   background: string
 }

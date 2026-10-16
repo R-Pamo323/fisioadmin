@@ -6,7 +6,7 @@ import { RegisterUser } from '../../domain/usecases/RegisterUser'
 
 const registerUser = new RegisterUser(new MockRegisterRepository())
 
-export interface RegisterModalState {
+interface RegisterModalState {
   variant: 'success' | 'error'
   message: string
 }

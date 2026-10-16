@@ -3,7 +3,7 @@ import type { BadgeTone, SelectOption } from '../../../../shared/components'
 import type { Patient, PatientGender } from '../../domain/entities/Patient'
 import type { PatientStatus } from './patientTreatment'
 
-export interface StatusMeta {
+interface StatusMeta {
   label: string
   tone: BadgeTone
 }
@@ -21,7 +21,7 @@ export const GENDER_OPTIONS: SelectOption[] = [
 
 export const DEFAULT_GENDER: PatientGender = 'femenino'
 
-export interface DistributionBand {
+interface DistributionBand {
   key: string
   label: string
   color: string
@@ -86,7 +86,7 @@ export function buildDistribution(
 }
 
 /** Porcentajes enteros que suman 100 repartiendo el resto entre los mayores. */
-export function toPercentages(counts: number[], total: number): number[] {
+function toPercentages(counts: number[], total: number): number[] {
   if (total === 0) return counts.map(() => 0)
 
   const exact = counts.map((count) => (count * 100) / total)

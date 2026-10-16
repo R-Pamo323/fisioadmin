@@ -3,14 +3,12 @@ import type { ChangeEvent, FormEvent } from 'react'
 import { CheckCircle2, User } from 'lucide-react'
 import { colors } from '../../../../core/theme/colors'
 import { Avatar, Button, Input } from '../../../../shared/components'
-import { initialsFromName } from '../../../../shared/components/Avatar'
+import { getInitials } from '../../../../shared/utils/text'
+import { SAVED_MESSAGE_MS } from '../constants'
 import type { SettingsProfile, SettingsProfileField } from '../../domain/entities/SettingsProfile'
 import { PasswordSection } from './PasswordSection'
 import { SettingsCard } from './SettingsCard'
 import styles from './ProfileCard.module.css'
-
-/** La confirmación se oculta sola para no dejar estado pegado en la pantalla. */
-const SAVED_MESSAGE_MS = 2500
 
 interface ProfileCardProps {
   profile: SettingsProfile
@@ -52,7 +50,7 @@ export function ProfileCard({
         <div className={styles.identityText}>
           <strong className={styles.identityName}>{profile.name}</strong>
           <span className={styles.identityHint}>
-            Iniciales generadas automáticamente: {initialsFromName(profile.name)}
+            Iniciales generadas automáticamente: {getInitials(profile.name)}
           </span>
         </div>
       </div>

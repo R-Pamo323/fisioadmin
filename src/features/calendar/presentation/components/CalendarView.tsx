@@ -15,6 +15,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import esLocale from '@fullcalendar/core/locales/es'
 import { colors } from '../../../../core/theme/colors'
+import { capitalize } from '../../../../shared/utils/text'
 import type { Appointment } from '../../domain/entities/Appointment'
 import type { Expense } from '../../domain/entities/Expense'
 import type { ServiceCategory } from '../../../appointment-types/domain/entities/ServiceType'
@@ -140,9 +141,6 @@ function toExpenseEvents(expenses: Expense[]): EventInput[] {
   })
 }
 
-const capitalize = (value: string): string =>
-  value.charAt(0).toUpperCase() + value.slice(1)
-
 export function CalendarView({
   calendarRef,
   view,
@@ -209,9 +207,12 @@ export function CalendarView({
   useEffect(() => {
     if (!bodyEl) return undefined
 
-    setNowMinutes(getNowMinutes())
-    // `rAF` espera a que FullCalendar termine de medir la grilla antes de centrar.
-    const frame = window.requestAnimationFrame(centerOnNow)
+    // `rAF` espera a que FullCalendar termine de medir la grilla antes de
+    // refrescar la hora y centrar la línea roja.
+    const frame = window.requestAnimationFrame(() => {
+      setNowMinutes(getNowMinutes())
+      centerOnNow()
+    })
     const interval = window.setInterval(() => setNowMinutes(getNowMinutes()), 60_000)
     const onResize = () => {
       setNowMinutes(getNowMinutes())

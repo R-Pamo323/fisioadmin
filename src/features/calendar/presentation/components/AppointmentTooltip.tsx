@@ -1,5 +1,6 @@
 import { Banknote, Clock, FileText, Pencil, Tag, Trash2, UserX } from 'lucide-react'
 import { Button } from '../../../../shared/components'
+import { formatHourMinute } from '../../../../shared/utils/date'
 import type { Appointment } from '../../domain/entities/Appointment'
 import { appointmentStatusMeta } from './appointmentStatusMeta'
 import { formatAppointmentAmount } from './appointmentMeta'
@@ -17,9 +18,6 @@ interface AppointmentTooltipProps {
   onEdit: (appointment: Appointment) => void
   onDelete: (appointment: Appointment) => void
 }
-
-const formatTime = (date: Date): string =>
-  new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' }).format(date)
 
 export function AppointmentTooltip({
   tooltip,
@@ -55,7 +53,7 @@ export function AppointmentTooltip({
           <div className={styles.row}>
             <Clock size={15} className={styles.rowIcon} />
             <span>
-              {formatTime(appointment.start)} – {formatTime(appointment.end)}
+              {formatHourMinute(appointment.start)} – {formatHourMinute(appointment.end)}
             </span>
           </div>
           {appointment.appointmentType ? (

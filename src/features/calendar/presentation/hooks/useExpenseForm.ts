@@ -2,8 +2,9 @@ import { useCallback, useMemo, useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
 import type { ServiceType } from '../../../appointment-types/domain/entities/ServiceType'
 import type { Expense, ExpenseDraft } from '../../domain/entities/Expense'
+import { toDateInputValue } from '../../../../shared/utils/date'
 
-export interface ExpenseFormValues {
+interface ExpenseFormValues {
   description: string
   date: string
   /** Hora 'HH:MM' opcional; no ocupa la grilla. */
@@ -23,16 +24,10 @@ const emptyValues: ExpenseFormValues = {
   serviceTypeId: '',
 }
 
-function toDateValue(date: Date): string {
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${date.getFullYear()}-${month}-${day}`
-}
-
 function fromExpense(expense: Expense): ExpenseFormValues {
   return {
     description: expense.description,
-    date: toDateValue(expense.date),
+    date: toDateInputValue(expense.date),
     time: expense.time ?? '',
     amount: expense.amount === 0 ? '' : String(expense.amount),
     serviceTypeId: expense.serviceTypeId ?? '',

@@ -11,7 +11,7 @@ export interface SupportFormValues {
   message: string
 }
 
-export type SupportFormField = keyof SupportFormValues
+type SupportFormField = keyof SupportFormValues
 type FormErrors = Partial<Record<SupportFormField, string>>
 
 const REQUIRED_ERROR = 'Este campo es obligatorio'

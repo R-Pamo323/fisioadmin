@@ -10,5 +10,3 @@ export interface SettingsProfile {
 
 /** Campo editable del perfil; permite teclear el setter sin repetir el key. */
 export type SettingsProfileField = keyof SettingsProfile
-
-export type SettingsProfileDraft = SettingsProfile

@@ -1,8 +1,9 @@
 import { Receipt } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { colors } from '../../../../core/theme/colors'
+import { formatSoles } from '../../../../shared/utils/currency'
 
-export interface ExpenseMeta {
+interface ExpenseMeta {
   label: string
   color: string
   background: string
@@ -22,7 +23,7 @@ export const EXPENSE_META: ExpenseMeta = {
 
 /** Igual que en Tipos de cita: el rojo se reserva para el monto real. */
 export function formatExpenseAmount(amount: number): string {
-  return amount === 0 ? 'Sin costo' : `S/${amount}`
+  return amount === 0 ? 'Sin costo' : formatSoles(amount)
 }
 
 export function formatExpenseDate(date: Date): string {

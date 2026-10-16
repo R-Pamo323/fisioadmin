@@ -3,7 +3,7 @@ import type { ChangeEvent, FormEvent } from 'react'
 import type { ServiceCategory, ServiceType, ServiceTypeDraft } from '../../domain/entities/ServiceType'
 import { DEFAULT_CATEGORY } from '../components/serviceMeta'
 
-export interface ServiceTypeFormValues {
+interface ServiceTypeFormValues {
   name: string
   price: string
   duration: string
