@@ -17,8 +17,8 @@ import { formatCurrency } from './statisticsFormat'
  * una cita pagada por adelantado no entra hasta que llega su día.
  */
 
-/** Cuántas filas caben en el card; el modal usa la lista completa. */
-const RECENT_TRANSACTIONS_COUNT = 5
+/** Año más antiguo al que puede llegar el selector, aunque no haya datos. */
+const MIN_SELECTABLE_YEAR = 2020
 
 /** Paleta de la distribución; se asigna por volumen (el mayor primero). */
 const SHARE_COLORS = ['#0EA5E9', '#6366F1', '#F59E0B', '#10B981', '#8B5CF6', '#EF4444']
@@ -35,6 +35,11 @@ function isRealized(date: Date, now: Date): boolean {
 /** La fecha pertenece al año elegido y además ya ocurrió. */
 function isRealizedIn(date: Date, year: number, now: Date): boolean {
   return date.getFullYear() === year && isRealized(date, now)
+}
+
+/** Con `month` nulo no filtra; si no, exige que la fecha caiga en ese mes. */
+function isInMonth(date: Date, month: number | null): boolean {
+  return month === null || date.getMonth() === month
 }
 
 /** Citas de un paciente del año ya realizadas; excluye reuniones y tareas. */
@@ -69,24 +74,10 @@ function slugify(value: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
-/** Años que el selector puede recorrer: los que tienen datos y, al menos, el pasado. */
-export function selectAvailableYears(
-  appointments: ReadonlyArray<Appointment>,
-  expenses: ReadonlyArray<Expense>,
-  now: Date = new Date(),
-): number[] {
+/** Años que el selector puede recorrer: de 2020 al año actual, con datos o sin ellos. */
+export function selectAvailableYears(now: Date = new Date()): number[] {
   const currentYear = now.getFullYear()
-
-  // El año pasado siempre es navegable aunque esté vacío.
-  let minYear = currentYear - 1
-
-  for (const appointment of appointments) {
-    minYear = Math.min(minYear, appointment.start.getFullYear())
-  }
-
-  for (const expense of expenses) {
-    minYear = Math.min(minYear, expense.date.getFullYear())
-  }
+  const minYear = Math.min(MIN_SELECTABLE_YEAR, currentYear)
 
   const years: number[] = []
   for (let year = minYear; year <= currentYear; year += 1) {
@@ -169,17 +160,19 @@ export function selectMonthly(
   return points
 }
 
-/** Reparto de los ingresos cobrados en el año por tipo de cita (de mayor a menor). */
+/** Reparto de los ingresos cobrados por tipo de cita (de mayor a menor), en un año o mes. */
 export function selectAppointmentShare(
   appointments: ReadonlyArray<Appointment>,
   year: number,
   now: Date = new Date(),
+  month: number | null = null,
 ): ShareSlice[] {
   const totals = new Map<string, number>()
   let grandTotal = 0
 
   for (const appointment of appointments) {
     if (appointment.status !== 'paid' || !isRealizedIn(appointment.start, year, now)) continue
+    if (!isInMonth(appointment.start, month)) continue
     if (appointment.amount <= 0) continue
 
     const name = appointment.appointmentType.trim() || 'Sin tipo'
@@ -205,13 +198,16 @@ export function selectAppointmentShare(
   return slices
 }
 
-/** Cobrado y pendiente del año, para el gráfico de estado de pagos. */
+/** Cobrado y pendiente de un año o mes, para el gráfico de estado de pagos. */
 export function selectPaymentBuckets(
   appointments: ReadonlyArray<Appointment>,
   year: number,
   now: Date = new Date(),
+  month: number | null = null,
 ): PaymentBucket[] {
-  const realized = realizedPatientAppointments(appointments, year, now)
+  const realized = realizedPatientAppointments(appointments, year, now).filter((appointment) =>
+    isInMonth(appointment.start, month),
+  )
 
   return [
     {
@@ -229,16 +225,18 @@ export function selectPaymentBuckets(
   ]
 }
 
-/** Movimientos con cobro del año ya realizados, del más reciente al más antiguo. */
+/** Movimientos con cobro ya realizados, del más reciente al más antiguo, en un año o mes. */
 export function selectTransactions(
   appointments: ReadonlyArray<Appointment>,
   year: number,
   now: Date = new Date(),
+  month: number | null = null,
 ): Transaction[] {
   return realizedPatientAppointments(appointments, year, now)
     .filter(
       (appointment) => appointment.status === 'paid' || appointment.status === 'pending',
     )
+    .filter((appointment) => isInMonth(appointment.start, month))
     .sort((a, b) => b.start.getTime() - a.start.getTime())
     .map((appointment) => ({
       id: appointment.id,
@@ -257,11 +255,20 @@ export function buildStatisticsOverview(
   now: Date = new Date(),
 ): StatisticsOverview {
   return {
-    years: selectAvailableYears(appointments, expenses, now),
+    years: selectAvailableYears(now),
     metrics: selectMetrics(appointments, year, now),
     monthly: selectMonthly(appointments, expenses, year, now),
     appointmentShare: selectAppointmentShare(appointments, year, now),
-    transactions: selectTransactions(appointments, year, now).slice(0, RECENT_TRANSACTIONS_COUNT),
+    appointmentShareByMonth: MONTH_INDEXES.map((month) =>
+      selectAppointmentShare(appointments, year, now, month),
+    ),
+    transactions: selectTransactions(appointments, year, now),
+    transactionsByMonth: MONTH_INDEXES.map((month) =>
+      selectTransactions(appointments, year, now, month),
+    ),
     payments: selectPaymentBuckets(appointments, year, now),
+    paymentsByMonth: MONTH_INDEXES.map((month) =>
+      selectPaymentBuckets(appointments, year, now, month),
+    ),
   }
 }

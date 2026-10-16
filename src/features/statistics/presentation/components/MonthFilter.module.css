@@ -1,0 +1,40 @@
+.wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 32px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.wrapper:focus-within {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px color-mix(in srgb, #0ea5e9 15%, transparent);
+}
+
+.select {
+  height: 100%;
+  padding: 0 30px 0 10px;
+  border: none;
+  outline: none;
+  border-radius: 8px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  appearance: none;
+  cursor: pointer;
+}
+
+.chevron {
+  position: absolute;
+  right: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: #6b7280;
+}

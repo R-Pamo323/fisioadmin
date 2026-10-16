@@ -18,11 +18,25 @@ export function Statistics() {
   const [isTransactionsOpen, setIsTransactionsOpen] = useState(false)
   /** Cambia en cada apertura para reiniciar la página del modal. */
   const [transactionsSession, setTransactionsSession] = useState(0)
+  /** Filtro de mes independiente por panel; `null` es todo el año. */
+  const [shareMonth, setShareMonth] = useState<number | null>(null)
+  const [transactionsMonth, setTransactionsMonth] = useState<number | null>(null)
+  const [paymentsMonth, setPaymentsMonth] = useState<number | null>(null)
   const { overview, isLoading } = useStatistics(selectedYear)
   const { transactions, isLoading: isTransactionsLoading } = useTransactions(
     selectedYear,
     isTransactionsOpen,
   )
+
+  // Al cambiar de año se vuelve a "Todo el año" en los tres filtros. Se ajusta
+  // durante el render (patrón de React) para no encadenar un efecto.
+  const [trackedYear, setTrackedYear] = useState(selectedYear)
+  if (trackedYear !== selectedYear) {
+    setTrackedYear(selectedYear)
+    setShareMonth(null)
+    setTransactionsMonth(null)
+    setPaymentsMonth(null)
+  }
 
   // Mientras carga el primer resumen, el selector ya permite ver el año pasado.
   const years = overview?.years ?? [currentYear - 1, currentYear]
@@ -41,6 +55,15 @@ export function Statistics() {
       </div>
     )
   }
+
+  const shareData =
+    shareMonth === null ? overview.appointmentShare : overview.appointmentShareByMonth[shareMonth]
+  const paymentsData =
+    paymentsMonth === null ? overview.payments : overview.paymentsByMonth[paymentsMonth]
+  const transactionsData =
+    transactionsMonth === null
+      ? overview.transactions
+      : overview.transactionsByMonth[transactionsMonth]
 
   return (
     <div className={styles.page}>
@@ -65,15 +88,25 @@ export function Statistics() {
 
       <div className={styles.grid}>
         <RevenueBarChart data={overview.monthly} />
-        <AppointmentShareChart data={overview.appointmentShare} />
+        <AppointmentShareChart
+          data={shareData}
+          month={shareMonth}
+          onMonthChange={setShareMonth}
+        />
       </div>
 
       <div className={styles.grid}>
         <RecentTransactions
-          transactions={overview.transactions}
+          transactions={transactionsData}
+          month={transactionsMonth}
+          onMonthChange={setTransactionsMonth}
           onViewAll={openTransactions}
         />
-        <PaymentStatusChart data={overview.payments} />
+        <PaymentStatusChart
+          data={paymentsData}
+          month={paymentsMonth}
+          onMonthChange={setPaymentsMonth}
+        />
       </div>
 
       <TransactionsModal

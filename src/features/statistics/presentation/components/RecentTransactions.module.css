@@ -11,6 +11,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .headText {
@@ -18,6 +19,13 @@
   flex-direction: column;
   gap: 2px;
   min-width: 0;
+}
+
+.controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 .title {
@@ -60,13 +68,19 @@
 }
 
 /* flex: 1 para igualar la altura con Estado de Pagos; las 5 filas quedan
-   arriba y el aire sobrante debajo. */
+   arriba y el aire sobrante debajo. En columna para poder centrar el vacío. */
 .tableScroll {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   overflow-x: auto;
 }
 
 .empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin: 0;
   padding: 24px 0;
   text-align: center;

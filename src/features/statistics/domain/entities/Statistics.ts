@@ -58,7 +58,13 @@ export interface StatisticsOverview {
   /** Los 12 meses del año seleccionado (Ene–Dic); los vacíos quedan en 0. */
   monthly: RevenuePoint[]
   appointmentShare: ShareSlice[]
-  /** Solo las más recientes para el card; la lista completa la trae GetTransactions. */
+  /** Reparto de cada mes del año (índice 0–11), para el filtro por mes del panel. */
+  appointmentShareByMonth: ShareSlice[][]
+  /** Todas las transacciones del año, de la más reciente a la más antigua. */
   transactions: Transaction[]
+  /** Transacciones de cada mes del año (índice 0–11), para el filtro por mes del panel. */
+  transactionsByMonth: Transaction[][]
   payments: PaymentBucket[]
+  /** Estado de pagos de cada mes del año (índice 0–11), para el filtro por mes del panel. */
+  paymentsByMonth: PaymentBucket[][]
 }

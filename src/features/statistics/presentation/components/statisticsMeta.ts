@@ -1,5 +1,5 @@
 import { colors } from '../../../../core/theme/colors'
-import type { BadgeTone } from '../../../../shared/components'
+import type { BadgeTone, SelectOption } from '../../../../shared/components'
 import type { TransactionStatus } from '../../domain/entities/Statistics'
 
 /** El formateo de moneda vive en el dominio porque las métricas ya vienen formateadas. */
@@ -54,3 +54,20 @@ export const REVENUE_SERIES = {
 export const AXIS_TICK = { fill: colors.textSecondary, fontSize: 12 } as const
 
 export const GRID_COLOR = '#F3F4F6'
+
+const monthNameFormatter = new Intl.DateTimeFormat('es-ES', { month: 'long' })
+
+/**
+ * Opciones del filtro de mes: "Todo el año" más los 12 meses. El valor `all`
+ * representa el año completo; los meses van como "0"–"11".
+ */
+export const MONTH_OPTIONS: SelectOption[] = [
+  { value: 'all', label: 'Todo el año' },
+  ...Array.from({ length: 12 }, (_, month) => {
+    const name = monthNameFormatter.format(new Date(2024, month, 1))
+    return {
+      value: String(month),
+      label: name.charAt(0).toUpperCase() + name.slice(1),
+    }
+  }),
+]

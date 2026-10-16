@@ -4,11 +4,15 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { Card, ProgressBar } from '../../../../shared/components'
 import type { PaymentBucket } from '../../domain/entities/Statistics'
 import { ChartTooltip } from './ChartTooltip'
+import { MonthFilter } from './MonthFilter'
 import { formatCurrency } from './statisticsMeta'
 import styles from './PaymentStatusChart.module.css'
 
 interface PaymentStatusChartProps {
   data: PaymentBucket[]
+  /** Mes activo (0–11) o `null` para todo el año. */
+  month: number | null
+  onMonthChange: (month: number | null) => void
 }
 
 const BUCKET_ICONS: Record<string, LucideIcon> = {
@@ -16,7 +20,7 @@ const BUCKET_ICONS: Record<string, LucideIcon> = {
   pending: Clock,
 }
 
-export function PaymentStatusChart({ data }: PaymentStatusChartProps) {
+export function PaymentStatusChart({ data, month, onMonthChange }: PaymentStatusChartProps) {
   const total = data.reduce((sum, bucket) => sum + bucket.amount, 0)
   const paid = data.find((bucket) => bucket.id === 'paid')
   const effectiveness = total > 0 && paid ? Math.round((paid.amount / total) * 100) : 0
@@ -24,8 +28,12 @@ export function PaymentStatusChart({ data }: PaymentStatusChartProps) {
   return (
     <Card className={styles.card}>
       <header className={styles.head}>
-        <h3 className={styles.title}>Estado de Pagos</h3>
-        <p className={styles.subtitle}>Cumplimiento de facturación actual</p>
+        <div className={styles.headText}>
+          <h3 className={styles.title}>Estado de Pagos</h3>
+          <p className={styles.subtitle}>Cumplimiento de facturación actual</p>
+        </div>
+
+        <MonthFilter value={month} onChange={onMonthChange} />
       </header>
 
       {total > 0 ? (
@@ -87,7 +95,9 @@ export function PaymentStatusChart({ data }: PaymentStatusChartProps) {
           </ul>
         </>
       ) : (
-        <p className={styles.empty}>Sin datos en este año</p>
+        <p className={styles.empty}>
+          {month === null ? 'Sin datos en este año' : 'Sin datos en este mes'}
+        </p>
       )}
     </Card>
   )

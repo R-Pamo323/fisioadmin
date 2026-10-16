@@ -2,20 +2,32 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { Card } from '../../../../shared/components'
 import type { ShareSlice } from '../../domain/entities/Statistics'
 import { ChartTooltip } from './ChartTooltip'
+import { MonthFilter } from './MonthFilter'
 import styles from './AppointmentShareChart.module.css'
 
 interface AppointmentShareChartProps {
   data: ShareSlice[]
+  /** Mes activo (0–11) o `null` para todo el año. */
+  month: number | null
+  onMonthChange: (month: number | null) => void
 }
 
 const formatPercentValue = (value: number) => `${value}%`
 
-export function AppointmentShareChart({ data }: AppointmentShareChartProps) {
+export function AppointmentShareChart({
+  data,
+  month,
+  onMonthChange,
+}: AppointmentShareChartProps) {
   return (
     <Card className={styles.card}>
       <header className={styles.head}>
-        <h3 className={styles.title}>Distribución por Cita</h3>
-        <p className={styles.subtitle}>Volumen de ingresos según especialidad</p>
+        <div className={styles.headText}>
+          <h3 className={styles.title}>Distribución por Cita</h3>
+          <p className={styles.subtitle}>Volumen de ingresos según especialidad</p>
+        </div>
+
+        <MonthFilter value={month} onChange={onMonthChange} />
       </header>
 
       {data.length > 0 ? (
@@ -53,7 +65,9 @@ export function AppointmentShareChart({ data }: AppointmentShareChartProps) {
           </ul>
         </>
       ) : (
-        <p className={styles.empty}>Sin datos en este año</p>
+        <p className={styles.empty}>
+          {month === null ? 'Sin datos en este año' : 'Sin datos en este mes'}
+        </p>
       )}
     </Card>
   )
